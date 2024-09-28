@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/jaxron/roapi.go/pkg/api/services/user"
+	"github.com/jaxron/roapi.go/pkg/api/services/users"
 	"github.com/jaxron/roapi.go/pkg/client"
 )
 
@@ -9,7 +9,7 @@ import (
 // It contains a client for making HTTP requests and services for different API endpoints.
 type API struct {
 	client *client.Client // HTTP client for making API requests
-	user   *user.Service  // Service for user-related API operations
+	users  *users.Service // Service for user-related API operations
 }
 
 // New creates a new instance of API with the provided options.
@@ -21,7 +21,7 @@ func New(opts ...client.Option) *API {
 	// Initialize and return the API instance
 	return &API{
 		client: c,
-		user:   user.NewService(c),
+		users:  users.NewService(c),
 	}
 }
 
@@ -31,8 +31,8 @@ func (api *API) GetClient() *client.Client {
 	return api.client
 }
 
-// User returns the Service instance for user-related operations.
+// Users returns the Service instance for user-related operations.
 // This provides access to methods for interacting with user data via the Roblox API.
-func (api *API) User() *user.Service {
-	return api.user
+func (api *API) Users() *users.Service {
+	return api.users
 }

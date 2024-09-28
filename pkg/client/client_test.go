@@ -27,8 +27,7 @@ func TestDo(t *testing.T) {
 	defer mockServer.Close()
 
 	// Create a new test client
-	c, err := utils.NewTestClient(false, false)
-	require.NoError(t, err)
+	c := utils.NewTestClient(false, false)
 
 	// Prepare the request
 	ctx := context.Background()
@@ -65,8 +64,7 @@ func TestDoWithRetry(t *testing.T) {
 	defer mockServer.Close()
 
 	// Create a new test client with retry configuration
-	c, err := utils.NewTestClient(false, false, client.WithRetry(3, 10*time.Millisecond, handler.DefaultRetryMaxInterval))
-	require.NoError(t, err)
+	c := utils.NewTestClient(false, false, client.WithRetry(3, 10*time.Millisecond, handler.DefaultRetryMaxInterval))
 
 	// Prepare the request
 	ctx := context.Background()

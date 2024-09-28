@@ -28,20 +28,20 @@ const (
 
 // NewTestClient creates a new client.Client instance for testing purposes.
 // It sets up the client with proxies and cookies based on environment variables.
-func NewTestClient(useProxies bool, useCookie bool, opts ...client.Option) (*client.Client, error) {
+func NewTestClient(useProxies bool, useCookie bool, opts ...client.Option) *client.Client {
 	// Create a development logger
 	logger := logger.NewDevelopmentLogger()
 
 	// Get the proxies from environment variable
 	proxies, err := getProxiesFromEnv(logger, useProxies)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 
 	// Get the cookies from environment variable
 	cookies, err := getCookiesFromEnv(logger, useCookie)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 
 	// Create and return a new client with the specified options
@@ -52,7 +52,7 @@ func NewTestClient(useProxies bool, useCookie bool, opts ...client.Option) (*cli
 			client.WithRetry(1, handler.DefaultRetryInitialInterval, handler.DefaultRetryMaxInterval),
 			client.WithLogger(logger),
 		}, opts...)...,
-	), nil
+	)
 }
 
 // getProxiesFromEnv loads the proxies from the file specified in the ROAPI_PROXIES_FILE environment variable.
