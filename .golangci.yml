@@ -1,0 +1,35 @@
+run:
+  concurrency: 0
+  allow-parallel-runners: true
+  allow-serial-runners: true
+  go: '1.23'
+
+linters:
+  enable-all: true
+  disable:
+    - goimports # Not needed 
+    - depguard # Not needed
+    - gci # Encountering issues
+    - nlreturn # Not needed
+    - wsl # Too strict
+    - wrapcheck # Not needed 
+    - ireturn # Configuration is bugged
+    - bodyclose # Lots of false positives
+    - forcetypeassert # We don't need to check for type assertions
+    - paralleltest # Makes it difficult to debug integration tests
+
+linters-settings:
+  lll:
+    line-length: 180
+  gosec:
+    excludes:
+      - G404 # We don't need to check for weak number generators
+  errorlint:
+    comparison: false # Too strict
+  revive:
+    rules:
+      - name: var-naming
+        arguments:
+          - ["IDS"] # Roblox API uses 'userIds'
+  varnamelen:
+    min-name-length: 1
