@@ -10,6 +10,7 @@ linters:
     - goimports # Not needed 
     - depguard # Not needed
     - gci # Encountering issues
+    - gofmt # Replaced by gofumpt
     - nlreturn # Not needed
     - wsl # Too strict
     - wrapcheck # Not needed 
@@ -33,3 +34,5 @@ linters-settings:
           - ["IDS"] # Roblox API uses 'userIds'
   varnamelen:
     min-name-length: 1
+  dupl:
+    threshold: 250
