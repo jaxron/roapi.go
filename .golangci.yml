@@ -18,6 +18,10 @@ linters:
     - bodyclose # Lots of false positives
     - forcetypeassert # We don't need to check for type assertions
     - paralleltest # Makes it difficult to debug integration tests
+    - mnd # We don't need to check for magic numbers
+    - gomnd # Deprecated
+    - exportloopref # Deprecated
+    - execinquery # Deprecated
 
 linters-settings:
   lll:
@@ -36,3 +40,4 @@ linters-settings:
     min-name-length: 1
   dupl:
     threshold: 250
+    
