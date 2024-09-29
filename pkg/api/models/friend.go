@@ -2,6 +2,13 @@ package models
 
 import "time"
 
+// FollowerPageResponse represents the structure of a user's follower list returned by the Roblox API.
+type FollowerPageResponse struct {
+	PreviousPageCursor *string        `json:"previousPageCursor"` // Cursor for the previous page of results (if any)
+	NextPageCursor     *string        `json:"nextPageCursor"`     // Cursor for the next page of results (if any)
+	Data               []UserResponse `json:"data"`               // List of followers
+}
+
 // UserResponse represents a single user in a user's friend list.
 type UserResponse struct {
 	ID                     uint64    `json:"id"`                     // Unique identifier for the friend

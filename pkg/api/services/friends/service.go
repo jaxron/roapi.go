@@ -7,6 +7,11 @@ import (
 	"github.com/jaxron/roapi.go/pkg/client"
 )
 
+const (
+	SortOrderAsc  = "Asc"
+	SortOrderDesc = "Desc"
+)
+
 const FriendsEndpoint = "https://friends.roblox.com"
 
 // ServiceInterface defines the interface for friend-related operations.
