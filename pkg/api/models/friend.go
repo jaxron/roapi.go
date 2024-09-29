@@ -14,6 +14,7 @@ type UserResponse struct {
 	HasVerifiedBadge       bool      `json:"hasVerifiedBadge"`       // Whether the friend has a verified badge
 	FriendFrequentScore    int       `json:"friendFrequentScore"`    // Friend frequent score
 	FriendFrequentRank     int       `json:"friendFrequentRank"`     // Friend frequent rank
+	PresenceType           string    `json:"presenceType"`           // Type of presence
 	IsOnline               bool      `json:"isOnline"`               // Whether the friend is online
 	IsDeleted              bool      `json:"isDeleted"`              // Whether the friend account is deleted
 }
