@@ -10,15 +10,15 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// TestSearchUser tests the SearchUser method of the user.Service.
-func TestSearchUser(t *testing.T) {
+// TestSearchUsers tests the SearchUsers method of the user.Service.
+func TestSearchUsers(t *testing.T) {
 	// Create a new test service
 	api := users.NewService(utils.NewTestClient(true, false))
 
 	// Test case: Search for a known user
 	t.Run("Search Known User", func(t *testing.T) {
 		username := "Roblox"
-		res, err := api.SearchUser(context.Background(), users.NewSearchUserBuilder(username))
+		res, err := api.SearchUsers(context.Background(), users.NewSearchUsersBuilder(username))
 		require.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Nil(t, res.PreviousPageCursor)
@@ -33,7 +33,7 @@ func TestSearchUser(t *testing.T) {
 	// Test case: Search for a non-existent user
 	t.Run("Search Non-existent User", func(t *testing.T) {
 		username := InvalidUsername
-		res, err := api.SearchUser(context.Background(), users.NewSearchUserBuilder(username))
+		res, err := api.SearchUsers(context.Background(), users.NewSearchUsersBuilder(username))
 		require.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Nil(t, res.PreviousPageCursor)

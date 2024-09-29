@@ -9,10 +9,10 @@ import (
 	"github.com/jaxron/roapi.go/pkg/client"
 )
 
-// SearchUser searches for a user with the given username.
+// SearchUsers searches for a user with the given username.
 // GET https://users.roblox.com/v1/users/search
-func (s *Service) SearchUser(ctx context.Context, b *SearchUserBuilder) (*models.SearchResult, error) {
-	var result models.SearchResult
+func (s *Service) SearchUsers(ctx context.Context, b *SearchUsersBuilder) (*models.UserSearchPageResponse, error) {
+	var result models.UserSearchPageResponse
 	req := client.NewRequest().
 		Method(http.MethodGet).
 		URL(UsersEndpoint+"/v1/users/search").
@@ -30,16 +30,16 @@ func (s *Service) SearchUser(ctx context.Context, b *SearchUserBuilder) (*models
 	return &result, nil
 }
 
-// SearchUserBuilder builds parameters for SearchUser API call.
-type SearchUserBuilder struct {
+// SearchUsersBuilder builds parameters for SearchUsers API call.
+type SearchUsersBuilder struct {
 	username string // Required: Username to search for
 	limit    uint64 // Optional: Maximum number of results to return (default: 10)
 	cursor   string // Optional: Cursor for pagination
 }
 
-// NewSearchUserBuilder creates a new SearchUserBuilder with the given username.
-func NewSearchUserBuilder(username string) *SearchUserBuilder {
-	return &SearchUserBuilder{
+// NewSearchUsersBuilder creates a new SearchUsersBuilder with the given username.
+func NewSearchUsersBuilder(username string) *SearchUsersBuilder {
+	return &SearchUsersBuilder{
 		username: username,
 		limit:    DefaultLimit,
 		cursor:   "",
@@ -47,13 +47,13 @@ func NewSearchUserBuilder(username string) *SearchUserBuilder {
 }
 
 // Limit sets the maximum number of results to return.
-func (b *SearchUserBuilder) Limit(limit uint64) *SearchUserBuilder {
+func (b *SearchUsersBuilder) Limit(limit uint64) *SearchUsersBuilder {
 	b.limit = limit
 	return b
 }
 
 // Cursor sets the cursor for pagination.
-func (b *SearchUserBuilder) Cursor(cursor string) *SearchUserBuilder {
+func (b *SearchUsersBuilder) Cursor(cursor string) *SearchUsersBuilder {
 	b.cursor = cursor
 	return b
 }

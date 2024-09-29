@@ -18,12 +18,12 @@ const (
 
 // ServiceInterface defines the interface for user-related operations.
 type ServiceInterface interface {
-	GetUserInfo(ctx context.Context, userID uint64) (*models.UserInfo, error)
-	GetAuthUserInfo(ctx context.Context) (*models.AuthUserInfo, error)
-	GetUsersByUsernames(ctx context.Context, b *UsersByUsernamesBuilder) (*models.UsersByUsernames, error)
-	GetUsersByIDs(ctx context.Context, b *UsersByIDsBuilder) (*models.UsersByIDs, error)
-	GetUsernameHistory(ctx context.Context, b *UsernameHistoryBuilder) (*models.UsernameHistory, error)
-	SearchUser(ctx context.Context, b *SearchUserBuilder) (*models.SearchResult, error)
+	GetUserByID(ctx context.Context, userID uint64) (*models.UserByIDResponse, error)
+	GetAuthUserInfo(ctx context.Context) (*models.AuthUserResponse, error)
+	GetUsersByUsernames(ctx context.Context, b *UsersByUsernamesBuilder) ([]models.UserByUsernameResponse, error)
+	GetUsersByIDs(ctx context.Context, b *UsersByIDsBuilder) ([]models.VerifiedBadgeUserResponse, error)
+	GetUsernameHistory(ctx context.Context, b *UsernameHistoryBuilder) (*models.UsernameHistoryPageResponse, error)
+	SearchUsers(ctx context.Context, b *SearchUsersBuilder) (*models.UserSearchPageResponse, error)
 }
 
 // Ensure Service implements the ServiceInterface.

@@ -23,10 +23,10 @@ func TestGetUsersByIDs(t *testing.T) {
 
 		require.NoError(t, err)
 		assert.NotNil(t, result)
-		assert.Len(t, result.Data, 2)
+		assert.Len(t, result, 2)
 
 		// Check if the returned users match the requested IDs
-		for _, user := range result.Data {
+		for _, user := range result {
 			assert.Contains(t, userIDs, user.ID)
 		}
 	})
@@ -38,8 +38,8 @@ func TestGetUsersByIDs(t *testing.T) {
 
 		require.NoError(t, err)
 		assert.NotNil(t, result)
-		assert.Len(t, result.Data, 1) // Only one user should be returned
+		assert.Len(t, result, 1) // Only one user should be returned
 
-		assert.Equal(t, uint64(1), result.Data[0].ID)
+		assert.Equal(t, uint64(1), result[0].ID)
 	})
 }

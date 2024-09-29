@@ -12,8 +12,8 @@ import (
 
 // GetUsernameHistory fetches the username history for a user.
 // GET https://users.roblox.com/v1/users/{userID}/username-history
-func (s *Service) GetUsernameHistory(ctx context.Context, b *UsernameHistoryBuilder) (*models.UsernameHistory, error) {
-	var history models.UsernameHistory
+func (s *Service) GetUsernameHistory(ctx context.Context, b *UsernameHistoryBuilder) (*models.UsernameHistoryPageResponse, error) {
+	var history models.UsernameHistoryPageResponse
 	req := client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v1/users/%d/username-history", UsersEndpoint, b.userID)).

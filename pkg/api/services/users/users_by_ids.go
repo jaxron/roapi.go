@@ -11,8 +11,10 @@ import (
 
 // GetUsersByIDs fetches information for users with the given IDs.
 // POST https://users.roblox.com/v1/users
-func (s *Service) GetUsersByIDs(ctx context.Context, b *UsersByIDsBuilder) (*models.UsersByIDs, error) {
-	var users models.UsersByIDs
+func (s *Service) GetUsersByIDs(ctx context.Context, b *UsersByIDsBuilder) ([]models.VerifiedBadgeUserResponse, error) {
+	var users struct {
+		Data []models.VerifiedBadgeUserResponse `json:"data"` // List of users fetched by user IDs
+	}
 	req, err := client.NewRequest().
 		Method(http.MethodPost).
 		URL(UsersEndpoint + "/v1/users").
@@ -28,7 +30,7 @@ func (s *Service) GetUsersByIDs(ctx context.Context, b *UsersByIDsBuilder) (*mod
 	}
 	defer resp.Body.Close()
 
-	return &users, nil
+	return users.Data, nil
 }
 
 // UsersByIDsBuilder builds parameters for GetUsersByIDs API call.

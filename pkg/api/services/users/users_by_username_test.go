@@ -22,10 +22,10 @@ func TestGetUsersByUsernames(t *testing.T) {
 
 		require.NoError(t, err)
 		assert.NotNil(t, result)
-		assert.Len(t, result.Data, 2)
+		assert.Len(t, result, 2)
 
 		// Check if the returned users match the requested usernames
-		for _, user := range result.Data {
+		for _, user := range result {
 			assert.Contains(t, usernames, user.Name)
 		}
 	})
@@ -37,8 +37,8 @@ func TestGetUsersByUsernames(t *testing.T) {
 
 		require.NoError(t, err)
 		assert.NotNil(t, result)
-		assert.Len(t, result.Data, 1) // Only one user should be returned
+		assert.Len(t, result, 1) // Only one user should be returned
 
-		assert.Equal(t, "Roblox", result.Data[0].Name)
+		assert.Equal(t, "Roblox", result[0].Name)
 	})
 }

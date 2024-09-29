@@ -11,8 +11,10 @@ import (
 
 // GetUsersByUsernames fetches information for users with the given usernames.
 // POST https://users.roblox.com/v1/usernames/users
-func (s *Service) GetUsersByUsernames(ctx context.Context, b *UsersByUsernamesBuilder) (*models.UsersByUsernames, error) {
-	var users models.UsersByUsernames
+func (s *Service) GetUsersByUsernames(ctx context.Context, b *UsersByUsernamesBuilder) ([]models.UserByUsernameResponse, error) {
+	var users struct {
+		Data []models.UserByUsernameResponse `json:"data"` // List of users fetched by usernames
+	}
 	req, err := client.NewRequest().
 		Method(http.MethodPost).
 		URL(UsersEndpoint + "/v1/usernames/users").
@@ -28,7 +30,7 @@ func (s *Service) GetUsersByUsernames(ctx context.Context, b *UsersByUsernamesBu
 	}
 	defer resp.Body.Close()
 
-	return &users, nil
+	return users.Data, nil
 }
 
 // UsersByUsernamesBuilder builds parameters for GetUsersByUsernames API call.

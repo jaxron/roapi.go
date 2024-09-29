@@ -11,12 +11,12 @@ import (
 
 // GetAuthUserInfo fetches information for the authenticated user.
 // GET https://users.roblox.com/v1/users/authenticated
-func (s *Service) GetAuthUserInfo(ctx context.Context) (*models.AuthUserInfo, error) {
+func (s *Service) GetAuthUserInfo(ctx context.Context) (*models.AuthUserResponse, error) {
 	if s.Client.Handler.Auth.GetCookieCount() == 0 {
 		return nil, errors.ErrNoCookie
 	}
 
-	var user models.AuthUserInfo
+	var user models.AuthUserResponse
 	req := client.NewRequest().
 		Method(http.MethodGet).
 		URL(UsersEndpoint + "/v1/users/authenticated").

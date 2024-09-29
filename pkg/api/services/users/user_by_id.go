@@ -9,10 +9,10 @@ import (
 	"github.com/jaxron/roapi.go/pkg/client"
 )
 
-// GetUserInfo fetches information for a user with the given ID.
+// GetUserByID fetches information for a user with the given ID.
 // GET https://users.roblox.com/v1/users/{userID}
-func (s *Service) GetUserInfo(ctx context.Context, userID uint64) (*models.UserInfo, error) {
-	var user models.UserInfo
+func (s *Service) GetUserByID(ctx context.Context, userID uint64) (*models.UserByIDResponse, error) {
+	var user models.UserByIDResponse
 	req := client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v1/users/%d", UsersEndpoint, userID)).
