@@ -21,7 +21,7 @@
 ---
 
 > [!WARNING]
-> This library is currently in **early development** and is **not ready for production use**. It covers only a very small fraction of the Roblox API at this time.
+> This library is currently in **early development** and is **not ready for production use**. It covers only a very small fraction of the Roblox API at this time. Progress can be tracked [here](https://github.com/jaxron/roapi.go/issues/1).
 
 # 🚀 Features
 
