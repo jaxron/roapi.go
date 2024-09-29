@@ -151,7 +151,7 @@ func (h *Handler) performRequest(ctx context.Context, opts *RequestOptions) (*ht
 // makeRequest creates and sends an HTTP request.
 func (h *Handler) makeRequest(ctx context.Context, opts *RequestOptions, url string, headers map[string]string) (*http.Response, error) {
 	// Log the request details
-	h.logRequest(opts.Method, url, headers, opts.Body)
+	h.logRequest(opts.Method, url, headers, string(opts.Body))
 
 	// Set up proxy if available
 	if h.ProxyManager.GetProxyCount() > 0 {
@@ -180,9 +180,6 @@ func (h *Handler) makeRequest(ctx context.Context, opts *RequestOptions, url str
 		}
 		return nil, apierrors.NewError(apierrors.ErrorTypeNetwork, "Network error occurred", err, nil)
 	}
-
-	// Log the response
-	h.logResponse(resp.StatusCode, resp.Header, nil)
 
 	return resp, nil
 }
@@ -226,62 +223,73 @@ func (h *Handler) prepareHeaders(ctx context.Context, opts *RequestOptions) (map
 
 // processResponse handles the HTTP response, including error checking and JSON unmarshaling.
 func (h *Handler) processResponse(resp *http.Response, result interface{}) (*http.Response, error) {
+	defer resp.Body.Close()
+
+	// Read the entire body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, apierrors.NewError(apierrors.ErrorTypeHTTP, "Failed to read response body", err, nil)
+	}
+
+	// Log the response
+	h.logResponse(resp.StatusCode, resp.Header, string(body))
+
 	// Check for non-200 status codes
 	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body)
-		defer resp.Body.Close()
-
 		// Handle rate limiting
 		if resp.StatusCode == http.StatusTooManyRequests {
-			return nil, apierrors.NewError(apierrors.ErrorTypeTooManyRequests, "Rate limited by Roblox API", nil, nil)
+			return nil, apierrors.NewError(apierrors.ErrorTypeTooManyRequests, "Rate limited by Roblox API", nil, body)
 		}
-
 		// Try to parse API errors
-		apiErrors, err := apierrors.ParseAPIErrors(body)
-		if err == nil && len(apiErrors.Errors) > 0 {
+		apiErrors, parseErr := apierrors.ParseAPIErrors(body)
+		if parseErr == nil && len(apiErrors.Errors) > 0 {
 			return nil, apierrors.NewError(apierrors.ErrorTypeAPI, apiErrors.Errors[0].Message, nil, body)
 		}
-
 		// Generic HTTP error
 		return nil, apierrors.NewError(apierrors.ErrorTypeHTTP, "Unexpected status code", nil, body)
 	}
 
 	// Unmarshal JSON response if result interface is provided
 	if result != nil {
-		if err := sonic.ConfigFastest.NewDecoder(resp.Body).Decode(result); err != nil {
-			return nil, apierrors.NewError(apierrors.ErrorTypeUnmarshal, "Failed to unmarshal response", err, nil)
+		if err := sonic.ConfigFastest.NewDecoder(bytes.NewReader(body)).Decode(result); err != nil {
+			return nil, apierrors.NewError(apierrors.ErrorTypeUnmarshal, "Failed to unmarshal response", err, body)
 		}
-
-		// Reset response body for potential further use
-		resp.Body.Close()
-		resp.Body = io.NopCloser(bytes.NewBuffer(nil))
 	}
 
-	return resp, nil
+	// Create a new response with the same data but with a new body reader
+	newResp := *resp
+	newResp.Body = io.NopCloser(bytes.NewReader(body))
+
+	return &newResp, nil
 }
 
 // logRequest logs the details of an outgoing HTTP request.
-func (h *Handler) logRequest(method, url string, headers map[string]string, body []byte) {
-	h.Logger.Debug("Request", zap.String("method", method), zap.String("url", url), zap.Any("len_headers", len(headers)))
-
+func (h *Handler) logRequest(method, url string, headers map[string]string, body string) {
 	// Truncate body if it's too long
 	logBody := body
 	if len(logBody) > LogMaxBodyLength {
-		logBody = logBody[:LogMaxBodyLength]
+		logBody = logBody[:LogMaxBodyLength] + "...TRUNCATED"
 	}
 
-	h.Logger.Debug("Body", zap.String("body", string(logBody)))
+	h.Logger.Debug("Request",
+		zap.String("method", method),
+		zap.String("url", url),
+		zap.Any("len_headers", len(headers)),
+		zap.String("body", logBody),
+	)
 }
 
 // logResponse logs the details of an incoming HTTP response.
-func (h *Handler) logResponse(statusCode int, headers http.Header, body []byte) {
-	h.Logger.Debug("Response", zap.Int("status_code", statusCode), zap.Any("headers", headers))
-
+func (h *Handler) logResponse(statusCode int, headers http.Header, body string) {
 	// Truncate body if it's too long
 	logBody := body
 	if len(logBody) > LogMaxBodyLength {
-		logBody = logBody[:LogMaxBodyLength]
+		logBody = logBody[:LogMaxBodyLength] + "...TRUNCATED"
 	}
 
-	h.Logger.Debug("Body", zap.String("body", string(logBody)))
+	h.Logger.Debug("Response",
+		zap.Int("status_code", statusCode),
+		zap.Any("headers", headers),
+		zap.String("body", logBody),
+	)
 }
