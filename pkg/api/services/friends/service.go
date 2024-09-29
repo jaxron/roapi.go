@@ -11,7 +11,7 @@ const FriendsEndpoint = "https://friends.roblox.com"
 
 // ServiceInterface defines the interface for friend-related operations.
 type ServiceInterface interface {
-	GetFriends(ctx context.Context, userID uint64) (*models.FriendInfos, error)
+	GetFriends(ctx context.Context, userID uint64) ([]models.FriendResponse, error)
 }
 
 // Ensure Service implements the ServiceInterface.

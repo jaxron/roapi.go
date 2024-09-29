@@ -11,8 +11,10 @@ import (
 
 // GetFriends fetches the friends of a user.
 // GET https://friends.roblox.com/v1/users/{userID}/friends
-func (s *Service) GetFriends(ctx context.Context, userID uint64) (*models.FriendInfos, error) {
-	var friends models.FriendInfos
+func (s *Service) GetFriends(ctx context.Context, userID uint64) ([]models.FriendResponse, error) {
+	var friends struct {
+		Data []models.FriendResponse `json:"data"` // List of friend information
+	}
 	req := client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v1/users/%d/friends", FriendsEndpoint, userID)).
@@ -24,5 +26,5 @@ func (s *Service) GetFriends(ctx context.Context, userID uint64) (*models.Friend
 	}
 	defer resp.Body.Close()
 
-	return &friends, nil
+	return friends.Data, nil
 }
