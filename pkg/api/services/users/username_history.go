@@ -61,8 +61,14 @@ func (b *UsernameHistoryBuilder) Cursor(cursor string) *UsernameHistoryBuilder {
 	return b
 }
 
-// SortOrder sets the sort order for results.
-func (b *UsernameHistoryBuilder) SortOrder(sortOrder string) *UsernameHistoryBuilder {
-	b.sortOrder = sortOrder
+// SortOrderAsc sets the sort order for results to ascending.
+func (b *UsernameHistoryBuilder) SortOrderAsc(sortOrder string) *UsernameHistoryBuilder {
+	b.sortOrder = SortOrderAsc
+	return b
+}
+
+// SortOrderDesc sets the sort order for results to descending.
+func (b *UsernameHistoryBuilder) SortOrderDesc(sortOrder string) *UsernameHistoryBuilder {
+	b.sortOrder = SortOrderDesc
 	return b
 }

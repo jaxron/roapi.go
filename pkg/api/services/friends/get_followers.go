@@ -62,8 +62,14 @@ func (b *FollowersBuilder) Cursor(cursor string) *FollowersBuilder {
 	return b
 }
 
-// SortOrder sets the sort order for results.
-func (b *FollowersBuilder) SortOrder(sortOrder string) *FollowersBuilder {
-	b.sortOrder = sortOrder
+// SortOrderAsc sets the sort order for results to ascending.
+func (b *FollowersBuilder) SortOrderAsc(sortOrder string) *FollowersBuilder {
+	b.sortOrder = SortOrderAsc
+	return b
+}
+
+// SortOrderDesc sets the sort order for results to descending.
+func (b *FollowersBuilder) SortOrderDesc(sortOrder string) *FollowersBuilder {
+	b.sortOrder = SortOrderDesc
 	return b
 }
