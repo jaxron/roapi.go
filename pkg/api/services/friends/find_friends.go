@@ -6,15 +6,15 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/jaxron/roapi.go/pkg/api/client"
 	"github.com/jaxron/roapi.go/pkg/api/models"
-	"github.com/jaxron/roapi.go/pkg/errors"
+	"github.com/jaxron/roapi.go/pkg/client"
+	"github.com/jaxron/roapi.go/pkg/client/errors"
 )
 
 // FindFriends fetches the paginated list of friends for a user.
 // GET https://friends.roblox.com/v1/users/{userID}/friends/find
 func (s *Service) FindFriends(ctx context.Context, b *FindFriendsBuilder) (*models.FriendPageResponse, error) {
-	if s.client.Handler.Auth.GetCookieCount() == 0 {
+	if s.client.Auth.GetCookieCount() == 0 {
 		return nil, errors.ErrNoCookie
 	}
 

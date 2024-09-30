@@ -1,4 +1,4 @@
-package handler
+package client
 
 import (
 	"context"
@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"sync"
 
-	apierrors "github.com/jaxron/roapi.go/pkg/errors"
-	"github.com/jaxron/roapi.go/pkg/logger"
+	apierrors "github.com/jaxron/roapi.go/pkg/client/errors"
+	"github.com/jaxron/roapi.go/pkg/client/logger"
 	"go.uber.org/zap"
 )
 
@@ -24,7 +24,7 @@ type Auth struct {
 	mu        sync.RWMutex
 }
 
-// NewAuth creates a new Auth instance with the specified Handler.
+// NewAuth creates a new Auth instance with the specified logger and HTTP request function.
 func NewAuth(logger logger.Logger, doRequest HTTPRequester) *Auth {
 	return &Auth{
 		cookies:   []string{},

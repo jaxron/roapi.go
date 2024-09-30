@@ -1,4 +1,4 @@
-package handler
+package client
 
 import (
 	"context"
@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/cenkalti/backoff/v4"
-	"github.com/jaxron/roapi.go/pkg/errors"
-	"github.com/jaxron/roapi.go/pkg/logger"
+	"github.com/jaxron/roapi.go/pkg/client/errors"
+	"github.com/jaxron/roapi.go/pkg/client/logger"
 	"go.uber.org/zap"
 )
 

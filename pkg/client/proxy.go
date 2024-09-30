@@ -1,4 +1,4 @@
-package handler
+package client
 
 import (
 	"math/rand/v2"
@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"sync"
 
-	"github.com/jaxron/roapi.go/pkg/logger"
+	"github.com/jaxron/roapi.go/pkg/client/logger"
 	"go.uber.org/zap"
 )
 
@@ -18,7 +18,7 @@ type ProxyManager struct {
 	mu      sync.RWMutex
 }
 
-// NewProxyManager creates a new ProxyManager instance with the provided handler.
+// NewProxyManager creates a new ProxyManager instance with the specified logger.
 func NewProxyManager(logger logger.Logger) *ProxyManager {
 	return &ProxyManager{
 		proxies: []*url.URL{},

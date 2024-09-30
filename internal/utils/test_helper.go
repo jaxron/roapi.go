@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jaxron/roapi.go/pkg/api/client"
-	"github.com/jaxron/roapi.go/pkg/logger"
+	"github.com/jaxron/roapi.go/pkg/client"
+	"github.com/jaxron/roapi.go/pkg/client/logger"
 	"go.uber.org/zap"
 )
 

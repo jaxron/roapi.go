@@ -1,12 +1,12 @@
-package handler
+package client
 
 import (
 	"context"
 	"net/http"
 	"time"
 
-	"github.com/jaxron/roapi.go/pkg/errors"
-	"github.com/jaxron/roapi.go/pkg/logger"
+	"github.com/jaxron/roapi.go/pkg/client/errors"
+	"github.com/jaxron/roapi.go/pkg/client/logger"
 	"github.com/sony/gobreaker"
 	"go.uber.org/zap"
 )

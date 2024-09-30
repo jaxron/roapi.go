@@ -1,9 +1,9 @@
 package api
 
 import (
-	"github.com/jaxron/roapi.go/pkg/api/client"
 	"github.com/jaxron/roapi.go/pkg/api/services/friends"
 	"github.com/jaxron/roapi.go/pkg/api/services/users"
+	"github.com/jaxron/roapi.go/pkg/client"
 )
 
 // API represents the main struct for interacting with the Roblox API.
@@ -17,10 +17,7 @@ type API struct {
 // New creates a new instance of API with the provided options.
 // It initializes the client and sets up the services.
 func New(opts ...client.Option) *API {
-	// Create a new client with the provided options
 	c := client.NewClient(opts...)
-
-	// Initialize and return the API instance
 	return &API{
 		client:  c,
 		users:   users.NewService(c),

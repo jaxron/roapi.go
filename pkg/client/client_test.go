@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/jaxron/roapi.go/internal/utils"
-	"github.com/jaxron/roapi.go/pkg/api/client"
+	"github.com/jaxron/roapi.go/pkg/client"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

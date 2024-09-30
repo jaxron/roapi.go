@@ -1,10 +1,10 @@
-package handler
+package client
 
 import (
 	"context"
 	"net/http"
 
-	"github.com/jaxron/roapi.go/pkg/logger"
+	"github.com/jaxron/roapi.go/pkg/client/logger"
 	"golang.org/x/time/rate"
 )
 

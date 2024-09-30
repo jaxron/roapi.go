@@ -1,5 +1,5 @@
-// Package handler provides HTTP request handling functionality with various middleware options.
-package handler
+// package client provides HTTP request handling functionality with various middleware options.
+package client
 
 import (
 	"bytes"
@@ -13,12 +13,12 @@ import (
 	"time"
 
 	"github.com/bytedance/sonic"
-	apierrors "github.com/jaxron/roapi.go/pkg/errors"
-	"github.com/jaxron/roapi.go/pkg/logger"
+	apierrors "github.com/jaxron/roapi.go/pkg/client/errors"
+	"github.com/jaxron/roapi.go/pkg/client/logger"
 	"go.uber.org/zap"
 )
 
-// Default values for various Handler settings.
+// Default values for various Client settings.
 const (
 	LogMaxBodyLength = 1024
 )
@@ -41,8 +41,8 @@ type Middleware interface {
 	SetLogger(l logger.Logger)
 }
 
-// Handler manages HTTP requests with various middleware options.
-type Handler struct {
+// Client manages HTTP requests with various middleware options.
+type Client struct {
 	middlewares    []Middleware
 	httpClient     *http.Client
 	ProxyManager   *ProxyManager
@@ -52,11 +52,12 @@ type Handler struct {
 	MaxTimeout     time.Duration
 }
 
-// NewHandler creates a new Handler instance with default settings.
-func NewHandler(maxTimeout time.Duration, middlewares ...Middleware) *Handler {
+// NewClient creates a new Client instance with default settings.
+func NewClient(opts ...Option) *Client {
+	// Create a new client with default settings
 	logger := &logger.NoOpLogger{}
-	handler := &Handler{
-		middlewares: middlewares,
+	client := &Client{
+		middlewares: []Middleware{},
 		httpClient: &http.Client{
 			Transport:     http.DefaultTransport,
 			CheckRedirect: nil,
@@ -67,22 +68,27 @@ func NewHandler(maxTimeout time.Duration, middlewares ...Middleware) *Handler {
 		Auth:           nil,
 		Logger:         logger,
 		DefaultHeaders: make(map[string]string),
-		MaxTimeout:     maxTimeout,
+		MaxTimeout:     10 * time.Second,
 	}
-	handler.Auth = NewAuth(logger, handler.Do)
+	client.Auth = NewAuth(logger, client.Do)
+
+	// Apply all provided options to customize the client
+	for _, opt := range opts {
+		opt(client)
+	}
 
 	// Set up proxy connection logging
-	transport := handler.httpClient.Transport.(*http.Transport)
+	transport := client.httpClient.Transport.(*http.Transport)
 	transport.OnProxyConnectResponse = func(ctx context.Context, proxyURL *url.URL, connectReq *http.Request, connectRes *http.Response) error {
-		handler.Logger.Debug("Proxy connection established", zap.String("proxy", proxyURL.Host))
+		client.Logger.Debug("Proxy connection established", zap.String("proxy", proxyURL.Host))
 		return nil
 	}
 
-	return handler
+	return client
 }
 
 // Do performs an HTTP request with the specified options.
-func (h *Handler) Do(ctx context.Context, opts *RequestOptions) (*http.Response, error) {
+func (h *Client) Do(ctx context.Context, opts *RequestOptions) (*http.Response, error) {
 	// Create a new context with the maximum timeout if the original context has no deadline
 	ctx, cancel := context.WithTimeout(ctx, h.MaxTimeout)
 	defer cancel()
@@ -91,7 +97,7 @@ func (h *Handler) Do(ctx context.Context, opts *RequestOptions) (*http.Response,
 }
 
 // executeMiddlewareChain recursively executes the middleware chain.
-func (h *Handler) executeMiddlewareChain(ctx context.Context, opts *RequestOptions, index int) (*http.Response, error) {
+func (h *Client) executeMiddlewareChain(ctx context.Context, opts *RequestOptions, index int) (*http.Response, error) {
 	if index == len(h.middlewares) {
 		// Base case: all middleware processed, execute the actual request
 		return h.performRequest(ctx, opts)
@@ -105,7 +111,7 @@ func (h *Handler) executeMiddlewareChain(ctx context.Context, opts *RequestOptio
 }
 
 // performRequest executes the actual HTTP request.
-func (h *Handler) performRequest(ctx context.Context, opts *RequestOptions) (*http.Response, error) {
+func (h *Client) performRequest(ctx context.Context, opts *RequestOptions) (*http.Response, error) {
 	// Check for context cancellation
 	if err := ctx.Err(); err != nil {
 		return nil, apierrors.NewError(apierrors.ErrorTypeTimeout, "Context error before request", err, nil)
@@ -135,7 +141,7 @@ func (h *Handler) performRequest(ctx context.Context, opts *RequestOptions) (*ht
 }
 
 // makeRequest creates and sends an HTTP request.
-func (h *Handler) makeRequest(ctx context.Context, opts *RequestOptions, url string, headers map[string]string) (*http.Response, error) {
+func (h *Client) makeRequest(ctx context.Context, opts *RequestOptions, url string, headers map[string]string) (*http.Response, error) {
 	// Log the request details
 	h.logRequest(opts.Method, url, headers, string(opts.Body))
 
@@ -171,7 +177,7 @@ func (h *Handler) makeRequest(ctx context.Context, opts *RequestOptions, url str
 }
 
 // prepareHeaders combines default headers, authentication headers, and request-specific headers.
-func (h *Handler) prepareHeaders(ctx context.Context, opts *RequestOptions) (map[string]string, error) {
+func (h *Client) prepareHeaders(ctx context.Context, opts *RequestOptions) (map[string]string, error) {
 	result := make(map[string]string)
 
 	// Set default Content-Type and Accept headers
@@ -182,7 +188,7 @@ func (h *Handler) prepareHeaders(ctx context.Context, opts *RequestOptions) (map
 		result[k] = v
 	}
 
-	// Add handler's default headers
+	// Add client's default headers
 	for k, v := range h.DefaultHeaders {
 		result[k] = v
 	}
@@ -208,7 +214,7 @@ func (h *Handler) prepareHeaders(ctx context.Context, opts *RequestOptions) (map
 }
 
 // processResponse handles the HTTP response, including error checking and JSON unmarshaling.
-func (h *Handler) processResponse(resp *http.Response, result interface{}) (*http.Response, error) {
+func (h *Client) processResponse(resp *http.Response, result interface{}) (*http.Response, error) {
 	defer resp.Body.Close()
 
 	// Read the entire body
@@ -249,8 +255,8 @@ func (h *Handler) processResponse(resp *http.Response, result interface{}) (*htt
 	return &newResp, nil
 }
 
-// SetLogger updates the handler's logger and propagates it to all middleware.
-func (h *Handler) SetLogger(l logger.Logger) {
+// SetLogger updates the client's logger and propagates it to all middleware.
+func (h *Client) SetLogger(l logger.Logger) {
 	// Update all middleware loggers
 	for _, m := range h.middlewares {
 		m.SetLogger(l)
@@ -259,8 +265,8 @@ func (h *Handler) SetLogger(l logger.Logger) {
 	h.ProxyManager.logger = l
 }
 
-// UpdateMiddleware adds or replaces a middleware in the handler's middleware chain.
-func (h *Handler) UpdateMiddleware(newMiddleware Middleware) {
+// UpdateMiddleware adds or replaces a middleware in the client's middleware chain.
+func (h *Client) UpdateMiddleware(newMiddleware Middleware) {
 	for i, m := range h.middlewares {
 		if reflect.TypeOf(m) == reflect.TypeOf(newMiddleware) {
 			h.middlewares[i] = newMiddleware
@@ -273,7 +279,7 @@ func (h *Handler) UpdateMiddleware(newMiddleware Middleware) {
 }
 
 // logRequest logs the details of an outgoing HTTP request.
-func (h *Handler) logRequest(method, url string, headers map[string]string, body string) {
+func (h *Client) logRequest(method, url string, headers map[string]string, body string) {
 	// Truncate body if it's too long
 	logBody := body
 	if len(logBody) > LogMaxBodyLength {
@@ -289,7 +295,7 @@ func (h *Handler) logRequest(method, url string, headers map[string]string, body
 }
 
 // logResponse logs the details of an incoming HTTP response.
-func (h *Handler) logResponse(statusCode int, headers http.Header, body string) {
+func (h *Client) logResponse(statusCode int, headers http.Header, body string) {
 	// Truncate body if it's too long
 	logBody := body
 	if len(logBody) > LogMaxBodyLength {
