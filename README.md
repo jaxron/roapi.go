@@ -27,13 +27,17 @@
 
 RoAPI.go offers features that prioritize flexibility and reliability. Key features include:
 
-- **Advanced Client:**
-  - [Circuit breaker](https://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker) for fault tolerance
-  - [Retry mechanism](https://learn.microsoft.com/en-us/azure/architecture/patterns/retry) with exponential backoff
-  - [Rate limiting](https://learn.microsoft.com/en-us/azure/architecture/patterns/rate-limiting-pattern) to prevent API throttling
-  - Request deduplication via `singleflight`
-  - Dynamic proxy rotation for distributed traffic
-  - All features configurable and toggleable
+- **Custom Client**
+  - Make requests to any website using built-in middlewares.
+  - Extend the middlewares to suit your needs.
+  - Extend the API wrapper with custom methods.
+  - Dynamic proxy rotation for distributed traffic.
+- **Built-in Middlewares:**
+  - [Circuit breaker](https://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker) for fault tolerance.
+  - [Retry mechanism](https://learn.microsoft.com/en-us/azure/architecture/patterns/retry) with exponential backoff.
+  - [Rate limiting](https://learn.microsoft.com/en-us/azure/architecture/patterns/rate-limiting-pattern) to prevent API throttling.
+  - Request deduplication via `singleflight`.
+  - All features toggleable and configurable.
 - **Beginner-Friendly:**
   - Simple request construction using builders
   - No need to understand Roblox's API in-depth
@@ -41,8 +45,10 @@ RoAPI.go offers features that prioritize flexibility and reliability. Key featur
   - Cookie-based authentication supported with rotation
   - Automatic CSRF token handling and refresh
 - **Easy to Troubleshoot:**
-  - Detailed error messages with root cause and response body
+  - Detailed error types with root cause and response body
   - Configurable logging modes for debugging
+
+---
 
 > [!NOTE]
 > RoAPI.go is an independently developed project and is not affiliated with Roblox Corporation. It is neither endorsed by nor sponsored by Roblox Corporation, and "Roblox" is a registered trademark of Roblox Corporation.

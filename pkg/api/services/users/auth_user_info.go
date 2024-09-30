@@ -4,8 +4,8 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/jaxron/roapi.go/pkg/api/client"
 	"github.com/jaxron/roapi.go/pkg/api/models"
-	"github.com/jaxron/roapi.go/pkg/client"
 	"github.com/jaxron/roapi.go/pkg/errors"
 )
 

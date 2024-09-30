@@ -1,9 +1,9 @@
 package api
 
 import (
+	"github.com/jaxron/roapi.go/pkg/api/client"
 	"github.com/jaxron/roapi.go/pkg/api/services/friends"
 	"github.com/jaxron/roapi.go/pkg/api/services/users"
-	"github.com/jaxron/roapi.go/pkg/client"
 )
 
 // API represents the main struct for interacting with the Roblox API.

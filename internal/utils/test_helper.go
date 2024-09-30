@@ -8,9 +8,9 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"time"
 
-	"github.com/jaxron/roapi.go/internal/handler"
-	"github.com/jaxron/roapi.go/pkg/client"
+	"github.com/jaxron/roapi.go/pkg/api/client"
 	"github.com/jaxron/roapi.go/pkg/logger"
 	"go.uber.org/zap"
 )
@@ -49,7 +49,10 @@ func NewTestClient(useProxies bool, useCookie bool, opts ...client.Option) *clie
 		append([]client.Option{
 			client.WithProxies(proxies),
 			client.WithCookies(cookies),
-			client.WithRetry(1, handler.DefaultRetryInitialInterval, handler.DefaultRetryMaxInterval),
+			client.WithRetry(1, 1*time.Second, 5*time.Second),
+			client.WithCircuitBreaker(5, 10*time.Second, 10*time.Second),
+			client.WithRateLimit(1, 1),
+			client.WithSingleFlight(),
 			client.WithLogger(logger),
 		}, opts...)...,
 	)

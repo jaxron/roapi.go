@@ -8,24 +8,30 @@ import (
 	"sync"
 
 	apierrors "github.com/jaxron/roapi.go/pkg/errors"
+	"github.com/jaxron/roapi.go/pkg/logger"
 	"go.uber.org/zap"
 )
 
+// HTTPRequester is a function type that performs HTTP requests.
+type HTTPRequester func(ctx context.Context, opts *RequestOptions) (*http.Response, error)
+
 // Auth represents the authentication information for Roblox users.
 type Auth struct {
-	handler *Handler     // The handler instance
-	cookies []string     // The .ROBLOSECURITY cookie values
-	current int          // Index of the current cookie in use
-	mu      sync.RWMutex // Mutex to protect concurrent access
+	cookies   []string
+	current   int
+	doRequest HTTPRequester
+	logger    logger.Logger
+	mu        sync.RWMutex
 }
 
 // NewAuth creates a new Auth instance with the specified Handler.
-func NewAuth(handler *Handler) *Auth {
+func NewAuth(logger logger.Logger, doRequest HTTPRequester) *Auth {
 	return &Auth{
-		handler: handler,
-		cookies: []string{},
-		current: 0,
-		mu:      sync.RWMutex{},
+		cookies:   []string{},
+		current:   0,
+		doRequest: doRequest,
+		logger:    logger,
+		mu:        sync.RWMutex{},
 	}
 }
 
@@ -39,7 +45,7 @@ func (a *Auth) GetAuthHeaders(ctx context.Context, useCookie bool, useToken bool
 	// Include the .ROBLOSECURITY cookie if requested
 	if useCookie {
 		headers["Cookie"] = ".ROBLOSECURITY=" + a.nextCookie()
-		a.handler.Logger.Debug("Using .ROBLOSECURITY cookie")
+		a.logger.Debug("Using .ROBLOSECURITY cookie")
 	}
 
 	// Include the CSRF token if requested
@@ -51,7 +57,7 @@ func (a *Auth) GetAuthHeaders(ctx context.Context, useCookie bool, useToken bool
 		}
 
 		headers["X-CSRF-TOKEN"] = token
-		a.handler.Logger.Debug("Using CSRF token")
+		a.logger.Debug("Using CSRF token")
 	}
 
 	return headers, nil
@@ -66,7 +72,7 @@ func (a *Auth) nextCookie() string {
 	a.current = (a.current + 1) % len(a.cookies)
 
 	// Log the first 50 characters of the cookie for debugging
-	a.handler.Logger.Debug("Next Cookie", zap.String("cookie", cookie[:50]))
+	a.logger.Debug("Next Cookie", zap.String("cookie", cookie[:50]))
 
 	return cookie
 }
@@ -86,7 +92,7 @@ func (a *Auth) getCSRFToken(ctx context.Context) (string, error) {
 	}
 
 	// Send the request to get a new CSRF token
-	resp, err := a.handler.Do(ctx, options)
+	resp, err := a.doRequest(ctx, options)
 	if err != nil {
 		return "", fmt.Errorf("failed to send request: %w", err)
 	}
@@ -113,7 +119,7 @@ func (a *Auth) UpdateCookies(cookies []string) {
 		a.current = rand.IntN(len(cookies))
 	}
 
-	a.handler.Logger.Debug("Cookie list updated", zap.Int("cookie_count", len(cookies)))
+	a.logger.Debug("Cookie list updated", zap.Int("cookie_count", len(cookies)))
 }
 
 // GetCookieCount returns the current number of cookies in the list.

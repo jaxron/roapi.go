@@ -25,21 +25,6 @@ func WithProxies(proxies []*url.URL) Option {
 	}
 }
 
-// WithLogger sets the logger for the Handler.
-func WithLogger(logger logger.Logger) Option {
-	return func(h *handler.Handler) {
-		h.Logger = logger
-	}
-}
-
-// WithRateLimit sets the rate limit options for the Handler.
-func WithRateLimit(requestsPerSecond float64, burst int) Option {
-	return func(h *handler.Handler) {
-		h.RateLimitRequestsPerSecond = requestsPerSecond
-		h.RateLimitBurst = burst
-	}
-}
-
 // WithDefaultHeader adds a default header to be sent with all requests.
 func WithDefaultHeader(key, value string) Option {
 	return func(h *handler.Handler) {
@@ -47,49 +32,44 @@ func WithDefaultHeader(key, value string) Option {
 	}
 }
 
-// WithRetry sets the retry options for failed requests.
+// WithTimeout sets the maximum timeout for all requests.
+func WithTimeout(timeout time.Duration) Option {
+	return func(h *handler.Handler) {
+		h.MaxTimeout = timeout
+	}
+}
+
+// WithMiddleware adds or updates the middleware for the Handler.
+func WithMiddleware(middleware handler.Middleware) Option {
+	return func(h *handler.Handler) {
+		h.UpdateMiddleware(middleware)
+	}
+}
+
+// WithRateLimit enables the rate limiter middleware with the specified options.
+func WithRateLimit(requestsPerSecond float64, burst int) Option {
+	return WithMiddleware(handler.NewRateLimiterMiddleware(requestsPerSecond, burst))
+}
+
+// WithRetry enables the retry middleware with the specified options.
 func WithRetry(maxAttempts uint64, initialInterval, maxInterval time.Duration) Option {
-	return func(h *handler.Handler) {
-		h.RetryMaxAttempts = maxAttempts
-		h.RetryInitialInterval = initialInterval
-		h.RetryMaxInterval = maxInterval
-	}
+	return WithMiddleware(handler.NewRetryMiddleware(maxAttempts, initialInterval, maxInterval))
 }
 
-// WithRequestTimeout sets the timeout for individual requests.
-func WithRequestTimeout(timeout time.Duration) Option {
-	return func(h *handler.Handler) {
-		h.RequestTimeout = timeout
-	}
-}
-
-// WithCircuitBreaker sets the circuit breaker options to prevent cascading failures.
+// WithCircuitBreaker enables the circuit breaker middleware with the specified options.
 func WithCircuitBreaker(maxRequests uint32, interval, timeout time.Duration) Option {
-	return func(h *handler.Handler) {
-		h.CircuitBreakerMaxRequests = maxRequests
-		h.CircuitBreakerInterval = interval
-		h.CircuitBreakerTimeout = timeout
-	}
+	return WithMiddleware(handler.NewCircuitBreakerMiddleware(maxRequests, interval, timeout))
 }
 
-// WithCircuitBreakerEnabled enables or disables the circuit breaker.
-func WithCircuitBreakerEnabled(use bool) Option {
-	return func(h *handler.Handler) {
-		h.UseCircuitBreaker = use
-	}
+// WithSingleFlight enables the single flight middleware.
+func WithSingleFlight() Option {
+	return WithMiddleware(handler.NewSingleFlightMiddleware())
 }
 
-// WithRateLimiterEnabled enables or disables the rate limiter.
-func WithRateLimiterEnabled(use bool) Option {
+// WithLogger sets the logger for the Handler and its middleware.
+func WithLogger(logger logger.Logger) Option {
 	return func(h *handler.Handler) {
-		h.UseRateLimiter = use
-	}
-}
-
-// WithSingleFlightEnabled enables or disables the single flight feature to deduplicate in-flight requests.
-func WithSingleFlightEnabled(use bool) Option {
-	return func(h *handler.Handler) {
-		h.UseSingleFlight = use
+		h.SetLogger(logger)
 	}
 }
 

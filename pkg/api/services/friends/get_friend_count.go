@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/jaxron/roapi.go/pkg/client"
+	"github.com/jaxron/roapi.go/pkg/api/client"
 )
 
 // GetFriendCount fetches the count of friends for a user.

@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"reflect"
 	"strings"
 	"time"
 
@@ -19,16 +20,6 @@ import (
 
 // Default values for various Handler settings.
 const (
-	DefaultRateLimitRequestsPerSecond = 50
-	DefaultRateLimitBurst             = 100
-	DefaultRetryMaxAttempts           = 3
-	DefaultRetryInitialInterval       = 1 * time.Second
-	DefaultRetryMaxInterval           = 5 * time.Second
-	DefaultRequestTimeout             = 10 * time.Second
-	DefaultCircuitBreakerMaxRequests  = 100
-	DefaultCircuitBreakerInterval     = time.Minute
-	DefaultCircuitBreakerTimeout      = 30 * time.Second
-
 	LogMaxBodyLength = 1024
 )
 
@@ -44,63 +35,44 @@ type RequestOptions struct {
 	UseToken  bool
 }
 
+// Middleware interface for all HTTP middleware components.
+type Middleware interface {
+	Process(ctx context.Context, opts *RequestOptions, next func(context.Context, *RequestOptions) (*http.Response, error)) (*http.Response, error)
+	SetLogger(l logger.Logger)
+}
+
 // Handler manages HTTP requests with various middleware options.
 type Handler struct {
-	HTTPClient                 *http.Client
-	ProxyManager               *ProxyManager
-	Auth                       *Auth
-	SingleFlight               *SingleFlight
-	Logger                     logger.Logger
-	RateLimitRequestsPerSecond float64
-	RateLimitBurst             int
-	DefaultHeaders             map[string]string
-	RetryMaxAttempts           uint64
-	RetryInitialInterval       time.Duration
-	RetryMaxInterval           time.Duration
-	RequestTimeout             time.Duration
-	CircuitBreakerMaxRequests  uint32
-	CircuitBreakerInterval     time.Duration
-	CircuitBreakerTimeout      time.Duration
-	UseCircuitBreaker          bool
-	UseSingleFlight            bool
-	UseRetry                   bool
-	UseRateLimiter             bool
+	middlewares    []Middleware
+	httpClient     *http.Client
+	ProxyManager   *ProxyManager
+	Auth           *Auth
+	Logger         logger.Logger
+	DefaultHeaders map[string]string
+	MaxTimeout     time.Duration
 }
 
 // NewHandler creates a new Handler instance with default settings.
-func NewHandler() *Handler {
+func NewHandler(maxTimeout time.Duration, middlewares ...Middleware) *Handler {
+	logger := &logger.NoOpLogger{}
 	handler := &Handler{
-		HTTPClient: &http.Client{
+		middlewares: middlewares,
+		httpClient: &http.Client{
 			Transport:     http.DefaultTransport,
 			CheckRedirect: nil,
 			Jar:           nil,
-			Timeout:       DefaultRequestTimeout,
+			Timeout:       0, // No client timeout as context timeout is used
 		},
-		ProxyManager:               nil,
-		Auth:                       nil,
-		SingleFlight:               nil,
-		Logger:                     &logger.NoOpLogger{},
-		RateLimitRequestsPerSecond: DefaultRateLimitRequestsPerSecond,
-		RateLimitBurst:             DefaultRateLimitBurst,
-		DefaultHeaders:             make(map[string]string),
-		RetryMaxAttempts:           DefaultRetryMaxAttempts,
-		RetryInitialInterval:       DefaultRetryInitialInterval,
-		RetryMaxInterval:           DefaultRetryMaxInterval,
-		RequestTimeout:             DefaultRequestTimeout,
-		CircuitBreakerMaxRequests:  DefaultCircuitBreakerMaxRequests,
-		CircuitBreakerInterval:     DefaultCircuitBreakerInterval,
-		CircuitBreakerTimeout:      DefaultCircuitBreakerTimeout,
-		UseCircuitBreaker:          true,
-		UseSingleFlight:            true,
-		UseRetry:                   true,
-		UseRateLimiter:             true,
+		ProxyManager:   NewProxyManager(logger),
+		Auth:           nil,
+		Logger:         logger,
+		DefaultHeaders: make(map[string]string),
+		MaxTimeout:     maxTimeout,
 	}
-	handler.ProxyManager = NewProxyManager(handler)
-	handler.Auth = NewAuth(handler)
-	handler.SingleFlight = NewSingleFlight(handler)
+	handler.Auth = NewAuth(logger, handler.Do)
 
 	// Set up proxy connection logging
-	transport := handler.HTTPClient.Transport.(*http.Transport)
+	transport := handler.httpClient.Transport.(*http.Transport)
 	transport.OnProxyConnectResponse = func(ctx context.Context, proxyURL *url.URL, connectReq *http.Request, connectRes *http.Response) error {
 		handler.Logger.Debug("Proxy connection established", zap.String("proxy", proxyURL.Host))
 		return nil
@@ -111,11 +83,25 @@ func NewHandler() *Handler {
 
 // Do performs an HTTP request with the specified options.
 func (h *Handler) Do(ctx context.Context, opts *RequestOptions) (*http.Response, error) {
-	// Create a new context with timeout
-	ctx, cancel := context.WithTimeout(ctx, h.RequestTimeout)
+	// Create a new context with the maximum timeout if the original context has no deadline
+	ctx, cancel := context.WithTimeout(ctx, h.MaxTimeout)
 	defer cancel()
 
-	return h.SingleFlight.do(ctx, opts)
+	return h.executeMiddlewareChain(ctx, opts, 0)
+}
+
+// executeMiddlewareChain recursively executes the middleware chain.
+func (h *Handler) executeMiddlewareChain(ctx context.Context, opts *RequestOptions, index int) (*http.Response, error) {
+	if index == len(h.middlewares) {
+		// Base case: all middleware processed, execute the actual request
+		return h.performRequest(ctx, opts)
+	}
+
+	// Execute the current middleware
+	return h.middlewares[index].Process(ctx, opts, func(ctx context.Context, opts *RequestOptions) (*http.Response, error) {
+		// Move to the next middleware in the chain
+		return h.executeMiddlewareChain(ctx, opts, index+1)
+	})
 }
 
 // performRequest executes the actual HTTP request.
@@ -155,10 +141,10 @@ func (h *Handler) makeRequest(ctx context.Context, opts *RequestOptions, url str
 
 	// Set up proxy if available
 	if h.ProxyManager.GetProxyCount() > 0 {
-		transport := h.HTTPClient.Transport.(*http.Transport).Clone()
+		transport := h.httpClient.Transport.(*http.Transport).Clone()
 		transport.Proxy = h.ProxyManager.NextProxy
 
-		h.HTTPClient.Transport = transport
+		h.httpClient.Transport = transport
 	}
 
 	// Create the HTTP request
@@ -173,7 +159,7 @@ func (h *Handler) makeRequest(ctx context.Context, opts *RequestOptions, url str
 	}
 
 	// Send the request
-	resp, err := h.HTTPClient.Do(req)
+	resp, err := h.httpClient.Do(req)
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			return nil, apierrors.NewError(apierrors.ErrorTypeTimeout, "Request timed out", err, nil)
@@ -261,6 +247,29 @@ func (h *Handler) processResponse(resp *http.Response, result interface{}) (*htt
 	newResp.Body = io.NopCloser(bytes.NewReader(body))
 
 	return &newResp, nil
+}
+
+// SetLogger updates the handler's logger and propagates it to all middleware.
+func (h *Handler) SetLogger(l logger.Logger) {
+	// Update all middleware loggers
+	for _, m := range h.middlewares {
+		m.SetLogger(l)
+	}
+	h.Logger = l
+	h.ProxyManager.logger = l
+}
+
+// UpdateMiddleware adds or replaces a middleware in the handler's middleware chain.
+func (h *Handler) UpdateMiddleware(newMiddleware Middleware) {
+	for i, m := range h.middlewares {
+		if reflect.TypeOf(m) == reflect.TypeOf(newMiddleware) {
+			h.middlewares[i] = newMiddleware
+			m.SetLogger(h.Logger)
+			return
+		}
+	}
+	h.middlewares = append(h.middlewares, newMiddleware)
+	newMiddleware.SetLogger(h.Logger)
 }
 
 // logRequest logs the details of an outgoing HTTP request.

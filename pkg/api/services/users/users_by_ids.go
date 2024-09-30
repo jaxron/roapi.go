@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/bytedance/sonic"
+	"github.com/jaxron/roapi.go/pkg/api/client"
 	"github.com/jaxron/roapi.go/pkg/api/models"
-	"github.com/jaxron/roapi.go/pkg/client"
 )
 
 // GetUsersByIDs fetches information for users with the given IDs.

@@ -7,9 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jaxron/roapi.go/internal/handler"
 	"github.com/jaxron/roapi.go/internal/utils"
-	"github.com/jaxron/roapi.go/pkg/client"
+	"github.com/jaxron/roapi.go/pkg/api/client"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -64,7 +63,7 @@ func TestDoWithRetry(t *testing.T) {
 	defer mockServer.Close()
 
 	// Create a new test client with retry configuration
-	c := utils.NewTestClient(false, false, client.WithRetry(3, 10*time.Millisecond, handler.DefaultRetryMaxInterval))
+	c := utils.NewTestClient(false, false, client.WithRetry(3, 10*time.Millisecond, 100*time.Millisecond))
 
 	// Prepare the request
 	ctx := context.Background()

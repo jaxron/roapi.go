@@ -4,8 +4,8 @@ import (
 	"math"
 	"testing"
 
+	"github.com/jaxron/roapi.go/pkg/api/client"
 	"github.com/jaxron/roapi.go/pkg/api/services/users"
-	"github.com/jaxron/roapi.go/pkg/client"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -7,38 +7,37 @@ import (
 
 	"github.com/cenkalti/backoff/v4"
 	"github.com/jaxron/roapi.go/pkg/errors"
+	"github.com/jaxron/roapi.go/pkg/logger"
 	"go.uber.org/zap"
 )
 
-// Retry implements retry logic for HTTP requests with exponential backoff.
-type Retry struct {
-	handler *Handler
-	limiter *RateLimiter
+// RetryMiddleware implements retry logic for HTTP requests with exponential backoff.
+type RetryMiddleware struct {
+	maxAttempts     uint64
+	initialInterval time.Duration
+	maxInterval     time.Duration
+	logger          logger.Logger
 }
 
-// NewRetry creates a new Retry instance with the specified Handler.
-func NewRetry(handler *Handler) *Retry {
-	return &Retry{
-		handler: handler,
-		limiter: NewRateLimiter(handler),
+// NewRetryMiddleware creates a new RetryMiddleware instance.
+func NewRetryMiddleware(maxAttempts uint64, initialInterval, maxInterval time.Duration) *RetryMiddleware {
+	return &RetryMiddleware{
+		maxAttempts:     maxAttempts,
+		initialInterval: initialInterval,
+		maxInterval:     maxInterval,
+		logger:          &logger.NoOpLogger{},
 	}
 }
 
-// do performs an HTTP request, potentially using retry logic with exponential backoff.
-func (r *Retry) do(ctx context.Context, options *RequestOptions) (*http.Response, error) {
-	if r.handler.UseRetry {
-		return r.executeWithRetry(ctx, options)
-	}
-	return r.executeWithoutRetry(ctx, options)
-}
+// Process applies retry logic before passing the request to the next middleware.
+func (m *RetryMiddleware) Process(ctx context.Context, opts *RequestOptions, next func(context.Context, *RequestOptions) (*http.Response, error)) (*http.Response, error) {
+	m.logger.Debug("Processing request with retry middleware")
 
-// executeWithRetry performs an HTTP request with retry logic using exponential backoff.
-func (r *Retry) executeWithRetry(ctx context.Context, options *RequestOptions) (*http.Response, error) {
 	// Create an exponential backoff strategy with a maximum number of retries
 	expBackoff := backoff.WithMaxRetries(backoff.NewExponentialBackOff(
-		backoff.WithInitialInterval(r.handler.RetryInitialInterval),
-		backoff.WithMaxInterval(r.handler.RetryMaxInterval),
-	), r.handler.RetryMaxAttempts)
+		backoff.WithInitialInterval(m.initialInterval),
+		backoff.WithMaxInterval(m.maxInterval),
+	), m.maxAttempts)
 	backoffStrategy := backoff.WithContext(expBackoff, ctx)
 
 	var resp *http.Response
@@ -47,35 +46,24 @@ func (r *Retry) executeWithRetry(ctx context.Context, options *RequestOptions) (
 	// Retry the request using the backoff strategy
 	retryErr := backoff.RetryNotify(
 		func() error {
-			// Execute the request through the rate limiter
-			resp, err = r.limiter.do(ctx, options)
-			// Handle the error and determine if a retry is needed
-			return r.handleRetryError(err)
+			resp, err = next(ctx, opts)
+			return m.handleRetryError(err)
 		},
 		backoffStrategy,
 		func(err error, duration time.Duration) {
-			// Log retry attempts
-			r.handler.Logger.Warn("Retrying request", zap.Error(err), zap.Duration("retry_in", duration))
+			m.logger.Warn("Retrying request", zap.Error(err), zap.Duration("retry_in", duration))
 		},
 	)
 
-	// If all retries have been exhausted and there's still an error, return it
 	if retryErr != nil {
 		return nil, retryErr
 	}
 
-	// Return the successful response
 	return resp, nil
 }
 
-// executeWithoutRetry performs an HTTP request without using retry logic.
-func (r *Retry) executeWithoutRetry(ctx context.Context, options *RequestOptions) (*http.Response, error) {
-	// Execute the request through the rate limiter
-	return r.limiter.do(ctx, options)
-}
-
 // handleRetryError determines whether to retry the request based on the error type.
-func (r *Retry) handleRetryError(err error) error {
+func (m *RetryMiddleware) handleRetryError(err error) error {
 	if err != nil {
 		if errors.IsTemporary(err) {
 			return err // This will trigger a retry for temporary errors
@@ -83,4 +71,9 @@ func (r *Retry) handleRetryError(err error) error {
 		return backoff.Permanent(err) // This will stop retries for permanent errors
 	}
 	return nil // Success, stop retrying
+}
+
+// SetLogger sets the logger for the middleware.
+func (m *RetryMiddleware) SetLogger(l logger.Logger) {
+	m.logger = l
 }

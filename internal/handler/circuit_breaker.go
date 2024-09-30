@@ -3,60 +3,57 @@ package handler
 import (
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/jaxron/roapi.go/pkg/errors"
+	"github.com/jaxron/roapi.go/pkg/logger"
 	"github.com/sony/gobreaker"
 	"go.uber.org/zap"
 )
 
-// CircuitBreaker implements the circuit breaker pattern to prevent cascading failures.
-type CircuitBreaker struct {
-	handler *Handler
+// CircuitBreakerMiddleware implements the circuit breaker pattern to prevent cascading failures.
+type CircuitBreakerMiddleware struct {
 	breaker *gobreaker.CircuitBreaker
-	retry   *Retry
+	logger  logger.Logger
 }
 
-// NewCircuitBreaker creates a new CircuitBreaker instance with the specified Handler.
-func NewCircuitBreaker(handler *Handler) *CircuitBreaker {
-	return &CircuitBreaker{
-		handler: handler,
-		breaker: gobreaker.NewCircuitBreaker(gobreaker.Settings{
-			Name:        "HTTPCircuitBreaker",
-			MaxRequests: handler.CircuitBreakerMaxRequests,
-			Interval:    handler.CircuitBreakerInterval,
-			Timeout:     handler.CircuitBreakerTimeout,
-			ReadyToTrip: func(counts gobreaker.Counts) bool {
-				failureRatio := float64(counts.TotalFailures) / float64(counts.Requests)
-				return counts.Requests >= 3 && failureRatio >= 0.6
-			},
-			OnStateChange: func(name string, from, to gobreaker.State) {
-				handler.Logger.Warn("Circuit breaker state changed",
-					zap.String("name", name),
-					zap.String("from", from.String()),
-					zap.String("to", to.String()))
-			},
-			IsSuccessful: nil,
-		}),
-		retry: NewRetry(handler),
+// NewCircuitBreakerMiddleware creates a new CircuitBreakerMiddleware instance.
+func NewCircuitBreakerMiddleware(maxRequests uint32, interval, timeout time.Duration) *CircuitBreakerMiddleware {
+	middleware := &CircuitBreakerMiddleware{
+		breaker: nil,
+		logger:  &logger.NoOpLogger{},
 	}
+
+	breaker := gobreaker.NewCircuitBreaker(gobreaker.Settings{
+		Name:        "HTTPCircuitBreaker",
+		MaxRequests: maxRequests,
+		Interval:    interval,
+		Timeout:     timeout,
+		ReadyToTrip: func(counts gobreaker.Counts) bool {
+			failureRatio := float64(counts.TotalFailures) / float64(counts.Requests)
+			return counts.Requests >= 3 && failureRatio >= 0.6
+		},
+		OnStateChange: func(name string, from, to gobreaker.State) {
+			middleware.logger.Warn("Circuit breaker state changed",
+				zap.String("name", name),
+				zap.String("from", from.String()),
+				zap.String("to", to.String()))
+		},
+		IsSuccessful: nil,
+	})
+	middleware.breaker = breaker
+
+	return middleware
 }
 
-// do performs an HTTP request, potentially using the circuit breaker to prevent cascading failures.
-func (c *CircuitBreaker) do(ctx context.Context, options *RequestOptions) (*http.Response, error) {
-	if c.handler.UseCircuitBreaker {
-		return c.executeWithCircuitBreaker(ctx, options)
-	}
-	return c.executeWithoutCircuitBreaker(ctx, options)
-}
+// Process applies the circuit breaker before passing the request to the next middleware.
+func (m *CircuitBreakerMiddleware) Process(ctx context.Context, opts *RequestOptions, next func(context.Context, *RequestOptions) (*http.Response, error)) (*http.Response, error) {
+	m.logger.Debug("Processing request with circuit breaker middleware")
 
-// executeWithCircuitBreaker performs an HTTP request using the circuit breaker.
-func (c *CircuitBreaker) executeWithCircuitBreaker(ctx context.Context, options *RequestOptions) (*http.Response, error) {
-	// Execute the request through the circuit breaker
-	result, err := c.breaker.Execute(func() (interface{}, error) {
-		return c.retry.do(ctx, options)
+	result, err := m.breaker.Execute(func() (interface{}, error) {
+		return next(ctx, opts)
 	})
 	if err != nil {
-		// Handle different circuit breaker errors
 		switch err {
 		case gobreaker.ErrOpenState:
 			return nil, errors.NewError(errors.ErrorTypeCircuitOpen, "Circuit breaker is open", err, nil)
@@ -70,8 +67,7 @@ func (c *CircuitBreaker) executeWithCircuitBreaker(ctx context.Context, options 
 	return result.(*http.Response), nil
 }
 
-// executeWithoutCircuitBreaker performs an HTTP request without using the circuit breaker.
-func (c *CircuitBreaker) executeWithoutCircuitBreaker(ctx context.Context, options *RequestOptions) (*http.Response, error) {
-	// Execute the request with retry logic
-	return c.retry.do(ctx, options)
+// SetLogger sets the logger for the middleware.
+func (m *CircuitBreakerMiddleware) SetLogger(l logger.Logger) {
+	m.logger = l
 }

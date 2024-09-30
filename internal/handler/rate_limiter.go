@@ -4,34 +4,38 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/jaxron/roapi.go/pkg/logger"
 	"golang.org/x/time/rate"
 )
 
-// RateLimiter implements a rate limiting middleware for HTTP requests.
-type RateLimiter struct {
-	handler *Handler
+// RateLimiterMiddleware implements a rate limiting middleware for HTTP requests.
+type RateLimiterMiddleware struct {
 	limiter *rate.Limiter
+	logger  logger.Logger
 }
 
-// NewRateLimiter creates a new RateLimiter instance with the specified Handler.
-// It initializes the rate limiter based on the Handler's configuration.
-func NewRateLimiter(handler *Handler) *RateLimiter {
-	return &RateLimiter{
-		handler: handler,
-		limiter: rate.NewLimiter(rate.Limit(handler.RateLimitRequestsPerSecond), handler.RateLimitBurst),
+// NewRateLimiterMiddleware creates a new RateLimiterMiddleware instance.
+func NewRateLimiterMiddleware(requestsPerSecond float64, burst int) *RateLimiterMiddleware {
+	return &RateLimiterMiddleware{
+		limiter: rate.NewLimiter(rate.Limit(requestsPerSecond), burst),
+		logger:  &logger.NoOpLogger{},
 	}
 }
 
-// do performs a rate-limited HTTP request.
-// It waits for the rate limiter before executing the request.
-func (r *RateLimiter) do(ctx context.Context, options *RequestOptions) (*http.Response, error) {
-	if r.handler.UseRateLimiter {
-		// Wait for rate limiter permission
-		if err := r.limiter.Wait(ctx); err != nil {
-			return nil, err
-		}
+// Process applies rate limiting before passing the request to the next middleware.
+func (m *RateLimiterMiddleware) Process(ctx context.Context, opts *RequestOptions, next func(context.Context, *RequestOptions) (*http.Response, error)) (*http.Response, error) {
+	m.logger.Debug("Processing request with rate limiter middleware")
+
+	// Wait for rate limiter permission
+	if err := m.limiter.Wait(ctx); err != nil {
+		return nil, err
 	}
 
-	// Execute the HTTP request
-	return r.handler.performRequest(ctx, options)
+	// Execute the next middleware in the chain
+	return next(ctx, opts)
+}
+
+// SetLogger sets the logger for the middleware.
+func (m *RateLimiterMiddleware) SetLogger(l logger.Logger) {
+	m.logger = l
 }

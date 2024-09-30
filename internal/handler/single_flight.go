@@ -5,41 +5,34 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/jaxron/roapi.go/pkg/logger"
 	"golang.org/x/sync/singleflight"
 )
 
-// SingleFlight implements the singleflight pattern to deduplicate concurrent identical requests.
-type SingleFlight struct {
-	handler        *Handler
-	sfGroup        *singleflight.Group
-	circuitBreaker *CircuitBreaker
+// SingleFlightMiddleware implements the singleflight pattern to deduplicate concurrent identical requests.
+type SingleFlightMiddleware struct {
+	sfGroup *singleflight.Group
+	logger  logger.Logger
 }
 
-// NewSingleFlight creates a new SingleFlight instance with the specified Handler.
-func NewSingleFlight(handler *Handler) *SingleFlight {
-	return &SingleFlight{
-		handler:        handler,
-		sfGroup:        &singleflight.Group{},
-		circuitBreaker: NewCircuitBreaker(handler),
+// NewSingleFlightMiddleware creates a new SingleFlightMiddleware instance.
+func NewSingleFlightMiddleware() *SingleFlightMiddleware {
+	return &SingleFlightMiddleware{
+		sfGroup: &singleflight.Group{},
+		logger:  &logger.NoOpLogger{},
 	}
 }
 
-// do performs an HTTP request, potentially using singleflight to deduplicate concurrent identical requests.
-func (s *SingleFlight) do(ctx context.Context, options *RequestOptions) (*http.Response, error) {
-	if s.handler.UseSingleFlight {
-		return s.doWithSingleFlight(ctx, options)
-	}
-	return s.doWithoutSingleFlight(ctx, options)
-}
+// Process applies the singleflight pattern before passing the request to the next middleware.
+func (m *SingleFlightMiddleware) Process(ctx context.Context, opts *RequestOptions, next func(context.Context, *RequestOptions) (*http.Response, error)) (*http.Response, error) {
+	m.logger.Debug("Processing request with singleflight middleware")
 
-// doWithSingleFlight performs an HTTP request using singleflight to deduplicate concurrent identical requests.
-func (s *SingleFlight) doWithSingleFlight(ctx context.Context, options *RequestOptions) (*http.Response, error) {
 	// Generate a unique key for the request
-	key := fmt.Sprintf("%s:%s:%x", options.Method, options.URL, options.Body)
+	key := fmt.Sprintf("%s:%s:%x", opts.Method, opts.URL, opts.Body)
 
 	// Use singleflight to execute the request
-	result, err, _ := s.sfGroup.Do(key, func() (interface{}, error) {
-		return s.circuitBreaker.do(ctx, options)
+	result, err, _ := m.sfGroup.Do(key, func() (interface{}, error) {
+		return next(ctx, opts)
 	})
 	if err != nil {
 		return nil, err
@@ -48,8 +41,7 @@ func (s *SingleFlight) doWithSingleFlight(ctx context.Context, options *RequestO
 	return result.(*http.Response), nil
 }
 
-// doWithoutSingleFlight performs an HTTP request without using singleflight.
-func (s *SingleFlight) doWithoutSingleFlight(ctx context.Context, options *RequestOptions) (*http.Response, error) {
-	// Execute the request through the circuit breaker
-	return s.circuitBreaker.do(ctx, options)
+// SetLogger sets the logger for the middleware.
+func (m *SingleFlightMiddleware) SetLogger(l logger.Logger) {
+	m.logger = l
 }
