@@ -14,7 +14,7 @@ import (
 // SearchFriends fetches the paginated list of friends for a user.
 // GET https://friends.roblox.com/v1/users/{userID}/friends/search
 func (s *Service) SearchFriends(ctx context.Context, b *SearchFriendsBuilder) (*models.FriendPageResponse, error) {
-	if s.Client.Handler.Auth.GetCookieCount() == 0 {
+	if s.client.Handler.Auth.GetCookieCount() == 0 {
 		return nil, errors.ErrNoCookie
 	}
 
@@ -28,7 +28,7 @@ func (s *Service) SearchFriends(ctx context.Context, b *SearchFriendsBuilder) (*
 		UseCookie(true).
 		Result(&friends)
 
-	resp, err := s.Client.Do(ctx, req.Build())
+	resp, err := s.client.Do(ctx, req.Build())
 	if err != nil {
 		return nil, err
 	}

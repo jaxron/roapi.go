@@ -21,7 +21,7 @@ func (s *Service) SearchUsers(ctx context.Context, b *SearchUsersBuilder) (*mode
 		Query("cursor", b.cursor).
 		Result(&result)
 
-	resp, err := s.Client.Do(ctx, req.Build())
+	resp, err := s.client.Do(ctx, req.Build())
 	if err != nil {
 		return nil, err
 	}

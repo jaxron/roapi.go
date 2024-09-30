@@ -18,7 +18,7 @@ func (s *Service) GetUserByID(ctx context.Context, userID uint64) (*models.UserB
 		URL(fmt.Sprintf("%s/v1/users/%d", UsersEndpoint, userID)).
 		Result(&user)
 
-	resp, err := s.Client.Do(ctx, req.Build())
+	resp, err := s.client.Do(ctx, req.Build())
 	if err != nil {
 		return nil, err
 	}

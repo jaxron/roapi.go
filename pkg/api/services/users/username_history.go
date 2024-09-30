@@ -22,7 +22,7 @@ func (s *Service) GetUsernameHistory(ctx context.Context, b *UsernameHistoryBuil
 		Query("cursor", b.cursor).
 		Result(&history)
 
-	resp, err := s.Client.Do(ctx, req.Build())
+	resp, err := s.client.Do(ctx, req.Build())
 	if err != nil {
 		return nil, err
 	}

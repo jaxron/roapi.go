@@ -23,7 +23,4 @@ func TestNewService(t *testing.T) {
 
 	// Assert that the service is not nil
 	assert.NotNil(t, service, "Service should not be nil")
-
-	// Assert that the client in the service is the same as the mock client
-	assert.Equal(t, client, service.Client, "Service client should be the same as the provided client")
 }

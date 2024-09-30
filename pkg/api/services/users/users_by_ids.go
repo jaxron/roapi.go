@@ -24,7 +24,7 @@ func (s *Service) GetUsersByIDs(ctx context.Context, b *UsersByIDsBuilder) ([]mo
 		return nil, err
 	}
 
-	resp, err := s.Client.Do(ctx, req.Build())
+	resp, err := s.client.Do(ctx, req.Build())
 	if err != nil {
 		return nil, err
 	}

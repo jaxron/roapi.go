@@ -20,7 +20,7 @@ func (s *Service) GetFriends(ctx context.Context, userID uint64) ([]models.UserR
 		URL(fmt.Sprintf("%s/v1/users/%d/friends", FriendsEndpoint, userID)).
 		Result(&friends)
 
-	resp, err := s.Client.Do(ctx, req.Build())
+	resp, err := s.client.Do(ctx, req.Build())
 	if err != nil {
 		return nil, err
 	}

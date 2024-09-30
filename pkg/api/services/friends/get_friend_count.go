@@ -19,7 +19,7 @@ func (s *Service) GetFriendCount(ctx context.Context, userID uint64) (uint64, er
 		URL(fmt.Sprintf("%s/v1/users/%d/friends/count", FriendsEndpoint, userID)).
 		Result(&count)
 
-	resp, err := s.Client.Do(ctx, req.Build())
+	resp, err := s.client.Do(ctx, req.Build())
 	if err != nil {
 		return 0, err
 	}

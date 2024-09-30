@@ -23,7 +23,7 @@ func (s *Service) GetFollowers(ctx context.Context, b *FollowersBuilder) (*model
 		UseCookie(true).
 		Result(&followers)
 
-	resp, err := s.Client.Do(ctx, req.Build())
+	resp, err := s.client.Do(ctx, req.Build())
 	if err != nil {
 		return nil, err
 	}

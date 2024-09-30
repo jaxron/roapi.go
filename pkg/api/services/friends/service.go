@@ -26,12 +26,12 @@ var _ ServiceInterface = (*Service)(nil)
 
 // Service provides methods for interacting with friend-related endpoints.
 type Service struct {
-	Client *client.Client
+	client *client.Client
 }
 
 // NewService creates a new Service with the specified version.
 func NewService(client *client.Client) *Service {
 	return &Service{
-		Client: client,
+		client: client,
 	}
 }
