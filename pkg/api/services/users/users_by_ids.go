@@ -4,9 +4,8 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/bytedance/sonic"
+	"github.com/jaxron/roapi.go/pkg/api/errors"
 	"github.com/jaxron/roapi.go/pkg/api/models"
-	"github.com/jaxron/roapi.go/pkg/client"
 )
 
 // GetUsersByIDs fetches information for users with the given IDs.
@@ -15,18 +14,21 @@ func (s *Service) GetUsersByIDs(ctx context.Context, b *UsersByIDsBuilder) ([]mo
 	var users struct {
 		Data []models.VerifiedBadgeUserResponse `json:"data"` // List of users fetched by user IDs
 	}
-	req, err := client.NewRequest().
+	resp, err := s.client.NewRequest().
 		Method(http.MethodPost).
 		URL(UsersEndpoint + "/v1/users").
 		Result(&users).
-		JSONBody(b.MarshalJSON)
+		MarshalBody(struct {
+			UserIds            []uint64 `json:"userIds"`
+			ExcludeBannedUsers bool     `json:"excludeBannedUsers"`
+		}{
+			UserIds:            b.userIds,
+			ExcludeBannedUsers: b.excludeBannedUsers,
+		}).
+		JSONHeaders().
+		Do(ctx)
 	if err != nil {
-		return nil, err
-	}
-
-	resp, err := s.client.Do(ctx, req.Build())
-	if err != nil {
-		return nil, err
+		return nil, errors.HandleAPIError(resp, err)
 	}
 	defer resp.Body.Close()
 
@@ -51,15 +53,4 @@ func NewUsersByIDsBuilder(userIds []uint64) *UsersByIDsBuilder {
 func (b *UsersByIDsBuilder) ExcludeBannedUsers(excludeBannedUsers bool) *UsersByIDsBuilder {
 	b.excludeBannedUsers = excludeBannedUsers
 	return b
-}
-
-// MarshalJSON converts the UsersByIDsBuilder to JSON for API requests.
-func (b *UsersByIDsBuilder) MarshalJSON() ([]byte, error) {
-	return sonic.Marshal(struct {
-		UserIds            []uint64 `json:"userIds"`
-		ExcludeBannedUsers bool     `json:"excludeBannedUsers"`
-	}{
-		UserIds:            b.userIds,
-		ExcludeBannedUsers: b.excludeBannedUsers,
-	})
 }

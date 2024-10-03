@@ -4,9 +4,8 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/bytedance/sonic"
+	"github.com/jaxron/roapi.go/pkg/api/errors"
 	"github.com/jaxron/roapi.go/pkg/api/models"
-	"github.com/jaxron/roapi.go/pkg/client"
 )
 
 // GetUsersByUsernames fetches information for users with the given usernames.
@@ -15,18 +14,21 @@ func (s *Service) GetUsersByUsernames(ctx context.Context, b *UsersByUsernamesBu
 	var users struct {
 		Data []models.UserByUsernameResponse `json:"data"` // List of users fetched by usernames
 	}
-	req, err := client.NewRequest().
+	resp, err := s.client.NewRequest().
 		Method(http.MethodPost).
 		URL(UsersEndpoint + "/v1/usernames/users").
 		Result(&users).
-		JSONBody(b.MarshalJSON)
+		MarshalBody(struct {
+			Usernames          []string `json:"usernames"`
+			ExcludeBannedUsers bool     `json:"excludeBannedUsers"`
+		}{
+			Usernames:          b.usernames,
+			ExcludeBannedUsers: b.excludeBannedUsers,
+		}).
+		JSONHeaders().
+		Do(ctx)
 	if err != nil {
-		return nil, err
-	}
-
-	resp, err := s.client.Do(ctx, req.Build())
-	if err != nil {
-		return nil, err
+		return nil, errors.HandleAPIError(resp, err)
 	}
 	defer resp.Body.Close()
 
@@ -51,15 +53,4 @@ func NewUsersByUsernamesBuilder(usernames []string) *UsersByUsernamesBuilder {
 func (b *UsersByUsernamesBuilder) ExcludeBannedUsers(excludeBannedUsers bool) *UsersByUsernamesBuilder {
 	b.excludeBannedUsers = excludeBannedUsers
 	return b
-}
-
-// MarshalJSON converts the UsersByUsernamesBuilder to JSON for API requests.
-func (b *UsersByUsernamesBuilder) MarshalJSON() ([]byte, error) {
-	return sonic.Marshal(struct {
-		Usernames          []string `json:"usernames"`
-		ExcludeBannedUsers bool     `json:"excludeBannedUsers"`
-	}{
-		Usernames:          b.usernames,
-		ExcludeBannedUsers: b.excludeBannedUsers,
-	})
 }

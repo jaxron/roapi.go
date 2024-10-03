@@ -13,7 +13,7 @@ import (
 // TestGetUsersByUsernames tests the GetUsersByUsernames method of the user.Service.
 func TestGetUsersByUsernames(t *testing.T) {
 	// Create a new test service
-	api := users.NewService(utils.NewTestClient(true, false))
+	api := users.NewService(utils.NewTestClient())
 
 	t.Run("Fetch Known Users", func(t *testing.T) {
 		usernames := []string{"Roblox", "builderman"}

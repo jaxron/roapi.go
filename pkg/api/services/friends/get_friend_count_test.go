@@ -13,7 +13,7 @@ import (
 // TestGetFriendCount tests the GetFriendCount method of the friends.Service.
 func TestGetFriendCount(t *testing.T) {
 	// Create a new test service
-	api := friends.NewService(utils.NewTestClient(true, false))
+	api := friends.NewService(utils.NewTestClient())
 
 	// Test case: Fetch friend count for a known user
 	t.Run("Fetch Known User Friend Count", func(t *testing.T) {

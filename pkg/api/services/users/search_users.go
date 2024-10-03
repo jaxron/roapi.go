@@ -5,25 +5,25 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/jaxron/roapi.go/pkg/api/errors"
 	"github.com/jaxron/roapi.go/pkg/api/models"
-	"github.com/jaxron/roapi.go/pkg/client"
 )
 
 // SearchUsers searches for a user with the given username.
 // GET https://users.roblox.com/v1/users/search
 func (s *Service) SearchUsers(ctx context.Context, b *SearchUsersBuilder) (*models.UserSearchPageResponse, error) {
 	var result models.UserSearchPageResponse
-	req := client.NewRequest().
+	resp, err := s.client.NewRequest().
 		Method(http.MethodGet).
 		URL(UsersEndpoint+"/v1/users/search").
 		Query("keyword", b.username).
 		Query("limit", strconv.FormatUint(b.limit, 10)).
 		Query("cursor", b.cursor).
-		Result(&result)
-
-	resp, err := s.client.Do(ctx, req.Build())
+		Result(&result).
+		JSONHeaders().
+		Do(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.HandleAPIError(resp, err)
 	}
 	defer resp.Body.Close()
 

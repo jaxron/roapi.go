@@ -13,7 +13,7 @@ import (
 // TestGetUsernameHistory tests the GetUsernameHistory method of the user.Service.
 func TestGetUsernameHistory(t *testing.T) {
 	// Create a new test service
-	api := users.NewService(utils.NewTestClient(true, false))
+	api := users.NewService(utils.NewTestClient())
 
 	// Test case: Fetch username history for a known user
 	t.Run("Fetch Known User Username History", func(t *testing.T) {

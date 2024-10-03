@@ -4,28 +4,25 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/jaxron/roapi.go/internal/middleware/auth"
+	"github.com/jaxron/roapi.go/pkg/api/errors"
 	"github.com/jaxron/roapi.go/pkg/api/models"
-	"github.com/jaxron/roapi.go/pkg/client"
-	"github.com/jaxron/roapi.go/pkg/client/errors"
 )
 
 // GetAuthUserInfo fetches information for the authenticated user.
 // GET https://users.roblox.com/v1/users/authenticated
 func (s *Service) GetAuthUserInfo(ctx context.Context) (*models.AuthUserResponse, error) {
-	if s.client.Auth.GetCookieCount() == 0 {
-		return nil, errors.ErrNoCookie
-	}
+	ctx = context.WithValue(ctx, auth.KeyAddCookie, true)
 
 	var user models.AuthUserResponse
-	req := client.NewRequest().
+	resp, err := s.client.NewRequest().
 		Method(http.MethodGet).
 		URL(UsersEndpoint + "/v1/users/authenticated").
 		Result(&user).
-		UseCookie(true)
-
-	resp, err := s.client.Do(ctx, req.Build())
+		JSONHeaders().
+		Do(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.HandleAPIError(resp, err)
 	}
 	defer resp.Body.Close()
 

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/jaxron/roapi.go/pkg/api/errors"
 	"github.com/jaxron/roapi.go/pkg/api/models"
-	"github.com/jaxron/roapi.go/pkg/client"
 )
 
 // GetFriends fetches the friends of a user.
@@ -15,14 +15,14 @@ func (s *Service) GetFriends(ctx context.Context, userID uint64) ([]models.UserR
 	var friends struct {
 		Data []models.UserResponse `json:"data"` // List of friend information
 	}
-	req := client.NewRequest().
+	resp, err := s.client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v1/users/%d/friends", FriendsEndpoint, userID)).
-		Result(&friends)
-
-	resp, err := s.client.Do(ctx, req.Build())
+		Result(&friends).
+		JSONHeaders().
+		Do(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.HandleAPIError(resp, err)
 	}
 	defer resp.Body.Close()
 

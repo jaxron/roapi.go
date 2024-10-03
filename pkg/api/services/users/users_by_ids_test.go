@@ -14,7 +14,7 @@ import (
 // TestGetUsersByIDs tests the GetUsersByIDs method of the user.Service.
 func TestGetUsersByIDs(t *testing.T) {
 	// Create a new test service
-	api := users.NewService(utils.NewTestClient(true, false))
+	api := users.NewService(utils.NewTestClient())
 
 	t.Run("Fetch Known Users", func(t *testing.T) {
 		userIDs := []uint64{1, 156} // IDs for Roblox and Builderman

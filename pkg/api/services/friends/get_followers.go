@@ -6,26 +6,28 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/jaxron/roapi.go/internal/middleware/auth"
+	"github.com/jaxron/roapi.go/pkg/api/errors"
 	"github.com/jaxron/roapi.go/pkg/api/models"
-	"github.com/jaxron/roapi.go/pkg/client"
 )
 
 // GetFollowers fetches the paginated followers of a user.
 // GET https://friends.roblox.com/v1/users/{userID}/followers
 func (s *Service) GetFollowers(ctx context.Context, b *FollowersBuilder) (*models.FollowerPageResponse, error) {
+	ctx = context.WithValue(ctx, auth.KeyAddCookie, true)
+
 	var followers models.FollowerPageResponse
-	req := client.NewRequest().
+	resp, err := s.client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v1/users/%d/followers", FriendsEndpoint, b.userID)).
 		Query("limit", strconv.FormatUint(b.limit, 10)).
 		Query("cursor", b.cursor).
 		Query("sortOrder", b.sortOrder).
-		UseCookie(true).
-		Result(&followers)
-
-	resp, err := s.client.Do(ctx, req.Build())
+		Result(&followers).
+		JSONHeaders().
+		Do(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.HandleAPIError(resp, err)
 	}
 	defer resp.Body.Close()
 

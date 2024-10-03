@@ -1,23 +1,28 @@
 package api
 
 import (
+	"github.com/jaxron/axonet/pkg/client"
+	"github.com/jaxron/roapi.go/internal/middleware/auth"
 	"github.com/jaxron/roapi.go/pkg/api/services/friends"
 	"github.com/jaxron/roapi.go/pkg/api/services/users"
-	"github.com/jaxron/roapi.go/pkg/client"
 )
 
 // API represents the main struct for interacting with the Roblox API.
 // It contains a client for making HTTP requests and services for different API endpoints.
 type API struct {
-	client  *client.Client   // HTTP client for making API requests
+	client  *client.Client   // Axonet client for making API requests
 	users   *users.Service   // Service for user-related API operations
 	friends *friends.Service // Service for friend-related API operations
 }
 
 // New creates a new instance of API with the provided options.
 // It initializes the client and sets up the services.
-func New(opts ...client.Option) *API {
-	c := client.NewClient(opts...)
+func New(cookies []string, opts ...client.Option) *API {
+	c := client.NewClient(append(
+		opts,
+		client.WithMiddleware(auth.New(cookies)),
+	)...)
+
 	return &API{
 		client:  c,
 		users:   users.NewService(c),

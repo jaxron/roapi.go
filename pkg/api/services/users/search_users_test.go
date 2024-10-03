@@ -13,7 +13,7 @@ import (
 // TestSearchUsers tests the SearchUsers method of the user.Service.
 func TestSearchUsers(t *testing.T) {
 	// Create a new test service
-	api := users.NewService(utils.NewTestClient(true, false))
+	api := users.NewService(utils.NewTestClient())
 
 	// Test case: Search for a known user
 	t.Run("Search Known User", func(t *testing.T) {

@@ -6,25 +6,25 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/jaxron/roapi.go/pkg/api/errors"
 	"github.com/jaxron/roapi.go/pkg/api/models"
-	"github.com/jaxron/roapi.go/pkg/client"
 )
 
 // GetUsernameHistory fetches the username history for a user.
 // GET https://users.roblox.com/v1/users/{userID}/username-history
 func (s *Service) GetUsernameHistory(ctx context.Context, b *UsernameHistoryBuilder) (*models.UsernameHistoryPageResponse, error) {
 	var history models.UsernameHistoryPageResponse
-	req := client.NewRequest().
+	resp, err := s.client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v1/users/%d/username-history", UsersEndpoint, b.userID)).
 		Query("limit", strconv.FormatUint(b.limit, 10)).
 		Query("sortOrder", b.sortOrder).
 		Query("cursor", b.cursor).
-		Result(&history)
-
-	resp, err := s.client.Do(ctx, req.Build())
+		Result(&history).
+		JSONHeaders().
+		Do(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.HandleAPIError(resp, err)
 	}
 	defer resp.Body.Close()
 

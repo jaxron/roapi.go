@@ -8,11 +8,11 @@ import (
 	"net/url"
 	"os"
 	"strings"
-	"time"
 
-	"github.com/jaxron/roapi.go/pkg/client"
-	"github.com/jaxron/roapi.go/pkg/client/logger"
-	"go.uber.org/zap"
+	"github.com/jaxron/axonet/middleware/proxy"
+	"github.com/jaxron/axonet/pkg/client"
+	"github.com/jaxron/axonet/pkg/client/logger"
+	"github.com/jaxron/roapi.go/internal/middleware/auth"
 )
 
 var (
@@ -28,18 +28,18 @@ const (
 
 // NewTestClient creates a new client.Client instance for testing purposes.
 // It sets up the client with proxies and cookies based on environment variables.
-func NewTestClient(useProxies bool, useCookie bool, opts ...client.Option) *client.Client {
-	// Create a development logger
-	logger := logger.NewDevelopmentLogger()
+func NewTestClient(opts ...client.Option) *client.Client {
+	// Use a basic logger for testing
+	logger := logger.NewBasicLogger()
 
 	// Get the proxies from environment variable
-	proxies, err := getProxiesFromEnv(logger, useProxies)
+	proxies, err := getProxiesFromEnv(logger)
 	if err != nil {
 		panic(err)
 	}
 
 	// Get the cookies from environment variable
-	cookies, err := getCookiesFromEnv(logger, useCookie)
+	cookies, err := getCookiesFromEnv(logger)
 	if err != nil {
 		panic(err)
 	}
@@ -47,23 +47,15 @@ func NewTestClient(useProxies bool, useCookie bool, opts ...client.Option) *clie
 	// Create and return a new client with the specified options
 	return client.NewClient(
 		append([]client.Option{
-			client.WithProxies(proxies),
-			client.WithCookies(cookies),
-			client.WithRetry(1, 1*time.Second, 5*time.Second),
-			client.WithCircuitBreaker(5, 10*time.Second, 10*time.Second),
-			client.WithRateLimit(1, 1),
-			client.WithSingleFlight(),
+			client.WithMiddleware(auth.New(cookies)),
+			client.WithMiddleware(proxy.New(proxies)),
 			client.WithLogger(logger),
 		}, opts...)...,
 	)
 }
 
 // getProxiesFromEnv loads the proxies from the file specified in the ROAPI_PROXIES_FILE environment variable.
-func getProxiesFromEnv(logger logger.Logger, useProxies bool) ([]*url.URL, error) {
-	if !useProxies {
-		return []*url.URL{}, nil
-	}
-
+func getProxiesFromEnv(log logger.Logger) ([]*url.URL, error) {
 	proxiesFile := os.Getenv("ROAPI_PROXIES_FILE")
 	if proxiesFile == "" {
 		return nil, ErrProxiesFileNotSet
@@ -74,7 +66,7 @@ func getProxiesFromEnv(logger logger.Logger, useProxies bool) ([]*url.URL, error
 		return nil, err
 	}
 
-	logger.Debug("Loaded proxies", zap.Int("count", len(proxies)))
+	log.WithFields(logger.Int("count", len(proxies))).Debug("Loaded proxies")
 	return proxies, nil
 }
 
@@ -127,11 +119,7 @@ func readProxiesFromFile(fileName string) ([]*url.URL, error) {
 }
 
 // getCookiesFromEnv loads the cookies from the file specified in the ROAPI_COOKIES_FILE environment variable.
-func getCookiesFromEnv(logger logger.Logger, useCookie bool) ([]string, error) {
-	if !useCookie {
-		return []string{}, nil
-	}
-
+func getCookiesFromEnv(log logger.Logger) ([]string, error) {
 	cookie := os.Getenv("ROAPI_COOKIES_FILE")
 	if cookie == "" {
 		return nil, ErrCookiesFileNotSet
@@ -142,7 +130,7 @@ func getCookiesFromEnv(logger logger.Logger, useCookie bool) ([]string, error) {
 		return nil, err
 	}
 
-	logger.Debug("Loaded cookies", zap.Int("count", len(cookies)))
+	log.WithFields(logger.Int("count", len(cookies))).Debug("Loaded cookies")
 	return cookies, nil
 }
 

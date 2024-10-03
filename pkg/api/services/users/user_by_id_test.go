@@ -13,7 +13,7 @@ import (
 // TestGetUserByID tests the GetUserByID method of the user.Service.
 func TestGetUserByID(t *testing.T) {
 	// Create a new test service
-	api := users.NewService(utils.NewTestClient(true, false))
+	api := users.NewService(utils.NewTestClient())
 
 	// Test case: Fetch information for a known user
 	t.Run("Fetch Known User", func(t *testing.T) {

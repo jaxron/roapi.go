@@ -6,31 +6,28 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/jaxron/roapi.go/internal/middleware/auth"
+	"github.com/jaxron/roapi.go/pkg/api/errors"
 	"github.com/jaxron/roapi.go/pkg/api/models"
-	"github.com/jaxron/roapi.go/pkg/client"
-	"github.com/jaxron/roapi.go/pkg/client/errors"
 )
 
 // SearchFriends fetches the paginated list of friends for a user.
 // GET https://friends.roblox.com/v1/users/{userID}/friends/search
 func (s *Service) SearchFriends(ctx context.Context, b *SearchFriendsBuilder) (*models.FriendPageResponse, error) {
-	if s.client.Auth.GetCookieCount() == 0 {
-		return nil, errors.ErrNoCookie
-	}
+	ctx = context.WithValue(ctx, auth.KeyAddCookie, true)
 
 	var friends models.FriendPageResponse
-	req := client.NewRequest().
+	resp, err := s.client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v1/users/%d/friends/search", FriendsEndpoint, b.userID)).
 		Query("query", b.query).
 		Query("cursor", b.cursor).
 		Query("limit", strconv.FormatUint(b.limit, 10)).
-		UseCookie(true).
-		Result(&friends)
-
-	resp, err := s.client.Do(ctx, req.Build())
+		Result(&friends).
+		JSONHeaders().
+		Do(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.HandleAPIError(resp, err)
 	}
 	defer resp.Body.Close()
 

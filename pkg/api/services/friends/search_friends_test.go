@@ -13,7 +13,7 @@ import (
 // TestSearchFriends tests the SearchFriends method of the friends.Service.
 func TestSearchFriends(t *testing.T) {
 	// Create a new test service
-	api := friends.NewService(utils.NewTestClient(true, true))
+	api := friends.NewService(utils.NewTestClient())
 
 	// Test case: Search for friends for a known user
 	t.Run("Search Known User Friends", func(t *testing.T) {

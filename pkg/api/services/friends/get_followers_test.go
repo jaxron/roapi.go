@@ -13,7 +13,7 @@ import (
 // TestGetFollowers tests the GetFollowers method of the friends.Service.
 func TestGetFollowers(t *testing.T) {
 	// Create a new test service
-	api := friends.NewService(utils.NewTestClient(true, false))
+	api := friends.NewService(utils.NewTestClient())
 
 	// Test case: Fetch followers for a known user
 	t.Run("Fetch Known User Followers", func(t *testing.T) {

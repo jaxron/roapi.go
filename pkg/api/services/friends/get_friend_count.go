@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/jaxron/roapi.go/pkg/client"
+	"github.com/jaxron/roapi.go/pkg/api/errors"
 )
 
 // GetFriendCount fetches the count of friends for a user.
@@ -14,14 +14,14 @@ func (s *Service) GetFriendCount(ctx context.Context, userID uint64) (uint64, er
 	var count struct {
 		Count uint64 `json:"count"` // The number of friends
 	}
-	req := client.NewRequest().
+	resp, err := s.client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v1/users/%d/friends/count", FriendsEndpoint, userID)).
-		Result(&count)
-
-	resp, err := s.client.Do(ctx, req.Build())
+		Result(&count).
+		JSONHeaders().
+		Do(ctx)
 	if err != nil {
-		return 0, err
+		return 0, errors.HandleAPIError(resp, err)
 	}
 	defer resp.Body.Close()
 

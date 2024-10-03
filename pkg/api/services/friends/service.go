@@ -3,8 +3,8 @@ package friends
 import (
 	"context"
 
+	"github.com/jaxron/axonet/pkg/client"
 	"github.com/jaxron/roapi.go/pkg/api/models"
-	"github.com/jaxron/roapi.go/pkg/client"
 )
 
 const (
