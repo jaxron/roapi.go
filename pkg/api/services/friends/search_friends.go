@@ -13,16 +13,20 @@ import (
 
 // SearchFriends fetches the paginated list of friends for a user.
 // GET https://friends.roblox.com/v1/users/{userID}/friends/search
-func (s *Service) SearchFriends(ctx context.Context, b *SearchFriendsBuilder) (*models.FriendPageResponse, error) {
+func (s *Service) SearchFriends(ctx context.Context, params SearchFriendsParams) (*models.FriendPageResponse, error) {
+	if err := s.validate.Struct(params); err != nil {
+		return nil, err
+	}
+
 	ctx = context.WithValue(ctx, auth.KeyAddCookie, true)
 
 	var friends models.FriendPageResponse
 	resp, err := s.client.NewRequest().
 		Method(http.MethodGet).
-		URL(fmt.Sprintf("%s/v1/users/%d/friends/search", FriendsEndpoint, b.userID)).
-		Query("query", b.query).
-		Query("cursor", b.cursor).
-		Query("limit", strconv.FormatUint(b.limit, 10)).
+		URL(fmt.Sprintf("%s/v1/users/%d/friends/search", FriendsEndpoint, params.UserID)).
+		Query("query", params.Query).
+		Query("cursor", params.Cursor).
+		Query("limit", strconv.FormatUint(params.Limit, 10)).
 		Result(&friends).
 		JSONHeaders().
 		Do(ctx)
@@ -34,38 +38,50 @@ func (s *Service) SearchFriends(ctx context.Context, b *SearchFriendsBuilder) (*
 	return &friends, nil
 }
 
-// SearchFriendsBuilder builds parameters for SearchFriends API call.
-type SearchFriendsBuilder struct {
-	userID uint64 // Required: ID of the user to fetch friends for
-	query  string // Optional: Search keyword
-	cursor string // Optional: Cursor for pagination
-	limit  uint64 // Optional: Maximum number of results to return (default: 20)
+// SearchFriendsParams holds the parameters for searching friends.
+type SearchFriendsParams struct {
+	UserID uint64 `json:"userId" validate:"required"`         // Required: ID of the user to fetch friends for
+	Query  string `json:"query"`                              // Optional: Search keyword
+	Limit  uint64 `json:"limit"  validate:"min=1,max=50"`     // Optional: Maximum number of results to return (default: 20)
+	Cursor string `json:"cursor" validate:"omitempty,base64"` // Optional: Cursor for pagination
 }
 
-// NewSearchFriendsBuilder creates a new SearchFriendsBuilder with the given user ID.
+// SearchFriendsBuilder is a builder for SearchFriendsParams.
+type SearchFriendsBuilder struct {
+	params SearchFriendsParams
+}
+
+// NewSearchFriendsBuilder creates a new SearchFriendsBuilder with default values.
 func NewSearchFriendsBuilder(userID uint64) *SearchFriendsBuilder {
 	return &SearchFriendsBuilder{
-		userID: userID,
-		query:  "",
-		cursor: "",
-		limit:  20,
+		params: SearchFriendsParams{
+			UserID: userID,
+			Query:  "",
+			Cursor: "",
+			Limit:  20,
+		},
 	}
 }
 
-// Query sets the search keyword.
-func (b *SearchFriendsBuilder) Query(query string) *SearchFriendsBuilder {
-	b.query = query
+// WithQuery sets the search keyword.
+func (b *SearchFriendsBuilder) WithQuery(query string) *SearchFriendsBuilder {
+	b.params.Query = query
 	return b
 }
 
-// Cursor sets the cursor for pagination.
-func (b *SearchFriendsBuilder) Cursor(cursor string) *SearchFriendsBuilder {
-	b.cursor = cursor
+// WithLimit sets the maximum number of results to return.
+func (b *SearchFriendsBuilder) WithLimit(limit uint64) *SearchFriendsBuilder {
+	b.params.Limit = limit
 	return b
 }
 
-// Limit sets the maximum number of results to return.
-func (b *SearchFriendsBuilder) Limit(limit uint64) *SearchFriendsBuilder {
-	b.limit = limit
+// WithCursor sets the cursor for pagination.
+func (b *SearchFriendsBuilder) WithCursor(cursor string) *SearchFriendsBuilder {
+	b.params.Cursor = cursor
 	return b
+}
+
+// Build returns the SearchFriendsParams.
+func (b *SearchFriendsBuilder) Build() SearchFriendsParams {
+	return b.params
 }

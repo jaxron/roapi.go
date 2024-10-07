@@ -12,14 +12,13 @@ import (
 
 // TestGetUsersByUsernames tests the GetUsersByUsernames method of the user.Service.
 func TestGetUsersByUsernames(t *testing.T) {
-	// Create a new test service
-	api := users.NewService(utils.NewTestClient())
+	// Create a new test service and validator
+	api := users.NewService(utils.NewTestEnv())
 
 	t.Run("Fetch Known Users", func(t *testing.T) {
 		usernames := []string{"Roblox", "builderman"}
-		builder := users.NewUsersByUsernamesBuilder(usernames)
-		result, err := api.GetUsersByUsernames(context.Background(), builder)
-
+		builder := users.NewGetUsersByUsernamesBuilder(usernames)
+		result, err := api.GetUsersByUsernames(context.Background(), builder.Build())
 		require.NoError(t, err)
 		assert.NotNil(t, result)
 		assert.Len(t, result, 2)
@@ -32,9 +31,8 @@ func TestGetUsersByUsernames(t *testing.T) {
 
 	t.Run("Fetch With Non-existent Username", func(t *testing.T) {
 		usernames := []string{"Roblox", InvalidUsername}
-		builder := users.NewUsersByUsernamesBuilder(usernames)
-		result, err := api.GetUsersByUsernames(context.Background(), builder)
-
+		builder := users.NewGetUsersByUsernamesBuilder(usernames)
+		result, err := api.GetUsersByUsernames(context.Background(), builder.Build())
 		require.NoError(t, err)
 		assert.NotNil(t, result)
 		assert.Len(t, result, 1) // Only one user should be returned

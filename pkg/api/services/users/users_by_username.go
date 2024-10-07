@@ -10,7 +10,11 @@ import (
 
 // GetUsersByUsernames fetches information for users with the given usernames.
 // POST https://users.roblox.com/v1/usernames/users
-func (s *Service) GetUsersByUsernames(ctx context.Context, b *UsersByUsernamesBuilder) ([]models.UserByUsernameResponse, error) {
+func (s *Service) GetUsersByUsernames(ctx context.Context, params GetUsersByUsernamesParams) ([]models.UserByUsernameResponse, error) {
+	if err := s.validate.Struct(params); err != nil {
+		return nil, err
+	}
+
 	var users struct {
 		Data []models.UserByUsernameResponse `json:"data"` // List of users fetched by usernames
 	}
@@ -22,8 +26,8 @@ func (s *Service) GetUsersByUsernames(ctx context.Context, b *UsersByUsernamesBu
 			Usernames          []string `json:"usernames"`
 			ExcludeBannedUsers bool     `json:"excludeBannedUsers"`
 		}{
-			Usernames:          b.usernames,
-			ExcludeBannedUsers: b.excludeBannedUsers,
+			Usernames:          params.Usernames,
+			ExcludeBannedUsers: params.ExcludeBannedUsers,
 		}).
 		JSONHeaders().
 		Do(ctx)
@@ -35,22 +39,34 @@ func (s *Service) GetUsersByUsernames(ctx context.Context, b *UsersByUsernamesBu
 	return users.Data, nil
 }
 
-// UsersByUsernamesBuilder builds parameters for GetUsersByUsernames API call.
-type UsersByUsernamesBuilder struct {
-	usernames          []string // Required: List of usernames to fetch information for
-	excludeBannedUsers bool     // Optional: Whether to exclude banned users from the result
+// GetUsersByUsernamesParams holds the parameters for fetching users by usernames.
+type GetUsersByUsernamesParams struct {
+	Usernames          []string `json:"usernames"          validate:"required,min=1,max=100"`
+	ExcludeBannedUsers bool     `json:"excludeBannedUsers"`
 }
 
-// NewUsersByUsernamesBuilder creates a new UsersByUsernamesBuilder with the given usernames.
-func NewUsersByUsernamesBuilder(usernames []string) *UsersByUsernamesBuilder {
-	return &UsersByUsernamesBuilder{
-		usernames:          usernames,
-		excludeBannedUsers: false, // Default: include banned users
+// GetUsersByUsernamesBuilder is a builder for GetUsersByUsernamesParams.
+type GetUsersByUsernamesBuilder struct {
+	params GetUsersByUsernamesParams
+}
+
+// NewGetUsersByUsernamesBuilder creates a new GetUsersByUsernamesBuilder with default values.
+func NewGetUsersByUsernamesBuilder(usernames []string) *GetUsersByUsernamesBuilder {
+	return &GetUsersByUsernamesBuilder{
+		params: GetUsersByUsernamesParams{
+			Usernames:          usernames,
+			ExcludeBannedUsers: false,
+		},
 	}
 }
 
 // ExcludeBannedUsers sets whether to exclude banned users from the result.
-func (b *UsersByUsernamesBuilder) ExcludeBannedUsers(excludeBannedUsers bool) *UsersByUsernamesBuilder {
-	b.excludeBannedUsers = excludeBannedUsers
+func (b *GetUsersByUsernamesBuilder) ExcludeBannedUsers(exclude bool) *GetUsersByUsernamesBuilder {
+	b.params.ExcludeBannedUsers = exclude
 	return b
+}
+
+// Build returns the GetUsersByUsernamesParams.
+func (b *GetUsersByUsernamesBuilder) Build() GetUsersByUsernamesParams {
+	return b.params
 }

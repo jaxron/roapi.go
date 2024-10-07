@@ -12,7 +12,7 @@ import (
 
 func TestGetFriends(t *testing.T) {
 	// Create a new test service
-	api := friends.NewService(utils.NewTestClient())
+	api := friends.NewService(utils.NewTestEnv())
 
 	// Test case: Fetch friends for a known user
 	t.Run("Fetch Known User Friends", func(t *testing.T) {

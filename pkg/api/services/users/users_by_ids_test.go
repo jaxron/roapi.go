@@ -14,32 +14,29 @@ import (
 // TestGetUsersByIDs tests the GetUsersByIDs method of the user.Service.
 func TestGetUsersByIDs(t *testing.T) {
 	// Create a new test service
-	api := users.NewService(utils.NewTestClient())
+	api := users.NewService(utils.NewTestEnv())
 
 	t.Run("Fetch Known Users", func(t *testing.T) {
 		userIDs := []uint64{1, 156} // IDs for Roblox and Builderman
 		builder := users.NewUsersByIDsBuilder(userIDs)
-		result, err := api.GetUsersByIDs(context.Background(), builder)
-
+		result, err := api.GetUsersByIDs(context.Background(), builder.Build())
 		require.NoError(t, err)
 		assert.NotNil(t, result)
 		assert.Len(t, result, 2)
 
-		// Check if the returned users match the requested IDs
 		for _, user := range result {
 			assert.Contains(t, userIDs, user.ID)
 		}
 	})
 
 	t.Run("Fetch With Non-existent User ID", func(t *testing.T) {
-		userIDs := []uint64{1, math.MaxUint64}
+		userIDs := []uint64{SampleUserID, math.MaxUint64}
 		builder := users.NewUsersByIDsBuilder(userIDs)
-		result, err := api.GetUsersByIDs(context.Background(), builder)
-
+		result, err := api.GetUsersByIDs(context.Background(), builder.Build())
 		require.NoError(t, err)
 		assert.NotNil(t, result)
 		assert.Len(t, result, 1) // Only one user should be returned
 
-		assert.Equal(t, uint64(1), result[0].ID)
+		assert.Equal(t, SampleUserID, result[0].ID)
 	})
 }

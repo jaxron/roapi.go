@@ -13,16 +13,20 @@ import (
 
 // GetFollowers fetches the paginated followers of a user.
 // GET https://friends.roblox.com/v1/users/{userID}/followers
-func (s *Service) GetFollowers(ctx context.Context, b *FollowersBuilder) (*models.FollowerPageResponse, error) {
+func (s *Service) GetFollowers(ctx context.Context, params GetFollowersParams) (*models.FollowerPageResponse, error) {
+	if err := s.validate.Struct(params); err != nil {
+		return nil, err
+	}
+
 	ctx = context.WithValue(ctx, auth.KeyAddCookie, true)
 
 	var followers models.FollowerPageResponse
 	resp, err := s.client.NewRequest().
 		Method(http.MethodGet).
-		URL(fmt.Sprintf("%s/v1/users/%d/followers", FriendsEndpoint, b.userID)).
-		Query("limit", strconv.FormatUint(b.limit, 10)).
-		Query("cursor", b.cursor).
-		Query("sortOrder", b.sortOrder).
+		URL(fmt.Sprintf("%s/v1/users/%d/followers", FriendsEndpoint, params.UserID)).
+		Query("limit", strconv.FormatUint(params.Limit, 10)).
+		Query("cursor", params.Cursor).
+		Query("sortOrder", params.SortOrder).
 		Result(&followers).
 		JSONHeaders().
 		Do(ctx)
@@ -34,44 +38,56 @@ func (s *Service) GetFollowers(ctx context.Context, b *FollowersBuilder) (*model
 	return &followers, nil
 }
 
-// FollowersBuilder builds parameters for GetFollowers API call.
-type FollowersBuilder struct {
-	userID    uint64 // Required: ID of the user to fetch followers for
-	limit     uint64 // Optional: Maximum number of results to return (default: 10)
-	cursor    string // Optional: Cursor for pagination
-	sortOrder string // Optional: Sort order for results
+// GetFollowersParams holds the parameters for getting followers.
+type GetFollowersParams struct {
+	UserID    uint64 `json:"userId"    validate:"required"`                 // Required: ID of the user to fetch followers for
+	Limit     uint64 `json:"limit"     validate:"oneof=10 18 25 50 100"`    // Optional: Maximum number of results to return (default: 10)
+	Cursor    string `json:"cursor"    validate:"omitempty,base64"`         // Optional: Cursor for pagination
+	SortOrder string `json:"sortOrder" validate:"omitempty,oneof=Asc Desc"` // Optional: Sort order for results
 }
 
-// NewFollowersBuilder creates a new FollowersBuilder with the given user ID.
-func NewFollowersBuilder(userID uint64) *FollowersBuilder {
-	return &FollowersBuilder{
-		userID:    userID,
-		limit:     10,
-		cursor:    "",
-		sortOrder: SortOrderAsc,
+// GetFollowersBuilder is a builder for GetFollowersParams.
+type GetFollowersBuilder struct {
+	params GetFollowersParams
+}
+
+// NewGetFollowersBuilder creates a new GetFollowersBuilder with default values.
+func NewGetFollowersBuilder(userID uint64) *GetFollowersBuilder {
+	return &GetFollowersBuilder{
+		params: GetFollowersParams{
+			UserID:    userID,
+			Limit:     10,
+			Cursor:    "",
+			SortOrder: "",
+		},
 	}
 }
 
-// Limit sets the maximum number of results to return.
-func (b *FollowersBuilder) Limit(limit uint64) *FollowersBuilder {
-	b.limit = limit
+// WithLimit sets the limit.
+func (b *GetFollowersBuilder) WithLimit(limit uint64) *GetFollowersBuilder {
+	b.params.Limit = limit
 	return b
 }
 
-// Cursor sets the cursor for pagination.
-func (b *FollowersBuilder) Cursor(cursor string) *FollowersBuilder {
-	b.cursor = cursor
+// WithCursor sets the cursor.
+func (b *GetFollowersBuilder) WithCursor(cursor string) *GetFollowersBuilder {
+	b.params.Cursor = cursor
 	return b
 }
 
-// SortOrderAsc sets the sort order for results to ascending.
-func (b *FollowersBuilder) SortOrderAsc(sortOrder string) *FollowersBuilder {
-	b.sortOrder = SortOrderAsc
+// WithSortOrderAsc sets the sort order to ascending.
+func (b *GetFollowersBuilder) WithSortOrderAsc() *GetFollowersBuilder {
+	b.params.SortOrder = SortOrderAsc
 	return b
 }
 
-// SortOrderDesc sets the sort order for results to descending.
-func (b *FollowersBuilder) SortOrderDesc(sortOrder string) *FollowersBuilder {
-	b.sortOrder = SortOrderDesc
+// WithSortOrderDesc sets the sort order to descending.
+func (b *GetFollowersBuilder) WithSortOrderDesc() *GetFollowersBuilder {
+	b.params.SortOrder = SortOrderDesc
 	return b
+}
+
+// Build returns the GetFollowersParams.
+func (b *GetFollowersBuilder) Build() GetFollowersParams {
+	return b.params
 }

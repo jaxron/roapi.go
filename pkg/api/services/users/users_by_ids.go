@@ -10,7 +10,11 @@ import (
 
 // GetUsersByIDs fetches information for users with the given IDs.
 // POST https://users.roblox.com/v1/users
-func (s *Service) GetUsersByIDs(ctx context.Context, b *UsersByIDsBuilder) ([]models.VerifiedBadgeUserResponse, error) {
+func (s *Service) GetUsersByIDs(ctx context.Context, params UsersByIDsParams) ([]models.VerifiedBadgeUserResponse, error) {
+	if err := s.validate.Struct(params); err != nil {
+		return nil, err
+	}
+
 	var users struct {
 		Data []models.VerifiedBadgeUserResponse `json:"data"` // List of users fetched by user IDs
 	}
@@ -18,13 +22,7 @@ func (s *Service) GetUsersByIDs(ctx context.Context, b *UsersByIDsBuilder) ([]mo
 		Method(http.MethodPost).
 		URL(UsersEndpoint + "/v1/users").
 		Result(&users).
-		MarshalBody(struct {
-			UserIds            []uint64 `json:"userIds"`
-			ExcludeBannedUsers bool     `json:"excludeBannedUsers"`
-		}{
-			UserIds:            b.userIds,
-			ExcludeBannedUsers: b.excludeBannedUsers,
-		}).
+		MarshalBody(params).
 		JSONHeaders().
 		Do(ctx)
 	if err != nil {
@@ -35,22 +33,34 @@ func (s *Service) GetUsersByIDs(ctx context.Context, b *UsersByIDsBuilder) ([]mo
 	return users.Data, nil
 }
 
+// UsersByIDsParams holds the parameters for fetching users by IDs.
+type UsersByIDsParams struct {
+	UserIDs            []uint64 `json:"userIds"            validate:"required,min=1,max=100"`
+	ExcludeBannedUsers bool     `json:"excludeBannedUsers"`
+}
+
 // UsersByIDsBuilder builds parameters for GetUsersByIDs API call.
 type UsersByIDsBuilder struct {
-	userIds            []uint64 // Required: List of user IDs to fetch information for
-	excludeBannedUsers bool     // Optional: Whether to exclude banned users from the result
+	params UsersByIDsParams
 }
 
 // NewUsersByIDsBuilder creates a new UsersByIDsBuilder with the given user IDs.
-func NewUsersByIDsBuilder(userIds []uint64) *UsersByIDsBuilder {
+func NewUsersByIDsBuilder(userIDs []uint64) *UsersByIDsBuilder {
 	return &UsersByIDsBuilder{
-		userIds:            userIds,
-		excludeBannedUsers: false, // Default: include banned users
+		params: UsersByIDsParams{
+			UserIDs:            userIDs,
+			ExcludeBannedUsers: false, // Default: include banned users
+		},
 	}
 }
 
 // ExcludeBannedUsers sets whether to exclude banned users from the result.
-func (b *UsersByIDsBuilder) ExcludeBannedUsers(excludeBannedUsers bool) *UsersByIDsBuilder {
-	b.excludeBannedUsers = excludeBannedUsers
+func (b *UsersByIDsBuilder) ExcludeBannedUsers(exclude bool) *UsersByIDsBuilder {
+	b.params.ExcludeBannedUsers = exclude
 	return b
+}
+
+// Build returns the UsersByIDsParams.
+func (b *UsersByIDsBuilder) Build() UsersByIDsParams {
+	return b.params
 }

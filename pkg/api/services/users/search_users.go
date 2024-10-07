@@ -11,14 +11,18 @@ import (
 
 // SearchUsers searches for a user with the given username.
 // GET https://users.roblox.com/v1/users/search
-func (s *Service) SearchUsers(ctx context.Context, b *SearchUsersBuilder) (*models.UserSearchPageResponse, error) {
+func (s *Service) SearchUsers(ctx context.Context, params SearchUsersParams) (*models.UserSearchPageResponse, error) {
+	if err := s.validate.Struct(params); err != nil {
+		return nil, err
+	}
+
 	var result models.UserSearchPageResponse
 	resp, err := s.client.NewRequest().
 		Method(http.MethodGet).
 		URL(UsersEndpoint+"/v1/users/search").
-		Query("keyword", b.username).
-		Query("limit", strconv.FormatUint(b.limit, 10)).
-		Query("cursor", b.cursor).
+		Query("keyword", params.Username).
+		Query("limit", strconv.FormatUint(params.Limit, 10)).
+		Query("cursor", params.Cursor).
 		Result(&result).
 		JSONHeaders().
 		Do(ctx)
@@ -30,30 +34,42 @@ func (s *Service) SearchUsers(ctx context.Context, b *SearchUsersBuilder) (*mode
 	return &result, nil
 }
 
-// SearchUsersBuilder builds parameters for SearchUsers API call.
-type SearchUsersBuilder struct {
-	username string // Required: Username to search for
-	limit    uint64 // Optional: Maximum number of results to return (default: 10)
-	cursor   string // Optional: Cursor for pagination
+// SearchUsersParams holds the parameters for searching users.
+type SearchUsersParams struct {
+	Username string `json:"username" validate:"required"`           // Required: Username to search for
+	Limit    uint64 `json:"limit"    validate:"oneof=10 25 50 100"` // Optional: Maximum number of results to return (default: 10)
+	Cursor   string `json:"cursor"   validate:"omitempty,base64"`   // Optional: Cursor for pagination
 }
 
-// NewSearchUsersBuilder creates a new SearchUsersBuilder with the given username.
+// SearchUsersBuilder is a builder for SearchUsersParams.
+type SearchUsersBuilder struct {
+	params SearchUsersParams
+}
+
+// NewSearchUsersBuilder creates a new SearchUsersBuilder with default values.
 func NewSearchUsersBuilder(username string) *SearchUsersBuilder {
 	return &SearchUsersBuilder{
-		username: username,
-		limit:    DefaultLimit,
-		cursor:   "",
+		params: SearchUsersParams{
+			Username: username,
+			Limit:    10,
+			Cursor:   "",
+		},
 	}
 }
 
-// Limit sets the maximum number of results to return.
-func (b *SearchUsersBuilder) Limit(limit uint64) *SearchUsersBuilder {
-	b.limit = limit
+// WithLimit sets the maximum number of results to return.
+func (b *SearchUsersBuilder) WithLimit(limit uint64) *SearchUsersBuilder {
+	b.params.Limit = limit
 	return b
 }
 
-// Cursor sets the cursor for pagination.
-func (b *SearchUsersBuilder) Cursor(cursor string) *SearchUsersBuilder {
-	b.cursor = cursor
+// WithCursor sets the cursor for pagination.
+func (b *SearchUsersBuilder) WithCursor(cursor string) *SearchUsersBuilder {
+	b.params.Cursor = cursor
 	return b
+}
+
+// Build returns the SearchUsersParams.
+func (b *SearchUsersBuilder) Build() SearchUsersParams {
+	return b.params
 }

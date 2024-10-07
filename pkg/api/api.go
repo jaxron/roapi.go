@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/go-playground/validator/v10"
 	"github.com/jaxron/axonet/pkg/client"
 	"github.com/jaxron/roapi.go/internal/middleware/auth"
 	"github.com/jaxron/roapi.go/pkg/api/services/friends"
@@ -22,11 +23,12 @@ func New(cookies []string, opts ...client.Option) *API {
 		opts,
 		client.WithMiddleware(auth.New(cookies)),
 	)...)
+	v := validator.New(validator.WithRequiredStructEnabled())
 
 	return &API{
 		client:  c,
-		users:   users.NewService(c),
-		friends: friends.NewService(c),
+		users:   users.NewService(c, v),
+		friends: friends.NewService(c, v),
 	}
 }
 

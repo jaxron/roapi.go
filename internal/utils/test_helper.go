@@ -9,7 +9,9 @@ import (
 	"os"
 	"strings"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/jaxron/axonet/middleware/proxy"
+	"github.com/jaxron/axonet/middleware/retry"
 	"github.com/jaxron/axonet/pkg/client"
 	"github.com/jaxron/axonet/pkg/client/logger"
 	"github.com/jaxron/roapi.go/internal/middleware/auth"
@@ -26,9 +28,9 @@ const (
 	ExpectedProxyParts = 4
 )
 
-// NewTestClient creates a new client.Client instance for testing purposes.
+// NewTestEnv creates a new client.Client instance and a validator.Validate for testing purposes.
 // It sets up the client with proxies and cookies based on environment variables.
-func NewTestClient(opts ...client.Option) *client.Client {
+func NewTestEnv(opts ...client.Option) (*client.Client, *validator.Validate) {
 	// Use a basic logger for testing
 	logger := logger.NewBasicLogger()
 
@@ -47,11 +49,12 @@ func NewTestClient(opts ...client.Option) *client.Client {
 	// Create and return a new client with the specified options
 	return client.NewClient(
 		append([]client.Option{
+			client.WithMiddleware(retry.New(1, 1000, 5000)),
 			client.WithMiddleware(auth.New(cookies)),
 			client.WithMiddleware(proxy.New(proxies)),
 			client.WithLogger(logger),
 		}, opts...)...,
-	)
+	), validator.New(validator.WithRequiredStructEnabled())
 }
 
 // getProxiesFromEnv loads the proxies from the file specified in the ROAPI_PROXIES_FILE environment variable.

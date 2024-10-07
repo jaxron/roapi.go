@@ -13,20 +13,18 @@ import (
 // TestGetFriendCount tests the GetFriendCount method of the friends.Service.
 func TestGetFriendCount(t *testing.T) {
 	// Create a new test service
-	api := friends.NewService(utils.NewTestClient())
+	api := friends.NewService(utils.NewTestEnv())
 
 	// Test case: Fetch friend count for a known user
 	t.Run("Fetch Known User Friend Count", func(t *testing.T) {
-		userID := uint64(SampleUserID)
-		count, err := api.GetFriendCount(context.Background(), userID)
+		count, err := api.GetFriendCount(context.Background(), SampleUserID)
 		require.NoError(t, err)
 		assert.NotZero(t, count)
 	})
 
 	// Test case: Attempt to fetch friend count for a non-existent user
 	t.Run("Fetch Non-existent User Friend Count", func(t *testing.T) {
-		userID := InvalidUserID
-		count, err := api.GetFriendCount(context.Background(), userID)
+		count, err := api.GetFriendCount(context.Background(), InvalidUserID)
 		require.Error(t, err)
 		assert.Zero(t, count)
 	})
