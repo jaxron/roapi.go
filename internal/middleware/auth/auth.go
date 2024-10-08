@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/jaxron/axonet/pkg/client/logger"
 	"github.com/jaxron/axonet/pkg/client/middleware"
@@ -22,25 +24,33 @@ var (
 	ErrTokenNotFound = errors.New("CSRF token not found")
 )
 
-// AuthMiddleware manages cookie rotation for HTTP requests.
+// AuthMiddleware manages cookie rotation and CSRF token caching for HTTP requests.
 type AuthMiddleware struct {
-	cookies atomic.Value
-	current atomic.Uint64
-	logger  logger.Logger
-}
-
-type cookieState struct {
-	cookies []string
+	cookies      []string
+	cookieCount  int
+	cookiesMux   sync.RWMutex
+	current      atomic.Uint64
+	csrfToken    string
+	csrfTokenExp time.Time
+	csrfTokenMux sync.RWMutex
+	logger       logger.Logger
+	now          func() time.Time
 }
 
 // New creates a new AuthMiddleware instance.
 func New(cookies []string) *AuthMiddleware {
 	m := &AuthMiddleware{
-		cookies: atomic.Value{},
-		current: atomic.Uint64{},
-		logger:  &logger.NoOpLogger{},
+		cookies:      cookies,
+		current:      atomic.Uint64{},
+		cookieCount:  len(cookies),
+		cookiesMux:   sync.RWMutex{},
+		csrfToken:    "",
+		csrfTokenExp: time.Time{},
+		csrfTokenMux: sync.RWMutex{},
+		logger:       &logger.NoOpLogger{},
+		now:          time.Now,
 	}
-	m.cookies.Store(&cookieState{cookies: cookies})
+	m.current.Store(0)
 	return m
 }
 
@@ -68,16 +78,18 @@ func (m *AuthMiddleware) Process(ctx context.Context, httpClient *http.Client, r
 }
 
 func (m *AuthMiddleware) getAndValidateCookie() (string, error) {
-	state := m.cookies.Load().(*cookieState)
-	if len(state.cookies) == 0 {
+	m.cookiesMux.RLock()
+	defer m.cookiesMux.RUnlock()
+
+	if m.cookieCount == 0 {
 		return "", ErrNoCookie
 	}
 
 	m.logger.Debug("Processing request with cookie middleware")
 
 	current := m.current.Add(1) - 1
-	index := int(current % uint64(len(state.cookies))) // #nosec G115
-	return state.cookies[index], nil
+	index := current % uint64(m.cookieCount) // #nosec G115
+	return m.cookies[index], nil
 }
 
 func (m *AuthMiddleware) applyCookieAndToken(ctx context.Context, httpClient *http.Client, req *http.Request, cookie string, isCookieEnabled, isTokenEnabled bool) error {
@@ -98,9 +110,32 @@ func (m *AuthMiddleware) applyCookieAndToken(ctx context.Context, httpClient *ht
 	return nil
 }
 
-// getCSRFToken sends a POST request to generate a new CSRF token.
+// getCSRFToken retrieves a valid CSRF token, either from cache or by making a new request.
 func (m *AuthMiddleware) getCSRFToken(ctx context.Context, httpClient *http.Client, cookie string) (string, error) {
-	// Create a new request
+	m.csrfTokenMux.RLock()
+	csrfToken := m.csrfToken
+	csrfTokenExp := m.csrfTokenExp
+	m.csrfTokenMux.RUnlock()
+
+	// Return cached token if it's still valid
+	if csrfToken != "" && m.now().Before(csrfTokenExp) {
+		return csrfToken, nil
+	}
+
+	// Otherwise, refresh the token
+	token, err := m.refreshCSRFToken(ctx, httpClient, cookie)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
+}
+
+// refreshCSRFToken sends a POST request to generate a new CSRF token and caches it.
+func (m *AuthMiddleware) refreshCSRFToken(ctx context.Context, httpClient *http.Client, cookie string) (string, error) {
+	m.csrfTokenMux.Lock()
+	defer m.csrfTokenMux.Unlock()
+
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, "https://auth.roblox.com/v2/logout", nil)
 	if err != nil {
 		return "", err
@@ -122,25 +157,37 @@ func (m *AuthMiddleware) getCSRFToken(ctx context.Context, httpClient *http.Clie
 		return "", ErrTokenNotFound
 	}
 
+	// Cache the new token
+	m.csrfToken = csrfToken
+	m.csrfTokenExp = m.now().Add(5 * time.Minute)
+
 	return csrfToken, nil
 }
 
 // UpdateCookies updates the list of cookies at runtime.
 func (m *AuthMiddleware) UpdateCookies(cookies []string) {
-	newState := &cookieState{cookies: cookies}
-	m.cookies.Store(newState)
-	m.current.Store(0)
+	m.cookiesMux.Lock()
+	defer m.cookiesMux.Unlock()
 
+	m.cookies = cookies
+	m.current.Store(0)
+	m.cookieCount = len(cookies)
 	m.logger.WithFields(logger.Int("cookies", len(cookies))).Debug("Cookies updated")
 }
 
 // GetCookieCount returns the current number of cookies in the list.
 func (m *AuthMiddleware) GetCookieCount() int {
-	state := m.cookies.Load().(*cookieState)
-	return len(state.cookies)
+	m.cookiesMux.RLock()
+	defer m.cookiesMux.RUnlock()
+	return m.cookieCount
 }
 
 // SetLogger sets the logger for the middleware.
 func (m *AuthMiddleware) SetLogger(l logger.Logger) {
 	m.logger = l
+}
+
+// SetNowFunc sets a custom function for getting the current time (useful for testing).
+func (m *AuthMiddleware) SetNowFunc(f func() time.Time) {
+	m.now = f
 }
