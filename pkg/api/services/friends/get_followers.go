@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/jaxron/roapi.go/internal/middleware/auth"
 	"github.com/jaxron/roapi.go/pkg/api/errors"
 	"github.com/jaxron/roapi.go/pkg/api/types"
 )
@@ -17,8 +16,6 @@ func (s *Service) GetFollowers(ctx context.Context, p GetFollowersParams) (*type
 	if err := s.validate.Struct(p); err != nil {
 		return nil, err
 	}
-
-	ctx = context.WithValue(ctx, auth.KeyAddCookie, true)
 
 	var followers types.FollowerPageResponse
 	resp, err := s.client.NewRequest().
