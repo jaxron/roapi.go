@@ -26,6 +26,18 @@ type UserResponse struct {
 	IsDeleted              bool      `json:"isDeleted"`              // Whether the friend account is deleted
 }
 
+// UserPresenceResponse represents the structure of friend information returned by the Roblox API.
+type UserPresenceResponse struct {
+	UserPresenceType string    `json:"userPresenceType"` // Type of user presence
+	UserLocationType string    `json:"userLocationType"` // Type of user location
+	LastLocation     string    `json:"lastLocation"`     // Last location of the user
+	PlaceID          *uint64   `json:"placeId"`          // Place ID the user is in
+	RootPlaceID      *uint64   `json:"rootPlaceId"`      // Root place ID the user is in
+	GameInstanceID   *string   `json:"gameInstanceId"`   // Game instance ID the user is in
+	UniverseID       *uint64   `json:"universeId"`       // Universe ID the user is in
+	LastOnline       time.Time `json:"lastOnline"`       // Last online time of the user
+}
+
 // FriendPageResponse represents the structure of a user's friend list returned by the Roblox API.
 type FriendPageResponse struct {
 	PreviousCursor *string          `json:"previousCursor"` // Cursor for the previous page of results (if any)
@@ -38,4 +50,12 @@ type FriendPageResponse struct {
 type FriendResponse struct {
 	ID               uint64 `json:"id"`               // Unique identifier for the friend
 	HasVerifiedBadge bool   `json:"hasVerifiedBadge"` // Whether the friend has a verified badge
+}
+
+// OnlineFriendResponse represents the structure of friend information returned by the Roblox API.
+type OnlineFriendResponse struct {
+	ID           uint64               `json:"id"`           // Unique identifier for the friend
+	Name         string               `json:"name"`         // Username of the friend
+	DisplayName  string               `json:"displayName"`  // Display name of the friend
+	UserPresence UserPresenceResponse `json:"userPresence"` // User presence information
 }

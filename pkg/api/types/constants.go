@@ -11,3 +11,12 @@ const (
 	SortOrderAsc  = "Asc"
 	SortOrderDesc = "Desc"
 )
+
+// Constants for user presence types.
+const (
+	UserPresenceTypeOnline string = "Online"
+	UserPresenceTypeInGame string = "InGame"
+
+	UserLocationTypePage string = "Page"
+	UserLocationTypeGame string = "Game"
+)
