@@ -23,7 +23,6 @@ func (s *Service) GetUsersByIDs(ctx context.Context, params UsersByIDsParams) ([
 		URL(UsersEndpoint + "/v1/users").
 		Result(&users).
 		MarshalBody(params).
-		JSONHeaders().
 		Do(ctx)
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)

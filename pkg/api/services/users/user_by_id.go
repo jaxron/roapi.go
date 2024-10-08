@@ -17,7 +17,6 @@ func (s *Service) GetUserByID(ctx context.Context, userID uint64) (*models.UserB
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v1/users/%d", UsersEndpoint, userID)).
 		Result(&user).
-		JSONHeaders().
 		Do(ctx)
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)

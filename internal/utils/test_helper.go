@@ -15,6 +15,7 @@ import (
 	"github.com/jaxron/axonet/pkg/client"
 	"github.com/jaxron/axonet/pkg/client/logger"
 	"github.com/jaxron/roapi.go/internal/middleware/auth"
+	"github.com/jaxron/roapi.go/internal/middleware/jsonheader"
 )
 
 var (
@@ -52,6 +53,7 @@ func NewTestEnv(opts ...client.Option) (*client.Client, *validator.Validate) {
 			client.WithMiddleware(retry.New(1, 1000, 5000)),
 			client.WithMiddleware(auth.New(cookies)),
 			client.WithMiddleware(proxy.New(proxies)),
+			client.WithMiddleware(jsonheader.New()),
 			client.WithLogger(logger),
 		}, opts...)...,
 	), validator.New(validator.WithRequiredStructEnabled())

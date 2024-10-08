@@ -19,7 +19,6 @@ func (s *Service) GetFriends(ctx context.Context, userID uint64) ([]models.UserR
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v1/users/%d/friends", FriendsEndpoint, userID)).
 		Result(&friends).
-		JSONHeaders().
 		Do(ctx)
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)

@@ -18,7 +18,6 @@ func (s *Service) GetFollowerCount(ctx context.Context, userID uint64) (uint64, 
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v1/users/%d/followers/count", FriendsEndpoint, userID)).
 		Result(&count).
-		JSONHeaders().
 		Do(ctx)
 	if err != nil {
 		return 0, errors.HandleAPIError(resp, err)

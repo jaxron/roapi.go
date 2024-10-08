@@ -24,7 +24,6 @@ func (s *Service) SearchUsers(ctx context.Context, params SearchUsersParams) (*m
 		Query("limit", strconv.FormatUint(params.Limit, 10)).
 		Query("cursor", params.Cursor).
 		Result(&result).
-		JSONHeaders().
 		Do(ctx)
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)

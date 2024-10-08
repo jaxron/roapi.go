@@ -28,7 +28,6 @@ func (s *Service) GetFollowers(ctx context.Context, params GetFollowersParams) (
 		Query("cursor", params.Cursor).
 		Query("sortOrder", params.SortOrder).
 		Result(&followers).
-		JSONHeaders().
 		Do(ctx)
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)

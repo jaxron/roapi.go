@@ -19,7 +19,6 @@ func (s *Service) GetAuthUserInfo(ctx context.Context) (*models.AuthUserResponse
 		Method(http.MethodGet).
 		URL(UsersEndpoint + "/v1/users/authenticated").
 		Result(&user).
-		JSONHeaders().
 		Do(ctx)
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)

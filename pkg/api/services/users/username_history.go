@@ -25,7 +25,6 @@ func (s *Service) GetUsernameHistory(ctx context.Context, params UsernameHistory
 		Query("sortOrder", params.SortOrder).
 		Query("cursor", params.Cursor).
 		Result(&history).
-		JSONHeaders().
 		Do(ctx)
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)

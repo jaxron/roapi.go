@@ -29,7 +29,6 @@ func (s *Service) GetUsersByUsernames(ctx context.Context, params GetUsersByUser
 			Usernames:          params.Usernames,
 			ExcludeBannedUsers: params.ExcludeBannedUsers,
 		}).
-		JSONHeaders().
 		Do(ctx)
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)

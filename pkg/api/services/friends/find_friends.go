@@ -28,7 +28,6 @@ func (s *Service) FindFriends(ctx context.Context, params FindFriendsParams) (*m
 		Query("cursor", params.Cursor).
 		Query("limit", strconv.FormatUint(params.Limit, 10)).
 		Result(&friends).
-		JSONHeaders().
 		Do(ctx)
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
