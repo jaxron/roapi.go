@@ -17,7 +17,7 @@ func TestGetUsersByIDs(t *testing.T) {
 	api := users.NewService(utils.NewTestEnv())
 
 	t.Run("Fetch Known Users", func(t *testing.T) {
-		userIDs := []uint64{1, 156} // IDs for Roblox and Builderman
+		userIDs := []uint64{utils.SampleUserID4, utils.SampleUserID5}
 		builder := users.NewUsersByIDsBuilder(userIDs)
 		result, err := api.GetUsersByIDs(context.Background(), builder.Build())
 		require.NoError(t, err)
@@ -30,13 +30,13 @@ func TestGetUsersByIDs(t *testing.T) {
 	})
 
 	t.Run("Fetch With Non-existent User ID", func(t *testing.T) {
-		userIDs := []uint64{SampleUserID, math.MaxUint64}
+		userIDs := []uint64{utils.SampleUserID1, math.MaxUint64}
 		builder := users.NewUsersByIDsBuilder(userIDs)
 		result, err := api.GetUsersByIDs(context.Background(), builder.Build())
 		require.NoError(t, err)
 		assert.NotNil(t, result)
 		assert.Len(t, result, 1) // Only one user should be returned
 
-		assert.Equal(t, SampleUserID, result[0].ID)
+		assert.Equal(t, utils.SampleUserID1, result[0].ID)
 	})
 }

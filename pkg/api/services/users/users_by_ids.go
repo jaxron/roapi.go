@@ -10,8 +10,8 @@ import (
 
 // GetUsersByIDs fetches information for users with the given IDs.
 // POST https://users.roblox.com/v1/users
-func (s *Service) GetUsersByIDs(ctx context.Context, params UsersByIDsParams) ([]models.VerifiedBadgeUserResponse, error) {
-	if err := s.validate.Struct(params); err != nil {
+func (s *Service) GetUsersByIDs(ctx context.Context, p UsersByIDsParams) ([]models.VerifiedBadgeUserResponse, error) {
+	if err := s.validate.Struct(p); err != nil {
 		return nil, err
 	}
 
@@ -22,7 +22,7 @@ func (s *Service) GetUsersByIDs(ctx context.Context, params UsersByIDsParams) ([
 		Method(http.MethodPost).
 		URL(UsersEndpoint + "/v1/users").
 		Result(&users).
-		MarshalBody(params).
+		MarshalBody(p).
 		Do(ctx)
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)

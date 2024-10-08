@@ -11,8 +11,8 @@ import (
 
 // SearchUsers searches for a user with the given username.
 // GET https://users.roblox.com/v1/users/search
-func (s *Service) SearchUsers(ctx context.Context, params SearchUsersParams) (*models.UserSearchPageResponse, error) {
-	if err := s.validate.Struct(params); err != nil {
+func (s *Service) SearchUsers(ctx context.Context, p SearchUsersParams) (*models.UserSearchPageResponse, error) {
+	if err := s.validate.Struct(p); err != nil {
 		return nil, err
 	}
 
@@ -20,9 +20,9 @@ func (s *Service) SearchUsers(ctx context.Context, params SearchUsersParams) (*m
 	resp, err := s.client.NewRequest().
 		Method(http.MethodGet).
 		URL(UsersEndpoint+"/v1/users/search").
-		Query("keyword", params.Username).
-		Query("limit", strconv.FormatUint(params.Limit, 10)).
-		Query("cursor", params.Cursor).
+		Query("keyword", p.Username).
+		Query("limit", strconv.FormatUint(p.Limit, 10)).
+		Query("cursor", p.Cursor).
 		Result(&result).
 		Do(ctx)
 	if err != nil {

@@ -13,8 +13,8 @@ import (
 
 // GetFollowers fetches the paginated followers of a user.
 // GET https://friends.roblox.com/v1/users/{userID}/followers
-func (s *Service) GetFollowers(ctx context.Context, params GetFollowersParams) (*models.FollowerPageResponse, error) {
-	if err := s.validate.Struct(params); err != nil {
+func (s *Service) GetFollowers(ctx context.Context, p GetFollowersParams) (*models.FollowerPageResponse, error) {
+	if err := s.validate.Struct(p); err != nil {
 		return nil, err
 	}
 
@@ -23,10 +23,10 @@ func (s *Service) GetFollowers(ctx context.Context, params GetFollowersParams) (
 	var followers models.FollowerPageResponse
 	resp, err := s.client.NewRequest().
 		Method(http.MethodGet).
-		URL(fmt.Sprintf("%s/v1/users/%d/followers", FriendsEndpoint, params.UserID)).
-		Query("limit", strconv.FormatUint(params.Limit, 10)).
-		Query("cursor", params.Cursor).
-		Query("sortOrder", params.SortOrder).
+		URL(fmt.Sprintf("%s/v1/users/%d/followers", FriendsEndpoint, p.UserID)).
+		Query("limit", strconv.FormatUint(p.Limit, 10)).
+		Query("cursor", p.Cursor).
+		Query("sortOrder", p.SortOrder).
 		Result(&followers).
 		Do(ctx)
 	if err != nil {

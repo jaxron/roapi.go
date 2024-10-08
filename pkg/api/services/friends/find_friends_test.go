@@ -16,16 +16,16 @@ func TestFindFriends(t *testing.T) {
 
 	// Test case: Find friends for a known user
 	t.Run("Find Known User Friends", func(t *testing.T) {
-		builder := friends.NewFindFriendsBuilder(SampleUserID)
+		builder := friends.NewFindFriendsBuilder(utils.SampleUserID1)
 		friends, err := api.FindFriends(context.Background(), builder.Build())
 		require.NoError(t, err)
 		assert.NotNil(t, friends)
-		assert.NotEmpty(t, friends.PageItems)
+		assert.Len(t, friends.PageItems, 2)
 	})
 
 	// Test case: Attempt to find friends for a non-existent user
 	t.Run("Find Non-existent User Friends", func(t *testing.T) {
-		builder := friends.NewFindFriendsBuilder(InvalidUserID)
+		builder := friends.NewFindFriendsBuilder(utils.InvalidUserID)
 		friends, err := api.FindFriends(context.Background(), builder.Build())
 		require.Error(t, err)
 		assert.Nil(t, friends)
@@ -33,7 +33,7 @@ func TestFindFriends(t *testing.T) {
 
 	// Test case: Validate with invalid UserSort
 	t.Run("Invalid UserSort", func(t *testing.T) {
-		builder := friends.NewFindFriendsBuilder(SampleUserID).WithUserSort(3)
+		builder := friends.NewFindFriendsBuilder(utils.SampleUserID1).WithUserSort(3)
 		_, err := api.FindFriends(context.Background(), builder.Build())
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "UserSort")
@@ -41,7 +41,7 @@ func TestFindFriends(t *testing.T) {
 
 	// Test case: Validate with invalid Limit
 	t.Run("Invalid Limit", func(t *testing.T) {
-		builder := friends.NewFindFriendsBuilder(SampleUserID).WithLimit(100)
+		builder := friends.NewFindFriendsBuilder(utils.SampleUserID1).WithLimit(100)
 		_, err := api.FindFriends(context.Background(), builder.Build())
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "Limit")
@@ -49,13 +49,13 @@ func TestFindFriends(t *testing.T) {
 
 	// Test case: Valid parameters with all fields set
 	t.Run("Valid Parameters", func(t *testing.T) {
-		builder := friends.NewFindFriendsBuilder(SampleUserID).
+		builder := friends.NewFindFriendsBuilder(utils.SampleUserID1).
 			WithUserSort(1).
 			WithLimit(20).
 			WithCursor("someCursor")
 
 		params := builder.Build()
-		assert.Equal(t, uint64(SampleUserID), params.UserID)
+		assert.Equal(t, uint64(utils.SampleUserID1), params.UserID)
 		assert.Equal(t, uint64(1), params.UserSort)
 		assert.Equal(t, uint64(20), params.Limit)
 		assert.Equal(t, "someCursor", params.Cursor)

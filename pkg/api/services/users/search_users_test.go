@@ -17,8 +17,7 @@ func TestSearchUsers(t *testing.T) {
 
 	// Test case: Search for a known user
 	t.Run("Search Known User", func(t *testing.T) {
-		username := "Roblox"
-		builder := users.NewSearchUsersBuilder(username)
+		builder := users.NewSearchUsersBuilder(utils.SampleUsername4)
 		res, err := api.SearchUsers(context.Background(), builder.Build())
 		require.NoError(t, err)
 		assert.NotNil(t, res)
@@ -28,12 +27,12 @@ func TestSearchUsers(t *testing.T) {
 
 		user := res.Data[0]
 		assert.Equal(t, uint64(1), user.ID)
-		assert.Equal(t, username, user.Name)
+		assert.Equal(t, utils.SampleUsername4, user.Name)
 	})
 
 	// Test case: Search for a non-existent user
 	t.Run("Search Non-existent User", func(t *testing.T) {
-		username := InvalidUsername
+		username := utils.InvalidUsername
 		builder := users.NewSearchUsersBuilder(username)
 
 		res, err := api.SearchUsers(context.Background(), builder.Build())

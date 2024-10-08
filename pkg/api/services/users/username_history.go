@@ -12,18 +12,18 @@ import (
 
 // GetUsernameHistory fetches the username history for a user.
 // GET https://users.roblox.com/v1/users/{userID}/username-history
-func (s *Service) GetUsernameHistory(ctx context.Context, params UsernameHistoryParams) (*models.UsernameHistoryPageResponse, error) {
-	if err := s.validate.Struct(params); err != nil {
+func (s *Service) GetUsernameHistory(ctx context.Context, p UsernameHistoryParams) (*models.UsernameHistoryPageResponse, error) {
+	if err := s.validate.Struct(p); err != nil {
 		return nil, err
 	}
 
 	var history models.UsernameHistoryPageResponse
 	resp, err := s.client.NewRequest().
 		Method(http.MethodGet).
-		URL(fmt.Sprintf("%s/v1/users/%d/username-history", UsersEndpoint, params.UserID)).
-		Query("limit", strconv.FormatUint(params.Limit, 10)).
-		Query("sortOrder", params.SortOrder).
-		Query("cursor", params.Cursor).
+		URL(fmt.Sprintf("%s/v1/users/%d/username-history", UsersEndpoint, p.UserID)).
+		Query("limit", strconv.FormatUint(p.Limit, 10)).
+		Query("sortOrder", p.SortOrder).
+		Query("cursor", p.Cursor).
 		Result(&history).
 		Do(ctx)
 	if err != nil {

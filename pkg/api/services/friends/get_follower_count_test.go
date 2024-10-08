@@ -17,14 +17,14 @@ func TestGetFollowerCount(t *testing.T) {
 
 	// Test case: Fetch follower count for a known user
 	t.Run("Fetch Known User Follower Count", func(t *testing.T) {
-		count, err := api.GetFollowerCount(context.Background(), SampleUserID)
+		count, err := api.GetFollowerCount(context.Background(), utils.SampleUserID1)
 		require.NoError(t, err)
 		assert.NotZero(t, count)
 	})
 
 	// Test case: Attempt to fetch follower count for a non-existent user
 	t.Run("Fetch Non-existent User Follower Count", func(t *testing.T) {
-		count, err := api.GetFollowerCount(context.Background(), InvalidUserID)
+		count, err := api.GetFollowerCount(context.Background(), utils.InvalidUserID)
 		require.Error(t, err)
 		assert.Zero(t, count)
 	})

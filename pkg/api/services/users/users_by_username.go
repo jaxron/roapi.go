@@ -10,8 +10,8 @@ import (
 
 // GetUsersByUsernames fetches information for users with the given usernames.
 // POST https://users.roblox.com/v1/usernames/users
-func (s *Service) GetUsersByUsernames(ctx context.Context, params GetUsersByUsernamesParams) ([]models.UserByUsernameResponse, error) {
-	if err := s.validate.Struct(params); err != nil {
+func (s *Service) GetUsersByUsernames(ctx context.Context, p GetUsersByUsernamesParams) ([]models.UserByUsernameResponse, error) {
+	if err := s.validate.Struct(p); err != nil {
 		return nil, err
 	}
 
@@ -26,8 +26,8 @@ func (s *Service) GetUsersByUsernames(ctx context.Context, params GetUsersByUser
 			Usernames          []string `json:"usernames"`
 			ExcludeBannedUsers bool     `json:"excludeBannedUsers"`
 		}{
-			Usernames:          params.Usernames,
-			ExcludeBannedUsers: params.ExcludeBannedUsers,
+			Usernames:          p.Usernames,
+			ExcludeBannedUsers: p.ExcludeBannedUsers,
 		}).
 		Do(ctx)
 	if err != nil {

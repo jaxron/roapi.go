@@ -13,8 +13,8 @@ import (
 
 // SearchFriends fetches the paginated list of friends for a user.
 // GET https://friends.roblox.com/v1/users/{userID}/friends/search
-func (s *Service) SearchFriends(ctx context.Context, params SearchFriendsParams) (*models.FriendPageResponse, error) {
-	if err := s.validate.Struct(params); err != nil {
+func (s *Service) SearchFriends(ctx context.Context, p SearchFriendsParams) (*models.FriendPageResponse, error) {
+	if err := s.validate.Struct(p); err != nil {
 		return nil, err
 	}
 
@@ -23,10 +23,10 @@ func (s *Service) SearchFriends(ctx context.Context, params SearchFriendsParams)
 	var friends models.FriendPageResponse
 	resp, err := s.client.NewRequest().
 		Method(http.MethodGet).
-		URL(fmt.Sprintf("%s/v1/users/%d/friends/search", FriendsEndpoint, params.UserID)).
-		Query("query", params.Query).
-		Query("cursor", params.Cursor).
-		Query("limit", strconv.FormatUint(params.Limit, 10)).
+		URL(fmt.Sprintf("%s/v1/users/%d/friends/search", FriendsEndpoint, p.UserID)).
+		Query("query", p.Query).
+		Query("cursor", p.Cursor).
+		Query("limit", strconv.FormatUint(p.Limit, 10)).
 		Result(&friends).
 		Do(ctx)
 	if err != nil {

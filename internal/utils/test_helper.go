@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"math"
 	"net"
 	"net/url"
 	"os"
@@ -27,6 +28,19 @@ var (
 const (
 	// ExpectedProxyParts is the number of parts expected in a proxy string (IP:Port:Username:Password).
 	ExpectedProxyParts = 4
+
+	SampleUserID1   = uint64(7380156655)
+	SampleUserID2   = uint64(7436054881)
+	SampleUserID3   = uint64(7436059676)
+	SampleUserID4   = uint64(1)   // Roblox
+	SampleUserID5   = uint64(156) // Builderman
+	SampleUsername1 = "actuallynotabot1"
+	SampleUsername2 = "actuallynotabot2"
+	SampleUsername3 = "actuallynotabot3"
+	SampleUsername4 = "Roblox"
+	SampleUsername5 = "builderman"
+	InvalidUserID   = uint64(math.MaxUint64)
+	InvalidUsername = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
 )
 
 // NewTestEnv creates a new client.Client instance and a validator.Validate for testing purposes.

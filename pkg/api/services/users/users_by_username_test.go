@@ -16,7 +16,7 @@ func TestGetUsersByUsernames(t *testing.T) {
 	api := users.NewService(utils.NewTestEnv())
 
 	t.Run("Fetch Known Users", func(t *testing.T) {
-		usernames := []string{"Roblox", "builderman"}
+		usernames := []string{utils.SampleUsername4, utils.SampleUsername5}
 		builder := users.NewGetUsersByUsernamesBuilder(usernames)
 		result, err := api.GetUsersByUsernames(context.Background(), builder.Build())
 		require.NoError(t, err)
@@ -30,13 +30,13 @@ func TestGetUsersByUsernames(t *testing.T) {
 	})
 
 	t.Run("Fetch With Non-existent Username", func(t *testing.T) {
-		usernames := []string{"Roblox", InvalidUsername}
+		usernames := []string{utils.SampleUsername4, utils.InvalidUsername}
 		builder := users.NewGetUsersByUsernamesBuilder(usernames)
 		result, err := api.GetUsersByUsernames(context.Background(), builder.Build())
 		require.NoError(t, err)
 		assert.NotNil(t, result)
 		assert.Len(t, result, 1) // Only one user should be returned
 
-		assert.Equal(t, "Roblox", result[0].Name)
+		assert.Equal(t, utils.SampleUsername4, result[0].Name)
 	})
 }
