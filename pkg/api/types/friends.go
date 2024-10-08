@@ -9,6 +9,13 @@ type FollowerPageResponse struct {
 	Data               []UserResponse `json:"data"`               // List of followers
 }
 
+// FollowingPageResponse represents the structure of a user's following list returned by the Roblox API.
+type FollowingPageResponse struct {
+	PreviousPageCursor *string        `json:"previousPageCursor"` // Cursor for the previous page of results (if any)
+	NextPageCursor     *string        `json:"nextPageCursor"`     // Cursor for the next page of results (if any)
+	Data               []UserResponse `json:"data"`               // List of users being followed
+}
+
 // UserResponse represents a single user in a user's friend list.
 type UserResponse struct {
 	ID                     uint64    `json:"id"`                     // Unique identifier for the friend

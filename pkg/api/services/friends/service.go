@@ -16,6 +16,8 @@ type ServiceInterface interface {
 	SearchFriends(ctx context.Context, params SearchFriendsParams) (*types.FriendPageResponse, error)
 	GetFollowers(ctx context.Context, params GetFollowersParams) (*types.FollowerPageResponse, error)
 	GetFollowerCount(ctx context.Context, userID uint64) (uint64, error)
+	GetFollowings(ctx context.Context, params GetFollowingsParams) (*types.FollowingPageResponse, error)
+	GetFollowingCount(ctx context.Context, userID uint64) (uint64, error)
 }
 
 // Ensure Service implements the ServiceInterface.
