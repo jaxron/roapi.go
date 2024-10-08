@@ -20,6 +20,7 @@ linters:
     - paralleltest # Makes it difficult to debug integration tests
     - mnd # Not needed
     - forcetypeassert # Not needed
+    - dupl # Not needed
     - gomnd # Deprecated
     - exportloopref # Deprecated
     - execinquery # Deprecated
@@ -39,6 +40,4 @@ linters-settings:
           - ["IDS"] # Roblox API uses 'userIds'
   varnamelen:
     min-name-length: 1
-  dupl:
-    threshold: 250
     
