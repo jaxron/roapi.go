@@ -6,20 +6,20 @@ import (
 	"strconv"
 
 	"github.com/jaxron/roapi.go/pkg/api/errors"
-	"github.com/jaxron/roapi.go/pkg/api/models"
+	"github.com/jaxron/roapi.go/pkg/api/types"
 )
 
 // SearchUsers searches for a user with the given username.
 // GET https://users.roblox.com/v1/users/search
-func (s *Service) SearchUsers(ctx context.Context, p SearchUsersParams) (*models.UserSearchPageResponse, error) {
+func (s *Service) SearchUsers(ctx context.Context, p SearchUsersParams) (*types.UserSearchPageResponse, error) {
 	if err := s.validate.Struct(p); err != nil {
 		return nil, err
 	}
 
-	var result models.UserSearchPageResponse
+	var result types.UserSearchPageResponse
 	resp, err := s.client.NewRequest().
 		Method(http.MethodGet).
-		URL(UsersEndpoint+"/v1/users/search").
+		URL(types.UsersEndpoint+"/v1/users/search").
 		Query("keyword", p.Username).
 		Query("limit", strconv.FormatUint(p.Limit, 10)).
 		Query("cursor", p.Cursor).

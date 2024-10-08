@@ -8,22 +8,22 @@ import (
 
 	"github.com/jaxron/roapi.go/internal/middleware/auth"
 	"github.com/jaxron/roapi.go/pkg/api/errors"
-	"github.com/jaxron/roapi.go/pkg/api/models"
+	"github.com/jaxron/roapi.go/pkg/api/types"
 )
 
 // SearchFriends fetches the paginated list of friends for a user.
 // GET https://friends.roblox.com/v1/users/{userID}/friends/search
-func (s *Service) SearchFriends(ctx context.Context, p SearchFriendsParams) (*models.FriendPageResponse, error) {
+func (s *Service) SearchFriends(ctx context.Context, p SearchFriendsParams) (*types.FriendPageResponse, error) {
 	if err := s.validate.Struct(p); err != nil {
 		return nil, err
 	}
 
 	ctx = context.WithValue(ctx, auth.KeyAddCookie, true)
 
-	var friends models.FriendPageResponse
+	var friends types.FriendPageResponse
 	resp, err := s.client.NewRequest().
 		Method(http.MethodGet).
-		URL(fmt.Sprintf("%s/v1/users/%d/friends/search", FriendsEndpoint, p.UserID)).
+		URL(fmt.Sprintf("%s/v1/users/%d/friends/search", types.FriendsEndpoint, p.UserID)).
 		Query("query", p.Query).
 		Query("cursor", p.Cursor).
 		Query("limit", strconv.FormatUint(p.Limit, 10)).

@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/jaxron/roapi.go/pkg/api/errors"
+	"github.com/jaxron/roapi.go/pkg/api/types"
 )
 
 // GetFollowerCount fetches the count of followers for a user.
@@ -16,7 +17,7 @@ func (s *Service) GetFollowerCount(ctx context.Context, userID uint64) (uint64, 
 	}
 	resp, err := s.client.NewRequest().
 		Method(http.MethodGet).
-		URL(fmt.Sprintf("%s/v1/users/%d/followers/count", FriendsEndpoint, userID)).
+		URL(fmt.Sprintf("%s/v1/users/%d/followers/count", types.FriendsEndpoint, userID)).
 		Result(&count).
 		Do(ctx)
 	if err != nil {

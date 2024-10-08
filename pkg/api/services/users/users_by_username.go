@@ -5,22 +5,22 @@ import (
 	"net/http"
 
 	"github.com/jaxron/roapi.go/pkg/api/errors"
-	"github.com/jaxron/roapi.go/pkg/api/models"
+	"github.com/jaxron/roapi.go/pkg/api/types"
 )
 
 // GetUsersByUsernames fetches information for users with the given usernames.
 // POST https://users.roblox.com/v1/usernames/users
-func (s *Service) GetUsersByUsernames(ctx context.Context, p GetUsersByUsernamesParams) ([]models.UserByUsernameResponse, error) {
+func (s *Service) GetUsersByUsernames(ctx context.Context, p GetUsersByUsernamesParams) ([]types.UserByUsernameResponse, error) {
 	if err := s.validate.Struct(p); err != nil {
 		return nil, err
 	}
 
 	var users struct {
-		Data []models.UserByUsernameResponse `json:"data"` // List of users fetched by usernames
+		Data []types.UserByUsernameResponse `json:"data"` // List of users fetched by usernames
 	}
 	resp, err := s.client.NewRequest().
 		Method(http.MethodPost).
-		URL(UsersEndpoint + "/v1/usernames/users").
+		URL(types.UsersEndpoint + "/v1/usernames/users").
 		Result(&users).
 		MarshalBody(struct {
 			Usernames          []string `json:"usernames"`

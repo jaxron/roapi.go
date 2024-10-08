@@ -5,22 +5,22 @@ import (
 	"net/http"
 
 	"github.com/jaxron/roapi.go/pkg/api/errors"
-	"github.com/jaxron/roapi.go/pkg/api/models"
+	"github.com/jaxron/roapi.go/pkg/api/types"
 )
 
 // GetUsersByIDs fetches information for users with the given IDs.
 // POST https://users.roblox.com/v1/users
-func (s *Service) GetUsersByIDs(ctx context.Context, p UsersByIDsParams) ([]models.VerifiedBadgeUserResponse, error) {
+func (s *Service) GetUsersByIDs(ctx context.Context, p UsersByIDsParams) ([]types.VerifiedBadgeUserResponse, error) {
 	if err := s.validate.Struct(p); err != nil {
 		return nil, err
 	}
 
 	var users struct {
-		Data []models.VerifiedBadgeUserResponse `json:"data"` // List of users fetched by user IDs
+		Data []types.VerifiedBadgeUserResponse `json:"data"` // List of users fetched by user IDs
 	}
 	resp, err := s.client.NewRequest().
 		Method(http.MethodPost).
-		URL(UsersEndpoint + "/v1/users").
+		URL(types.UsersEndpoint + "/v1/users").
 		Result(&users).
 		MarshalBody(p).
 		Do(ctx)

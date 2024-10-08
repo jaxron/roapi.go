@@ -5,23 +5,16 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/jaxron/axonet/pkg/client"
-	"github.com/jaxron/roapi.go/pkg/api/models"
+	"github.com/jaxron/roapi.go/pkg/api/types"
 )
-
-const (
-	SortOrderAsc  = "Asc"
-	SortOrderDesc = "Desc"
-)
-
-const FriendsEndpoint = "https://friends.roblox.com"
 
 // ServiceInterface defines the interface for friend-related operations.
 type ServiceInterface interface {
-	GetFriends(ctx context.Context, userID uint64) ([]models.UserResponse, error)
+	GetFriends(ctx context.Context, userID uint64) ([]types.UserResponse, error)
 	GetFriendCount(ctx context.Context, userID uint64) (uint64, error)
-	FindFriends(ctx context.Context, params FindFriendsParams) (*models.FriendPageResponse, error)
-	SearchFriends(ctx context.Context, params SearchFriendsParams) (*models.FriendPageResponse, error)
-	GetFollowers(ctx context.Context, params GetFollowersParams) (*models.FollowerPageResponse, error)
+	FindFriends(ctx context.Context, params FindFriendsParams) (*types.FriendPageResponse, error)
+	SearchFriends(ctx context.Context, params SearchFriendsParams) (*types.FriendPageResponse, error)
+	GetFollowers(ctx context.Context, params GetFollowersParams) (*types.FollowerPageResponse, error)
 	GetFollowerCount(ctx context.Context, userID uint64) (uint64, error)
 }
 

@@ -6,6 +6,7 @@ import (
 
 	"github.com/jaxron/roapi.go/internal/utils"
 	"github.com/jaxron/roapi.go/pkg/api/services/users"
+	"github.com/jaxron/roapi.go/pkg/api/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -61,6 +62,6 @@ func TestGetUsernameHistory(t *testing.T) {
 		assert.Equal(t, uint64(utils.SampleUserID1), params.UserID)
 		assert.Equal(t, uint64(50), params.Limit)
 		assert.Equal(t, "someCursor", params.Cursor)
-		assert.Equal(t, users.SortOrderDesc, params.SortOrder)
+		assert.Equal(t, types.SortOrderDesc, params.SortOrder)
 	})
 }

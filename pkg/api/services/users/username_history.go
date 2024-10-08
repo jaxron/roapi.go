@@ -7,20 +7,20 @@ import (
 	"strconv"
 
 	"github.com/jaxron/roapi.go/pkg/api/errors"
-	"github.com/jaxron/roapi.go/pkg/api/models"
+	"github.com/jaxron/roapi.go/pkg/api/types"
 )
 
 // GetUsernameHistory fetches the username history for a user.
 // GET https://users.roblox.com/v1/users/{userID}/username-history
-func (s *Service) GetUsernameHistory(ctx context.Context, p UsernameHistoryParams) (*models.UsernameHistoryPageResponse, error) {
+func (s *Service) GetUsernameHistory(ctx context.Context, p UsernameHistoryParams) (*types.UsernameHistoryPageResponse, error) {
 	if err := s.validate.Struct(p); err != nil {
 		return nil, err
 	}
 
-	var history models.UsernameHistoryPageResponse
+	var history types.UsernameHistoryPageResponse
 	resp, err := s.client.NewRequest().
 		Method(http.MethodGet).
-		URL(fmt.Sprintf("%s/v1/users/%d/username-history", UsersEndpoint, p.UserID)).
+		URL(fmt.Sprintf("%s/v1/users/%d/username-history", types.UsersEndpoint, p.UserID)).
 		Query("limit", strconv.FormatUint(p.Limit, 10)).
 		Query("sortOrder", p.SortOrder).
 		Query("cursor", p.Cursor).
@@ -53,7 +53,7 @@ func NewUsernameHistoryBuilder(userID uint64) *UsernameHistoryBuilder {
 		params: UsernameHistoryParams{
 			UserID:    userID,
 			Limit:     10,
-			SortOrder: SortOrderAsc,
+			SortOrder: types.SortOrderAsc,
 			Cursor:    "",
 		},
 	}
@@ -73,13 +73,13 @@ func (b *UsernameHistoryBuilder) WithCursor(cursor string) *UsernameHistoryBuild
 
 // WithSortOrderAsc sets the sort order for results to ascending.
 func (b *UsernameHistoryBuilder) WithSortOrderAsc() *UsernameHistoryBuilder {
-	b.params.SortOrder = SortOrderAsc
+	b.params.SortOrder = types.SortOrderAsc
 	return b
 }
 
 // WithSortOrderDesc sets the sort order for results to descending.
 func (b *UsernameHistoryBuilder) WithSortOrderDesc() *UsernameHistoryBuilder {
-	b.params.SortOrder = SortOrderDesc
+	b.params.SortOrder = types.SortOrderDesc
 	return b
 }
 

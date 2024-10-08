@@ -5,24 +5,17 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/jaxron/axonet/pkg/client"
-	"github.com/jaxron/roapi.go/pkg/api/models"
-)
-
-const UsersEndpoint = "https://users.roblox.com"
-
-const (
-	SortOrderAsc  = "Asc"
-	SortOrderDesc = "Desc"
+	"github.com/jaxron/roapi.go/pkg/api/types"
 )
 
 // ServiceInterface defines the interface for user-related operations.
 type ServiceInterface interface {
-	GetUserByID(ctx context.Context, userID uint64) (*models.UserByIDResponse, error)
-	GetAuthUserInfo(ctx context.Context) (*models.AuthUserResponse, error)
-	GetUsersByUsernames(ctx context.Context, params GetUsersByUsernamesParams) ([]models.UserByUsernameResponse, error)
-	GetUsersByIDs(ctx context.Context, params UsersByIDsParams) ([]models.VerifiedBadgeUserResponse, error)
-	GetUsernameHistory(ctx context.Context, params UsernameHistoryParams) (*models.UsernameHistoryPageResponse, error)
-	SearchUsers(ctx context.Context, params SearchUsersParams) (*models.UserSearchPageResponse, error)
+	GetUserByID(ctx context.Context, userID uint64) (*types.UserByIDResponse, error)
+	GetAuthUserInfo(ctx context.Context) (*types.AuthUserResponse, error)
+	GetUsersByUsernames(ctx context.Context, params GetUsersByUsernamesParams) ([]types.UserByUsernameResponse, error)
+	GetUsersByIDs(ctx context.Context, params UsersByIDsParams) ([]types.VerifiedBadgeUserResponse, error)
+	GetUsernameHistory(ctx context.Context, params UsernameHistoryParams) (*types.UsernameHistoryPageResponse, error)
+	SearchUsers(ctx context.Context, params SearchUsersParams) (*types.UserSearchPageResponse, error)
 }
 
 // Ensure Service implements the ServiceInterface.
