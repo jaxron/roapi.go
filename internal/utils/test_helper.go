@@ -72,7 +72,7 @@ func NewTestEnv(opts ...client.Option) (*client.Client, *validator.Validate) {
 	// Create and return a new client with the specified options
 	return client.NewClient(
 		append([]client.Option{
-			client.WithMiddleware(retry.New(1, 1000, 5000)),
+			client.WithMiddleware(retry.New(1, 5000, 10000)),
 			client.WithMiddleware(auth.New(cookies)),
 			client.WithMiddleware(proxy.New(proxies)),
 			client.WithMiddleware(jsonheader.New()),
