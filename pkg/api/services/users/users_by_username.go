@@ -50,13 +50,32 @@ type GetUsersByUsernamesBuilder struct {
 }
 
 // NewGetUsersByUsernamesBuilder creates a new GetUsersByUsernamesBuilder with default values.
-func NewGetUsersByUsernamesBuilder(usernames []string) *GetUsersByUsernamesBuilder {
+func NewGetUsersByUsernamesBuilder(usernames ...string) *GetUsersByUsernamesBuilder {
 	return &GetUsersByUsernamesBuilder{
 		params: GetUsersByUsernamesParams{
 			Usernames:          usernames,
 			ExcludeBannedUsers: false,
 		},
 	}
+}
+
+// WithUsernames adds multiple usernames to the list.
+func (b *GetUsersByUsernamesBuilder) WithUsernames(usernames ...string) *GetUsersByUsernamesBuilder {
+	b.params.Usernames = append(b.params.Usernames, usernames...)
+	return b
+}
+
+// RemoveUsernames removes multiple usernames from the list.
+func (b *GetUsersByUsernamesBuilder) RemoveUsernames(usernames ...string) *GetUsersByUsernamesBuilder {
+	for _, username := range usernames {
+		for i, u := range b.params.Usernames {
+			if u == username {
+				b.params.Usernames = append(b.params.Usernames[:i], b.params.Usernames[i+1:]...)
+				break
+			}
+		}
+	}
+	return b
 }
 
 // ExcludeBannedUsers sets whether to exclude banned users from the result.

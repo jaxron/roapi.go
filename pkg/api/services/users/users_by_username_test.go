@@ -17,7 +17,7 @@ func TestGetUsersByUsernames(t *testing.T) {
 
 	t.Run("Fetch Known Users", func(t *testing.T) {
 		usernames := []string{utils.SampleUsername4, utils.SampleUsername5}
-		builder := users.NewGetUsersByUsernamesBuilder(usernames)
+		builder := users.NewGetUsersByUsernamesBuilder().WithUsernames(usernames...)
 		result, err := api.GetUsersByUsernames(context.Background(), builder.Build())
 		require.NoError(t, err)
 		assert.NotNil(t, result)
@@ -31,12 +31,25 @@ func TestGetUsersByUsernames(t *testing.T) {
 
 	t.Run("Fetch With Non-existent Username", func(t *testing.T) {
 		usernames := []string{utils.SampleUsername4, utils.InvalidUsername}
-		builder := users.NewGetUsersByUsernamesBuilder(usernames)
+		builder := users.NewGetUsersByUsernamesBuilder(usernames...)
 		result, err := api.GetUsersByUsernames(context.Background(), builder.Build())
 		require.NoError(t, err)
 		assert.NotNil(t, result)
 		assert.Len(t, result, 1) // Only one user should be returned
 
 		assert.Equal(t, utils.SampleUsername4, result[0].Name)
+	})
+
+	t.Run("Test Builder Methods", func(t *testing.T) {
+		builder := users.NewGetUsersByUsernamesBuilder().
+			WithUsernames(utils.SampleUsername1, utils.SampleUsername2, utils.SampleUsername3, utils.SampleUsername4).
+			RemoveUsernames(utils.SampleUsername3)
+
+		params := builder.Build()
+		assert.Len(t, params.Usernames, 3)
+		assert.Contains(t, params.Usernames, utils.SampleUsername1)
+		assert.Contains(t, params.Usernames, utils.SampleUsername2)
+		assert.Contains(t, params.Usernames, utils.SampleUsername4)
+		assert.NotContains(t, params.Usernames, utils.SampleUsername3)
 	})
 }

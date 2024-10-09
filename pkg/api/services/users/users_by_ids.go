@@ -44,7 +44,7 @@ type UsersByIDsBuilder struct {
 }
 
 // NewUsersByIDsBuilder creates a new UsersByIDsBuilder with the given user IDs.
-func NewUsersByIDsBuilder(userIDs []uint64) *UsersByIDsBuilder {
+func NewUsersByIDsBuilder(userIDs ...uint64) *UsersByIDsBuilder {
 	return &UsersByIDsBuilder{
 		params: UsersByIDsParams{
 			UserIDs:            userIDs,
@@ -56,6 +56,25 @@ func NewUsersByIDsBuilder(userIDs []uint64) *UsersByIDsBuilder {
 // ExcludeBannedUsers sets whether to exclude banned users from the result.
 func (b *UsersByIDsBuilder) ExcludeBannedUsers(exclude bool) *UsersByIDsBuilder {
 	b.params.ExcludeBannedUsers = exclude
+	return b
+}
+
+// WithUserIDs adds multiple user IDs to the list.
+func (b *UsersByIDsBuilder) WithUserIDs(userIDs ...uint64) *UsersByIDsBuilder {
+	b.params.UserIDs = append(b.params.UserIDs, userIDs...)
+	return b
+}
+
+// RemoveUserIDs removes multiple user IDs from the list.
+func (b *UsersByIDsBuilder) RemoveUserIDs(userIDs ...uint64) *UsersByIDsBuilder {
+	for _, id := range userIDs {
+		for i, userID := range b.params.UserIDs {
+			if userID == id {
+				b.params.UserIDs = append(b.params.UserIDs[:i], b.params.UserIDs[i+1:]...)
+				break
+			}
+		}
+	}
 	return b
 }
 
