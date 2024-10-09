@@ -98,3 +98,24 @@ type GroupLookup struct {
 	MemberCount      uint64 `json:"memberCount"`
 	HasVerifiedBadge bool   `json:"hasVerifiedBadge"`
 }
+
+// GroupsInfoResponse represents the structure of multiple groups information returned by the Roblox API.
+type GroupsInfoResponse struct {
+	Data []GroupInfo `json:"data"`
+}
+
+// GroupInfo represents the structure of a single group's information in the GroupsInfoResponse.
+type GroupInfo struct {
+	ID               uint64     `json:"id"`
+	Name             string     `json:"name"`
+	Description      string     `json:"description"`
+	Owner            GroupOwner `json:"owner"`
+	Created          time.Time  `json:"created"`
+	HasVerifiedBadge bool       `json:"hasVerifiedBadge"`
+}
+
+// GroupOwner represents the owner of a group.
+type GroupOwner struct {
+	ID   uint64 `json:"id"`
+	Type string `json:"type"`
+}
