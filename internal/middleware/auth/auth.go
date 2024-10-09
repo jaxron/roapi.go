@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"errors"
+	"math/rand"
 	"net/http"
 	"sync"
 	"sync/atomic"
@@ -173,6 +174,18 @@ func (m *AuthMiddleware) UpdateCookies(cookies []string) {
 	m.current.Store(0)
 	m.cookieCount = len(cookies)
 	m.logger.WithFields(logger.Int("cookies", len(cookies))).Debug("Cookies updated")
+}
+
+// Shuffle randomizes the order of the cookies.
+func (m *AuthMiddleware) Shuffle() {
+	m.cookiesMux.Lock()
+	defer m.cookiesMux.Unlock()
+
+	rand.New(rand.NewSource(time.Now().UnixNano())).Shuffle(len(m.cookies), func(i, j int) {
+		m.cookies[i], m.cookies[j] = m.cookies[j], m.cookies[i]
+	})
+
+	m.logger.Debug("Cookies shuffled")
 }
 
 // GetCookieCount returns the current number of cookies in the list.

@@ -70,15 +70,23 @@ func NewTestEnv(opts ...client.Option) (*client.Client, *validator.Validate) {
 	}
 
 	// Create and return a new client with the specified options
-	return client.NewClient(
+	auth := auth.New(cookies)
+	proxy := proxy.New(proxies)
+	client := client.NewClient(
 		append([]client.Option{
-			client.WithMiddleware(retry.New(1, 5000, 10000)),
-			client.WithMiddleware(auth.New(cookies)),
-			client.WithMiddleware(proxy.New(proxies)),
-			client.WithMiddleware(jsonheader.New()),
 			client.WithLogger(logger),
+			client.WithMiddleware(retry.New(1, 5000, 10000)),
+			client.WithMiddleware(auth),
+			client.WithMiddleware(proxy),
+			client.WithMiddleware(jsonheader.New()),
 		}, opts...)...,
-	), validator.New(validator.WithRequiredStructEnabled())
+	)
+
+	// Shuffle the cookies and proxies
+	auth.Shuffle()
+	proxy.Shuffle()
+
+	return client, validator.New(validator.WithRequiredStructEnabled())
 }
 
 // getProxiesFromEnv loads the proxies from the file specified in the ROAPI_PROXIES_FILE environment variable.
