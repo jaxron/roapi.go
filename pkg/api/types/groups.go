@@ -51,3 +51,9 @@ type GroupRole struct {
 	Rank        uint64 `json:"rank"`
 	MemberCount uint64 `json:"memberCount"`
 }
+
+// GroupRolesResponse represents the structure of group roles information returned by the Roblox API.
+type GroupRolesResponse struct {
+	GroupID uint64      `json:"groupId"`
+	Roles   []GroupRole `json:"roles"`
+}
