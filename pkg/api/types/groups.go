@@ -64,3 +64,24 @@ type RoleUsersResponse struct {
 	NextPageCursor     *string     `json:"nextPageCursor"`
 	Data               []GroupUser `json:"data"`
 }
+
+// SearchGroupsResponse represents the structure of group search results returned by the Roblox API.
+type SearchGroupsResponse struct {
+	Keyword            string        `json:"keyword"`
+	PreviousPageCursor *string       `json:"previousPageCursor"`
+	NextPageCursor     *string       `json:"nextPageCursor"`
+	Data               []GroupSearch `json:"data"`
+}
+
+// GroupSearch represents a single group in the search results.
+type GroupSearch struct {
+	ID                 uint64    `json:"id"`
+	Name               string    `json:"name"`
+	Description        string    `json:"description"`
+	MemberCount        uint64    `json:"memberCount"`
+	PreviousName       string    `json:"previousName"`
+	PublicEntryAllowed bool      `json:"publicEntryAllowed"`
+	Created            time.Time `json:"created"`
+	Updated            time.Time `json:"updated"`
+	HasVerifiedBadge   bool      `json:"hasVerifiedBadge"`
+}
