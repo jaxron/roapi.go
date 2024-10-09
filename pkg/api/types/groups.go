@@ -85,3 +85,16 @@ type GroupSearch struct {
 	Updated            time.Time `json:"updated"`
 	HasVerifiedBadge   bool      `json:"hasVerifiedBadge"`
 }
+
+// GroupLookupResponse represents the structure of group lookup results returned by the Roblox API.
+type GroupLookupResponse struct {
+	Data []GroupLookup `json:"data"`
+}
+
+// GroupLookup represents a single group in the lookup results.
+type GroupLookup struct {
+	ID               uint64 `json:"id"`
+	Name             string `json:"name"`
+	MemberCount      uint64 `json:"memberCount"`
+	HasVerifiedBadge bool   `json:"hasVerifiedBadge"`
+}
