@@ -4,9 +4,9 @@ go 1.23.1
 
 require (
 	github.com/go-playground/validator/v10 v10.22.1
-	github.com/jaxron/axonet v0.0.0-20241008024308-45575184723a
-	github.com/jaxron/axonet/middleware/proxy v0.0.0-20241008024308-45575184723a
-	github.com/jaxron/axonet/middleware/retry v0.0.0-20241008024308-45575184723a
+	github.com/jaxron/axonet v0.0.0-20241009045600-f73d347dcdfe
+	github.com/jaxron/axonet/middleware/proxy v0.0.0-20241009045600-f73d347dcdfe
+	github.com/jaxron/axonet/middleware/retry v0.0.0-20241009045600-f73d347dcdfe
 	github.com/stretchr/testify v1.9.0
 )
 
