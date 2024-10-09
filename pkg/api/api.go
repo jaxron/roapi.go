@@ -5,18 +5,18 @@ import (
 	"github.com/jaxron/axonet/pkg/client"
 	"github.com/jaxron/roapi.go/internal/middleware/auth"
 	"github.com/jaxron/roapi.go/internal/middleware/jsonheader"
-	"github.com/jaxron/roapi.go/pkg/api/services/friends"
-	"github.com/jaxron/roapi.go/pkg/api/services/groups"
-	"github.com/jaxron/roapi.go/pkg/api/services/users"
+	"github.com/jaxron/roapi.go/pkg/api/resources/friends"
+	"github.com/jaxron/roapi.go/pkg/api/resources/groups"
+	"github.com/jaxron/roapi.go/pkg/api/resources/users"
 )
 
 // API represents the main struct for interacting with the Roblox API.
 // It contains a client for making HTTP requests and services for different API endpoints.
 type API struct {
-	client  *client.Client   // Axonet client for making API requests
-	users   *users.Service   // Service for user-related API operations
-	friends *friends.Service // Service for friend-related API operations
-	groups  *groups.Service  // Service for group-related API operations
+	client  *client.Client    // Axonet client for making API requests
+	users   *users.Resource   // Resource for user-related API operations
+	friends *friends.Resource // Resource for friend-related API operations
+	groups  *groups.Resource  // Resource for group-related API operations
 }
 
 // New creates a new instance of API with the provided options.
@@ -31,9 +31,9 @@ func New(cookies []string, opts ...client.Option) *API {
 
 	return &API{
 		client:  c,
-		users:   users.NewService(c, v),
-		friends: friends.NewService(c, v),
-		groups:  groups.NewService(c, v),
+		users:   users.New(c, v),
+		friends: friends.New(c, v),
+		groups:  groups.New(c, v),
 	}
 }
 
@@ -43,20 +43,20 @@ func (api *API) GetClient() *client.Client {
 	return api.client
 }
 
-// Users returns the Service instance for user-related operations.
+// Users returns the Resource instance for user-related operations.
 // This provides access to methods for interacting with user data via the Roblox API.
-func (api *API) Users() *users.Service {
+func (api *API) Users() *users.Resource {
 	return api.users
 }
 
-// Friends returns the Service instance for friend-related operations.
+// Friends returns the Resource instance for friend-related operations.
 // This provides access to methods for interacting with friend data via the Roblox API.
-func (api *API) Friends() *friends.Service {
+func (api *API) Friends() *friends.Resource {
 	return api.friends
 }
 
-// Groups returns the Service instance for group-related operations.
+// Groups returns the Resource instance for group-related operations.
 // This provides access to methods for interacting with group data via the Roblox API.
-func (api *API) Groups() *groups.Service {
+func (api *API) Groups() *groups.Resource {
 	return api.groups
 }
