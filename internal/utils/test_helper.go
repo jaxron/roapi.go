@@ -41,6 +41,14 @@ const (
 	SampleUsername5 = "builderman"
 	InvalidUserID   = uint64(math.MaxUint64)
 	InvalidUsername = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
+
+	SampleGroupID    = uint64(3336691)
+	SampleGroupID2   = uint64(7)
+	SampleGroupName  = "test"
+	SampleRoleID     = uint64(23018355)
+	InvalidGroupID   = uint64(math.MaxUint64)
+	InvalidGroupName = "ThisGroupShouldNotExist12345"
+	InvalidRoleID    = uint64(math.MaxUint64)
 )
 
 // NewTestEnv creates a new client.Client instance and a validator.Validate for testing purposes.

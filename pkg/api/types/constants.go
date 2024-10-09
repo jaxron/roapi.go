@@ -4,6 +4,7 @@ package types
 const (
 	UsersEndpoint   = "https://users.roblox.com"
 	FriendsEndpoint = "https://friends.roblox.com"
+	GroupsEndpoint  = "https://groups.roblox.com"
 )
 
 // Constants for building requests.
