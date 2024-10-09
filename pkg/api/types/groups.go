@@ -57,3 +57,10 @@ type GroupRolesResponse struct {
 	GroupID uint64      `json:"groupId"`
 	Roles   []GroupRole `json:"roles"`
 }
+
+// RoleUsersResponse represents the structure of role users information returned by the Roblox API.
+type RoleUsersResponse struct {
+	PreviousPageCursor *string     `json:"previousPageCursor"`
+	NextPageCursor     *string     `json:"nextPageCursor"`
+	Data               []GroupUser `json:"data"`
+}
