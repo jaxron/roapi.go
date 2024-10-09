@@ -30,3 +30,24 @@ type GroupShout struct {
 	Created time.Time `json:"created"`
 	Updated time.Time `json:"updated"`
 }
+
+// GroupUsersResponse represents the structure of group users information returned by the Roblox API.
+type GroupUsersResponse struct {
+	PreviousPageCursor *string         `json:"previousPageCursor"`
+	NextPageCursor     *string         `json:"nextPageCursor"`
+	Data               []GroupUserData `json:"data"`
+}
+
+// GroupUserData represents a single user in a group's user list.
+type GroupUserData struct {
+	User GroupUser `json:"user"`
+	Role GroupRole `json:"role"`
+}
+
+// GroupRole represents a role in a group.
+type GroupRole struct {
+	ID          uint64 `json:"id"`
+	Name        string `json:"name"`
+	Rank        uint64 `json:"rank"`
+	MemberCount uint64 `json:"memberCount"`
+}
