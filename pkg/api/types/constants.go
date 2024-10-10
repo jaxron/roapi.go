@@ -2,9 +2,10 @@ package types
 
 // Constants for Roblox API endpoints.
 const (
-	UsersEndpoint   = "https://users.roblox.com"
-	FriendsEndpoint = "https://friends.roblox.com"
-	GroupsEndpoint  = "https://groups.roblox.com"
+	UsersEndpoint      = "https://users.roblox.com"
+	FriendsEndpoint    = "https://friends.roblox.com"
+	GroupsEndpoint     = "https://groups.roblox.com"
+	ThumbnailsEndpoint = "https://thumbnails.roblox.com"
 )
 
 // Constants for building requests.

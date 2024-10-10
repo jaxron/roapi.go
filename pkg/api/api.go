@@ -7,16 +7,18 @@ import (
 	"github.com/jaxron/roapi.go/internal/middleware/jsonheader"
 	"github.com/jaxron/roapi.go/pkg/api/resources/friends"
 	"github.com/jaxron/roapi.go/pkg/api/resources/groups"
+	"github.com/jaxron/roapi.go/pkg/api/resources/thumbnails"
 	"github.com/jaxron/roapi.go/pkg/api/resources/users"
 )
 
 // API represents the main struct for interacting with the Roblox API.
 // It contains a client for making HTTP requests and services for different API endpoints.
 type API struct {
-	client  *client.Client    // Axonet client for making API requests
-	users   *users.Resource   // Resource for user-related API operations
-	friends *friends.Resource // Resource for friend-related API operations
-	groups  *groups.Resource  // Resource for group-related API operations
+	client     *client.Client       // Axonet client for making API requests
+	users      *users.Resource      // Resource for user-related API operations
+	friends    *friends.Resource    // Resource for friend-related API operations
+	groups     *groups.Resource     // Resource for group-related API operations
+	thumbnails *thumbnails.Resource // Resource for thumbnail-related API operations
 }
 
 // New creates a new instance of API with the provided options.
@@ -36,10 +38,11 @@ func New(cookies []string, opts ...client.Option) *API {
 	// Return a new API instance with initialized client and resources
 	v := validator.New(validator.WithRequiredStructEnabled())
 	return &API{
-		client:  c,
-		users:   users.New(c, v),
-		friends: friends.New(c, v),
-		groups:  groups.New(c, v),
+		client:     c,
+		users:      users.New(c, v),
+		friends:    friends.New(c, v),
+		groups:     groups.New(c, v),
+		thumbnails: thumbnails.New(c, v),
 	}
 }
 
@@ -65,4 +68,10 @@ func (api *API) Friends() *friends.Resource {
 // This provides access to methods for interacting with group data via the Roblox API.
 func (api *API) Groups() *groups.Resource {
 	return api.groups
+}
+
+// Thumbnails returns the Resource instance for thumbnail-related operations.
+// This provides access to methods for interacting with thumbnail data via the Roblox API.
+func (api *API) Thumbnails() *thumbnails.Resource {
+	return api.thumbnails
 }
