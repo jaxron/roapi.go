@@ -19,10 +19,10 @@ func TestGetUserGroupRoles(t *testing.T) {
 		userGroupRoles, err := api.GetUserGroupRoles(context.Background(), utils.SampleUserID1)
 		require.NoError(t, err)
 		assert.NotNil(t, userGroupRoles)
-		assert.NotEmpty(t, userGroupRoles.Data)
+		assert.NotEmpty(t, userGroupRoles)
 
 		// Check if user group roles are properly populated
-		for _, userGroup := range userGroupRoles.Data {
+		for _, userGroup := range userGroupRoles {
 			assert.NotZero(t, userGroup.Group.ID)
 			assert.NotEmpty(t, userGroup.Group.Name)
 			assert.NotZero(t, userGroup.Role.ID)

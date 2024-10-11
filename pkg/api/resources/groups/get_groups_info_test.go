@@ -20,10 +20,10 @@ func TestGetGroupsInfo(t *testing.T) {
 		groupsInfo, err := api.GetGroupsInfo(context.Background(), builder.Build())
 		require.NoError(t, err)
 		assert.NotNil(t, groupsInfo)
-		assert.Len(t, groupsInfo.Data, 2)
+		assert.Len(t, groupsInfo, 2)
 
 		// Check if groups are properly populated
-		for _, group := range groupsInfo.Data {
+		for _, group := range groupsInfo {
 			assert.NotZero(t, group.ID)
 			assert.NotEmpty(t, group.Name)
 			assert.NotZero(t, group.Owner.ID)

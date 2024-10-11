@@ -52,13 +52,8 @@ type ThumbnailRequest struct {
 	Size       ThumbnailSize   `json:"size"`
 }
 
-// BatchThumbnailsResponse represents the response from the batch thumbnails endpoint.
-type BatchThumbnailsResponse struct {
-	Data []ThumbnailData `json:"data"`
-}
-
-// ThumbnailData represents the data for a single thumbnail in the response.
-type ThumbnailData struct {
+// ThumbnailDataResponse represents the data for a single thumbnail in the response returned by the Roblox API.
+type ThumbnailDataResponse struct {
 	RequestID    string `json:"requestId"`
 	ErrorCode    int    `json:"errorCode"`
 	ErrorMessage string `json:"errorMessage"`

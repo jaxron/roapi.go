@@ -38,10 +38,10 @@ func TestGetBatchThumbnails(t *testing.T) {
 		batchThumbnails, err := api.GetBatchThumbnails(context.Background(), builder.Build())
 		require.NoError(t, err)
 		assert.NotNil(t, batchThumbnails)
-		assert.Len(t, batchThumbnails.Data, 2)
+		assert.Len(t, batchThumbnails, 2)
 
 		// Check if thumbnails are properly populated
-		for _, thumbnail := range batchThumbnails.Data {
+		for _, thumbnail := range batchThumbnails {
 			assert.NotEmpty(t, thumbnail.RequestID)
 			assert.NotZero(t, thumbnail.TargetID)
 			assert.NotEmpty(t, thumbnail.State)
@@ -72,9 +72,9 @@ func TestGetBatchThumbnails(t *testing.T) {
 		batchThumbnails, err := api.GetBatchThumbnails(context.Background(), builder.Build())
 		require.NoError(t, err) // The API should still return a response
 		assert.NotNil(t, batchThumbnails)
-		assert.Len(t, batchThumbnails.Data, 1)
-		assert.NotZero(t, batchThumbnails.Data[0].ErrorCode)
-		assert.NotEmpty(t, batchThumbnails.Data[0].ErrorMessage)
+		assert.Len(t, batchThumbnails, 1)
+		assert.NotZero(t, batchThumbnails[0].ErrorCode)
+		assert.NotEmpty(t, batchThumbnails[0].ErrorMessage)
 	})
 
 	// Test case: Test builder methods

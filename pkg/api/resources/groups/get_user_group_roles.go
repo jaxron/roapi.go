@@ -11,8 +11,10 @@ import (
 
 // GetUserGroupRoles fetches the group roles for a specific user.
 // GET https://groups.roblox.com/v1/users/{userId}/groups/roles
-func (r *Resource) GetUserGroupRoles(ctx context.Context, userID uint64) (*types.UserGroupRolesResponse, error) {
-	var userGroupRoles types.UserGroupRolesResponse
+func (r *Resource) GetUserGroupRoles(ctx context.Context, userID uint64) ([]types.UserGroupRolesResponse, error) {
+	var userGroupRoles struct {
+		Data []types.UserGroupRolesResponse `json:"data"`
+	}
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v1/users/%d/groups/roles", types.GroupsEndpoint, userID)).
@@ -23,5 +25,5 @@ func (r *Resource) GetUserGroupRoles(ctx context.Context, userID uint64) (*types
 	}
 	defer resp.Body.Close()
 
-	return &userGroupRoles, nil
+	return userGroupRoles.Data, nil
 }

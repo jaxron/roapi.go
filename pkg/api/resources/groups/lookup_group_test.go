@@ -19,10 +19,10 @@ func TestLookupGroup(t *testing.T) {
 		lookupResults, err := api.LookupGroup(context.Background(), utils.SampleGroupName)
 		require.NoError(t, err)
 		assert.NotNil(t, lookupResults)
-		assert.NotEmpty(t, lookupResults.Data)
+		assert.NotEmpty(t, lookupResults)
 
 		// Check if groups are properly populated
-		for _, group := range lookupResults.Data {
+		for _, group := range lookupResults {
 			assert.NotZero(t, group.ID)
 			assert.NotEmpty(t, group.Name)
 			assert.NotZero(t, group.MemberCount)
@@ -41,6 +41,6 @@ func TestLookupGroup(t *testing.T) {
 		lookupResults, err := api.LookupGroup(context.Background(), utils.InvalidGroupName)
 		require.NoError(t, err)
 		assert.NotNil(t, lookupResults)
-		assert.Empty(t, lookupResults.Data)
+		assert.Empty(t, lookupResults)
 	})
 }

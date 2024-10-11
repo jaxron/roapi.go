@@ -10,12 +10,14 @@ import (
 
 // GetBatchThumbnails fetches batch thumbnails.
 // POST https://thumbnails.roblox.com/v1/batch
-func (r *Resource) GetBatchThumbnails(ctx context.Context, p BatchThumbnailsParams) (*types.BatchThumbnailsResponse, error) {
+func (r *Resource) GetBatchThumbnails(ctx context.Context, p BatchThumbnailsParams) ([]types.ThumbnailDataResponse, error) {
 	if err := r.validate.Struct(p); err != nil {
 		return nil, err
 	}
 
-	var batchThumbnails types.BatchThumbnailsResponse
+	var batchThumbnails struct {
+		Data []types.ThumbnailDataResponse `json:"data"`
+	}
 	resp, err := r.client.NewRequest().
 		Method(http.MethodPost).
 		URL(types.ThumbnailsEndpoint + "/v1/batch").
@@ -27,7 +29,7 @@ func (r *Resource) GetBatchThumbnails(ctx context.Context, p BatchThumbnailsPara
 	}
 	defer resp.Body.Close()
 
-	return &batchThumbnails, nil
+	return batchThumbnails.Data, nil
 }
 
 // BatchThumbnailsParams holds the parameters for getting batch thumbnails.

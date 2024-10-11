@@ -4,15 +4,15 @@ import "time"
 
 // GroupResponse represents the structure of group information returned by the Roblox API.
 type GroupResponse struct {
-	ID                 uint64     `json:"id"`
-	Name               string     `json:"name"`
-	Description        string     `json:"description"`
-	Owner              GroupUser  `json:"owner"`
-	Shout              GroupShout `json:"shout"`
-	MemberCount        uint64     `json:"memberCount"`
-	IsBuildersClubOnly bool       `json:"isBuildersClubOnly"`
-	PublicEntryAllowed bool       `json:"publicEntryAllowed"`
-	HasVerifiedBadge   bool       `json:"hasVerifiedBadge"`
+	ID                 uint64      `json:"id"`
+	Name               string      `json:"name"`
+	Description        string      `json:"description"`
+	Owner              GroupUser   `json:"owner"`
+	Shout              *GroupShout `json:"shout"`
+	MemberCount        uint64      `json:"memberCount"`
+	IsBuildersClubOnly bool        `json:"isBuildersClubOnly"`
+	PublicEntryAllowed bool        `json:"publicEntryAllowed"`
+	HasVerifiedBadge   bool        `json:"hasVerifiedBadge"`
 }
 
 // GroupUser represents a user in the context of a group.
@@ -88,24 +88,14 @@ type GroupSearch struct {
 
 // GroupLookupResponse represents the structure of group lookup results returned by the Roblox API.
 type GroupLookupResponse struct {
-	Data []GroupLookup `json:"data"`
-}
-
-// GroupLookup represents a single group in the lookup results.
-type GroupLookup struct {
 	ID               uint64 `json:"id"`
 	Name             string `json:"name"`
 	MemberCount      uint64 `json:"memberCount"`
 	HasVerifiedBadge bool   `json:"hasVerifiedBadge"`
 }
 
-// GroupsInfoResponse represents the structure of multiple groups information returned by the Roblox API.
-type GroupsInfoResponse struct {
-	Data []GroupInfo `json:"data"`
-}
-
-// GroupInfo represents the structure of a single group's information in the GroupsInfoResponse.
-type GroupInfo struct {
+// GroupInfoResponse represents the structure of a single group's information returned by the Roblox API.
+type GroupInfoResponse struct {
 	ID               uint64     `json:"id"`
 	Name             string     `json:"name"`
 	Description      string     `json:"description"`
@@ -122,11 +112,6 @@ type GroupOwner struct {
 
 // UserGroupRolesResponse represents the structure of user group roles information returned by the Roblox API.
 type UserGroupRolesResponse struct {
-	Data []UserGroup `json:"data"`
-}
-
-// UserGroup represents a user's group.
-type UserGroup struct {
 	Group GroupResponse `json:"group"`
 	Role  UserGroupRole `json:"role"`
 }
