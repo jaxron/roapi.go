@@ -119,3 +119,21 @@ type GroupOwner struct {
 	ID   uint64 `json:"id"`
 	Type string `json:"type"`
 }
+
+// UserGroupRolesResponse represents the structure of user group roles information returned by the Roblox API.
+type UserGroupRolesResponse struct {
+	Data []UserGroup `json:"data"`
+}
+
+// UserGroup represents a user's group.
+type UserGroup struct {
+	Group GroupResponse `json:"group"`
+	Role  UserGroupRole `json:"role"`
+}
+
+// UserGroupRole represents a single group role for a user.
+type UserGroupRole struct {
+	ID   uint64 `json:"id"`
+	Name string `json:"name"`
+	Rank uint64 `json:"rank"`
+}

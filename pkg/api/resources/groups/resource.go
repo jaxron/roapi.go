@@ -17,6 +17,7 @@ type ResourceInterface interface {
 	SearchGroups(ctx context.Context, p SearchGroupsParams) (*types.SearchGroupsResponse, error)
 	LookupGroup(ctx context.Context, groupName string) (*types.GroupLookupResponse, error)
 	GetGroupsInfo(ctx context.Context, p GetGroupsInfoParams) (*types.GroupsInfoResponse, error)
+	GetUserGroupRoles(ctx context.Context, userID uint64) (*types.UserGroupRolesResponse, error)
 }
 
 // Ensure Resource implements the ResourceInterface.
