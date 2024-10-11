@@ -6,6 +6,7 @@ const (
 	FriendsEndpoint    = "https://friends.roblox.com"
 	GroupsEndpoint     = "https://groups.roblox.com"
 	ThumbnailsEndpoint = "https://thumbnails.roblox.com"
+	AvatarEndpoint     = "https://avatar.roblox.com"
 )
 
 // Constants for building requests.

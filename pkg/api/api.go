@@ -5,6 +5,7 @@ import (
 	"github.com/jaxron/axonet/pkg/client"
 	"github.com/jaxron/roapi.go/internal/middleware/auth"
 	"github.com/jaxron/roapi.go/internal/middleware/jsonheader"
+	"github.com/jaxron/roapi.go/pkg/api/resources/avatar"
 	"github.com/jaxron/roapi.go/pkg/api/resources/friends"
 	"github.com/jaxron/roapi.go/pkg/api/resources/groups"
 	"github.com/jaxron/roapi.go/pkg/api/resources/thumbnails"
@@ -19,6 +20,7 @@ type API struct {
 	friends    *friends.Resource    // Resource for friend-related API operations
 	groups     *groups.Resource     // Resource for group-related API operations
 	thumbnails *thumbnails.Resource // Resource for thumbnail-related API operations
+	avatar     *avatar.Resource     // Resource for avatar-related API operations
 }
 
 // New creates a new instance of API with the provided options.
@@ -43,6 +45,7 @@ func New(cookies []string, opts ...client.Option) *API {
 		friends:    friends.New(c, v),
 		groups:     groups.New(c, v),
 		thumbnails: thumbnails.New(c, v),
+		avatar:     avatar.New(c, v),
 	}
 }
 
@@ -74,4 +77,10 @@ func (api *API) Groups() *groups.Resource {
 // This provides access to methods for interacting with thumbnail data via the Roblox API.
 func (api *API) Thumbnails() *thumbnails.Resource {
 	return api.thumbnails
+}
+
+// Avatar returns the Resource instance for avatar-related operations.
+// This provides access to methods for interacting with avatar data via the Roblox API.
+func (api *API) Avatar() *avatar.Resource {
+	return api.avatar
 }
