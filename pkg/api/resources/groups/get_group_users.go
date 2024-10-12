@@ -23,7 +23,7 @@ func (r *Resource) GetGroupUsers(ctx context.Context, p GroupUsersParams) (*type
 		URL(fmt.Sprintf("%s/v1/groups/%d/users", types.GroupsEndpoint, p.GroupID)).
 		Query("limit", strconv.FormatUint(p.Limit, 10)).
 		Query("cursor", p.Cursor).
-		Query("sortOrder", p.SortOrder).
+		Query("sortOrder", string(p.SortOrder)).
 		Result(&groupUsers).
 		Do(ctx)
 	if err != nil {
@@ -36,10 +36,10 @@ func (r *Resource) GetGroupUsers(ctx context.Context, p GroupUsersParams) (*type
 
 // GroupUsersParams holds the parameters for getting group users.
 type GroupUsersParams struct {
-	GroupID   uint64 `json:"groupId"   validate:"required"`
-	Limit     uint64 `json:"limit"     validate:"omitempty,oneof=10 25 50 100"`
-	Cursor    string `json:"cursor"    validate:"omitempty"`
-	SortOrder string `json:"sortOrder" validate:"omitempty,oneof=Asc Desc"`
+	GroupID   uint64          `json:"groupId"   validate:"required"`
+	Limit     uint64          `json:"limit"     validate:"omitempty,oneof=10 25 50 100"`
+	Cursor    string          `json:"cursor"    validate:"omitempty"`
+	SortOrder types.SortOrder `json:"sortOrder" validate:"omitempty,oneof=Asc Desc"`
 }
 
 // GroupUsersBuilder is a builder for GroupUsersParams.

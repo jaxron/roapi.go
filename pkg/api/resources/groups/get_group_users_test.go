@@ -6,6 +6,7 @@ import (
 
 	"github.com/jaxron/roapi.go/internal/utils"
 	"github.com/jaxron/roapi.go/pkg/api/resources/groups"
+	"github.com/jaxron/roapi.go/pkg/api/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -50,6 +51,6 @@ func TestGetGroupUsers(t *testing.T) {
 		assert.Equal(t, utils.SampleGroupID, params.GroupID)
 		assert.Equal(t, uint64(50), params.Limit)
 		assert.Equal(t, "someCursor", params.Cursor)
-		assert.Equal(t, "Desc", params.SortOrder)
+		assert.Equal(t, types.SortOrderDesc, params.SortOrder)
 	})
 }

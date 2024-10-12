@@ -16,7 +16,8 @@ func TestGetUserGroupRoles(t *testing.T) {
 
 	// Test case: Fetch user group roles for a known user
 	t.Run("Fetch Known User Group Roles", func(t *testing.T) {
-		userGroupRoles, err := api.GetUserGroupRoles(context.Background(), utils.SampleUserID1)
+		builder := groups.NewUserGroupRolesBuilder(utils.SampleUserID1)
+		userGroupRoles, err := api.GetUserGroupRoles(context.Background(), builder.Build())
 		require.NoError(t, err)
 		assert.NotNil(t, userGroupRoles)
 		assert.NotEmpty(t, userGroupRoles)
@@ -32,8 +33,21 @@ func TestGetUserGroupRoles(t *testing.T) {
 
 	// Test case: Attempt to fetch user group roles for a non-existent user
 	t.Run("Fetch Non-existent User Group Roles", func(t *testing.T) {
-		userGroupRoles, err := api.GetUserGroupRoles(context.Background(), utils.InvalidUserID)
+		builder := groups.NewUserGroupRolesBuilder(utils.InvalidUserID)
+		userGroupRoles, err := api.GetUserGroupRoles(context.Background(), builder.Build())
 		require.Error(t, err)
 		assert.Nil(t, userGroupRoles)
+	})
+
+	// Test case: Valid parameters with all fields set
+	t.Run("Valid Parameters", func(t *testing.T) {
+		builder := groups.NewUserGroupRolesBuilder(utils.SampleUserID1).
+			IncludeLocked(true).
+			IncludeNotificationPreferences(true)
+
+		params := builder.Build()
+		assert.Equal(t, utils.SampleUserID1, params.UserID)
+		assert.True(t, params.IncludeLocked)
+		assert.True(t, params.IncludeNotificationPreferences)
 	})
 }

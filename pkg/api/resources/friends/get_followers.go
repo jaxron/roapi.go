@@ -23,7 +23,7 @@ func (r *Resource) GetFollowers(ctx context.Context, p GetFollowersParams) (*typ
 		URL(fmt.Sprintf("%s/v1/users/%d/followers", types.FriendsEndpoint, p.UserID)).
 		Query("limit", strconv.FormatUint(p.Limit, 10)).
 		Query("cursor", p.Cursor).
-		Query("sortOrder", p.SortOrder).
+		Query("sortOrder", string(p.SortOrder)).
 		Result(&followers).
 		Do(ctx)
 	if err != nil {
@@ -36,10 +36,10 @@ func (r *Resource) GetFollowers(ctx context.Context, p GetFollowersParams) (*typ
 
 // GetFollowersParams holds the parameters for getting followers.
 type GetFollowersParams struct {
-	UserID    uint64 `json:"userId"    validate:"required"`                 // Required: ID of the user to fetch followers for
-	Limit     uint64 `json:"limit"     validate:"oneof=10 18 25 50 100"`    // Optional: Maximum number of results to return (default: 10)
-	Cursor    string `json:"cursor"    validate:"omitempty,base64"`         // Optional: Cursor for pagination
-	SortOrder string `json:"sortOrder" validate:"omitempty,oneof=Asc Desc"` // Optional: Sort order for results
+	UserID    uint64          `json:"userId"    validate:"required"`                 // Required: ID of the user to fetch followers for
+	Limit     uint64          `json:"limit"     validate:"oneof=10 18 25 50 100"`    // Optional: Maximum number of results to return (default: 10)
+	Cursor    string          `json:"cursor"    validate:"omitempty,base64"`         // Optional: Cursor for pagination
+	SortOrder types.SortOrder `json:"sortOrder" validate:"omitempty,oneof=Asc Desc"` // Optional: Sort order for results
 }
 
 // GetFollowersBuilder is a builder for GetFollowersParams.

@@ -9,17 +9,10 @@ const (
 	AvatarEndpoint     = "https://avatar.roblox.com"
 )
 
-// Constants for building requests.
-const (
-	SortOrderAsc  = "Asc"
-	SortOrderDesc = "Desc"
-)
+// SortOrder represents the sort order of the results.
+type SortOrder string
 
-// Constants for user presence types.
 const (
-	UserPresenceTypeOnline string = "Online"
-	UserPresenceTypeInGame string = "InGame"
-
-	UserLocationTypePage string = "Page"
-	UserLocationTypeGame string = "Game"
+	SortOrderAsc  SortOrder = "Asc"
+	SortOrderDesc SortOrder = "Desc"
 )

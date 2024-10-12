@@ -22,7 +22,7 @@ func (r *Resource) GetUsernameHistory(ctx context.Context, p UsernameHistoryPara
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v1/users/%d/username-history", types.UsersEndpoint, p.UserID)).
 		Query("limit", strconv.FormatUint(p.Limit, 10)).
-		Query("sortOrder", p.SortOrder).
+		Query("sortOrder", string(p.SortOrder)).
 		Query("cursor", p.Cursor).
 		Result(&history).
 		Do(ctx)
@@ -36,10 +36,10 @@ func (r *Resource) GetUsernameHistory(ctx context.Context, p UsernameHistoryPara
 
 // UsernameHistoryParams holds the parameters for fetching username history.
 type UsernameHistoryParams struct {
-	UserID    uint64 `json:"userId"    validate:"required"`
-	Limit     uint64 `json:"limit"     validate:"oneof=10 25 50 100"`
-	SortOrder string `json:"sortOrder" validate:"omitempty,oneof=Asc Desc"`
-	Cursor    string `json:"cursor"    validate:"omitempty,base64"`
+	UserID    uint64          `json:"userId"    validate:"required"`
+	Limit     uint64          `json:"limit"     validate:"oneof=10 25 50 100"`
+	SortOrder types.SortOrder `json:"sortOrder" validate:"omitempty,oneof=Asc Desc"`
+	Cursor    string          `json:"cursor"    validate:"omitempty,base64"`
 }
 
 // UsernameHistoryBuilder builds parameters for GetUsernameHistory API call.

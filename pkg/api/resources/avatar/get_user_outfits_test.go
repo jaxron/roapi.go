@@ -26,7 +26,7 @@ func TestGetUserOutfits(t *testing.T) {
 		for _, outfit := range userOutfits {
 			assert.NotZero(t, outfit.ID)
 			assert.NotEmpty(t, outfit.Name)
-			assert.False(t, outfit.IsEditable)
+			assert.True(t, outfit.IsEditable)
 			assert.Equal(t, "Avatar", outfit.OutfitType)
 		}
 	})

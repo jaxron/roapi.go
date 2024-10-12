@@ -23,7 +23,7 @@ func (r *Resource) GetRoleUsers(ctx context.Context, p RoleUsersParams) (*types.
 		URL(fmt.Sprintf("%s/v1/groups/%d/roles/%d/users", types.GroupsEndpoint, p.GroupID, p.RoleID)).
 		Query("limit", strconv.FormatUint(p.Limit, 10)).
 		Query("cursor", p.Cursor).
-		Query("sortOrder", p.SortOrder).
+		Query("sortOrder", string(p.SortOrder)).
 		Result(&roleUsers).
 		Do(ctx)
 	if err != nil {
@@ -36,11 +36,11 @@ func (r *Resource) GetRoleUsers(ctx context.Context, p RoleUsersParams) (*types.
 
 // RoleUsersParams holds the parameters for getting role users.
 type RoleUsersParams struct {
-	GroupID   uint64 `json:"groupId"   validate:"required"`
-	RoleID    uint64 `json:"roleId"    validate:"required"`
-	Limit     uint64 `json:"limit"     validate:"omitempty,oneof=10 25 50 100"`
-	Cursor    string `json:"cursor"    validate:"omitempty"`
-	SortOrder string `json:"sortOrder" validate:"omitempty,oneof=Asc Desc"`
+	GroupID   uint64          `json:"groupId"   validate:"required"`
+	RoleID    uint64          `json:"roleId"    validate:"required"`
+	Limit     uint64          `json:"limit"     validate:"omitempty,oneof=10 25 50 100"`
+	Cursor    string          `json:"cursor"    validate:"omitempty"`
+	SortOrder types.SortOrder `json:"sortOrder" validate:"omitempty,oneof=Asc Desc"`
 }
 
 // RoleUsersBuilder is a builder for RoleUsersParams.

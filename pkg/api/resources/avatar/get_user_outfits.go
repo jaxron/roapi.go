@@ -44,6 +44,7 @@ type UserOutfitsParams struct {
 	ItemsPerPage    int    `json:"itemsPerPage"    validate:"min=1"`
 	OutfitType      string `json:"outfitType"`
 	PaginationToken string `json:"paginationToken"`
+	Page            uint32 `json:"page"            validate:"min=1"`
 }
 
 // UserOutfitsBuilder is a builder for UserOutfitsParams.
@@ -56,10 +57,11 @@ func NewUserOutfitsBuilder(userID uint64) *UserOutfitsBuilder {
 	return &UserOutfitsBuilder{
 		params: UserOutfitsParams{
 			UserID:          userID,
-			IsEditable:      false,
+			IsEditable:      true,
 			ItemsPerPage:    50,
 			OutfitType:      "Avatar",
 			PaginationToken: "",
+			Page:            1,
 		},
 	}
 }
@@ -85,6 +87,12 @@ func (b *UserOutfitsBuilder) WithOutfitType(outfitType string) *UserOutfitsBuild
 // WithPaginationToken sets the pagination token.
 func (b *UserOutfitsBuilder) WithPaginationToken(paginationToken string) *UserOutfitsBuilder {
 	b.params.PaginationToken = paginationToken
+	return b
+}
+
+// WithPage sets the page number.
+func (b *UserOutfitsBuilder) WithPage(page uint32) *UserOutfitsBuilder {
+	b.params.Page = page
 	return b
 }
 

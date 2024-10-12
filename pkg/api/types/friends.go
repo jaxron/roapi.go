@@ -2,6 +2,22 @@ package types
 
 import "time"
 
+// PresenceType represents the type of user presence.
+type PresenceType string
+
+const (
+	UserPresenceTypeOnline PresenceType = "Online"
+	UserPresenceTypeInGame PresenceType = "InGame"
+)
+
+// LocationType represents the type of user location.
+type LocationType string
+
+const (
+	UserLocationTypePage LocationType = "Page"
+	UserLocationTypeGame LocationType = "Game"
+)
+
 // FollowerPageResponse represents the structure of a user's follower list returned by the Roblox API.
 type FollowerPageResponse struct {
 	PreviousPageCursor *string        `json:"previousPageCursor"` // Cursor for the previous page of results (if any)
@@ -35,14 +51,14 @@ type UserResponse struct {
 
 // UserPresenceResponse represents the structure of friend information returned by the Roblox API.
 type UserPresenceResponse struct {
-	UserPresenceType string    `json:"userPresenceType"` // Type of user presence
-	UserLocationType string    `json:"userLocationType"` // Type of user location
-	LastLocation     string    `json:"lastLocation"`     // Last location of the user
-	PlaceID          *uint64   `json:"placeId"`          // Place ID the user is in
-	RootPlaceID      *uint64   `json:"rootPlaceId"`      // Root place ID the user is in
-	GameInstanceID   *string   `json:"gameInstanceId"`   // Game instance ID the user is in
-	UniverseID       *uint64   `json:"universeId"`       // Universe ID the user is in
-	LastOnline       time.Time `json:"lastOnline"`       // Last online time of the user
+	UserPresenceType PresenceType `json:"userPresenceType"` // Type of user presence
+	UserLocationType LocationType `json:"userLocationType"` // Type of user location
+	LastLocation     string       `json:"lastLocation"`     // Last location of the user
+	PlaceID          *uint64      `json:"placeId"`          // Place ID the user is in
+	RootPlaceID      *uint64      `json:"rootPlaceId"`      // Root place ID the user is in
+	GameInstanceID   *string      `json:"gameInstanceId"`   // Game instance ID the user is in
+	UniverseID       *uint64      `json:"universeId"`       // Universe ID the user is in
+	LastOnline       time.Time    `json:"lastOnline"`       // Last online time of the user
 }
 
 // FriendPageResponse represents the structure of a user's friend list returned by the Roblox API.

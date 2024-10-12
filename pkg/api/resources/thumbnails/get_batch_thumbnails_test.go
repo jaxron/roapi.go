@@ -19,7 +19,7 @@ func TestGetBatchThumbnails(t *testing.T) {
 	t.Run("Fetch Known Batch Thumbnails", func(t *testing.T) {
 		builder := thumbnails.NewBatchThumbnailsBuilder()
 		builder.AddRequest(types.ThumbnailRequest{
-			Type:       types.AvatarHeadShot,
+			Type:       types.AvatarHeadShotType,
 			TargetID:   utils.SampleUserID1,
 			Size:       types.Size420x420,
 			Format:     types.PNG,
@@ -27,7 +27,7 @@ func TestGetBatchThumbnails(t *testing.T) {
 			RequestID:  "AvatarHeadShot:420x420:png:regular",
 		})
 		builder.AddRequest(types.ThumbnailRequest{
-			Type:       types.GroupIcon,
+			Type:       types.GroupIconType,
 			TargetID:   utils.SampleGroupID,
 			Size:       types.Size150x150,
 			Format:     types.PNG,
@@ -81,7 +81,7 @@ func TestGetBatchThumbnails(t *testing.T) {
 	t.Run("Test Builder Methods", func(t *testing.T) {
 		builder := thumbnails.NewBatchThumbnailsBuilder()
 		builder.AddRequest(types.ThumbnailRequest{
-			Type:       types.AvatarHeadShot,
+			Type:       types.AvatarHeadShotType,
 			TargetID:   1,
 			Size:       types.Size420x420,
 			Format:     types.PNG,
@@ -89,7 +89,7 @@ func TestGetBatchThumbnails(t *testing.T) {
 			RequestID:  "Request1",
 		})
 		builder.AddRequest(types.ThumbnailRequest{
-			Type:       types.GroupIcon,
+			Type:       types.GroupIconType,
 			TargetID:   2,
 			Size:       types.Size150x150,
 			Format:     types.PNG,
