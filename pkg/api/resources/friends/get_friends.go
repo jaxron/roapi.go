@@ -11,9 +11,9 @@ import (
 
 // GetFriends fetches the friends of a user.
 // GET https://friends.roblox.com/v1/users/{userID}/friends
-func (r *Resource) GetFriends(ctx context.Context, userID uint64) ([]types.UserResponse, error) {
+func (r *Resource) GetFriends(ctx context.Context, userID uint64) ([]types.Friend, error) {
 	var friends struct {
-		Data []types.UserResponse `json:"data"` // List of friend information
+		Data []types.Friend `json:"data"` // List of friend information
 	}
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).

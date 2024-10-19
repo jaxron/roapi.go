@@ -20,20 +20,20 @@ const (
 
 // FollowerPageResponse represents the structure of a user's follower list returned by the Roblox API.
 type FollowerPageResponse struct {
-	PreviousPageCursor *string        `json:"previousPageCursor"` // Cursor for the previous page of results (if any)
-	NextPageCursor     *string        `json:"nextPageCursor"`     // Cursor for the next page of results (if any)
-	Data               []UserResponse `json:"data"`               // List of followers
+	PreviousPageCursor *string  `json:"previousPageCursor"` // Cursor for the previous page of results (if any)
+	NextPageCursor     *string  `json:"nextPageCursor"`     // Cursor for the next page of results (if any)
+	Data               []Friend `json:"data"`               // List of followers
 }
 
 // FollowingPageResponse represents the structure of a user's following list returned by the Roblox API.
 type FollowingPageResponse struct {
-	PreviousPageCursor *string        `json:"previousPageCursor"` // Cursor for the previous page of results (if any)
-	NextPageCursor     *string        `json:"nextPageCursor"`     // Cursor for the next page of results (if any)
-	Data               []UserResponse `json:"data"`               // List of users being followed
+	PreviousPageCursor *string  `json:"previousPageCursor"` // Cursor for the previous page of results (if any)
+	NextPageCursor     *string  `json:"nextPageCursor"`     // Cursor for the next page of results (if any)
+	Data               []Friend `json:"data"`               // List of users being followed
 }
 
-// UserResponse represents a single user in a user's friend list.
-type UserResponse struct {
+// Friend represents a single friend in a user's friend list.
+type Friend struct {
 	ID                     uint64    `json:"id"`                     // Unique identifier for the friend
 	Name                   string    `json:"name"`                   // Username of the friend
 	DisplayName            string    `json:"displayName"`            // Display name of the friend
@@ -75,8 +75,8 @@ type FriendResponse struct {
 	HasVerifiedBadge bool   `json:"hasVerifiedBadge"` // Whether the friend has a verified badge
 }
 
-// OnlineFriendResponse represents the structure of friend information returned by the Roblox API.
-type OnlineFriendResponse struct {
+// OnlineFriend represents the structure of friend information returned by the Roblox API.
+type OnlineFriend struct {
 	ID           uint64               `json:"id"`           // Unique identifier for the friend
 	Name         string               `json:"name"`         // Username of the friend
 	DisplayName  string               `json:"displayName"`  // Display name of the friend

@@ -29,6 +29,7 @@ type ThumbnailFormat string
 const (
 	PNG  ThumbnailFormat = "png"
 	JPEG ThumbnailFormat = "jpeg"
+	WEBP ThumbnailFormat = "webp"
 )
 
 // ThumbnailSize represents the size of the thumbnail.
@@ -50,6 +51,15 @@ const (
 	Size720x720 ThumbnailSize = "720x720"
 )
 
+// ThumbnailState represents the state of the thumbnail.
+type ThumbnailState string
+
+const (
+	ThumbnailStateCompleted ThumbnailState = "Completed"
+	ThumbnailStatePending   ThumbnailState = "Pending"
+	ThumbnailStateBlocked   ThumbnailState = "Blocked"
+)
+
 // ThumbnailRequest represents a single thumbnail request.
 type ThumbnailRequest struct {
 	Type       ThumbnailType   `json:"type"`
@@ -62,13 +72,13 @@ type ThumbnailRequest struct {
 	IsCircular bool            `json:"isCircular,omitempty"`
 }
 
-// ThumbnailDataResponse represents the data for a single thumbnail in the response returned by the Roblox API.
-type ThumbnailDataResponse struct {
-	RequestID    string  `json:"requestId"`
-	ErrorCode    int     `json:"errorCode"`
-	ErrorMessage string  `json:"errorMessage"`
-	TargetID     uint64  `json:"targetId"`
-	State        string  `json:"state"`
-	ImageURL     *string `json:"imageUrl"`
-	Version      *string `json:"version"`
+// ThumbnailData represents the data for a single thumbnail in the response returned by the Roblox API.
+type ThumbnailData struct {
+	RequestID    string         `json:"requestId"`
+	ErrorCode    int            `json:"errorCode"`
+	ErrorMessage string         `json:"errorMessage"`
+	TargetID     uint64         `json:"targetId"`
+	State        ThumbnailState `json:"state"`
+	ImageURL     *string        `json:"imageUrl"`
+	Version      *string        `json:"version"`
 }

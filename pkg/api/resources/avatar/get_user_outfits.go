@@ -12,13 +12,13 @@ import (
 
 // GetUserOutfits fetches the outfits for a specific user.
 // GET https://avatar.roblox.com/v2/avatar/users/{userId}/outfits
-func (r *Resource) GetUserOutfits(ctx context.Context, p UserOutfitsParams) ([]types.OutfitData, error) {
+func (r *Resource) GetUserOutfits(ctx context.Context, p UserOutfitsParams) ([]types.Outfit, error) {
 	if err := r.validate.Struct(p); err != nil {
 		return nil, err
 	}
 
 	var userOutfits struct {
-		Data []types.OutfitData `json:"data"`
+		Data []types.Outfit `json:"data"`
 	}
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).

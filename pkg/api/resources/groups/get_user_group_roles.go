@@ -12,9 +12,9 @@ import (
 
 // GetUserGroupRoles fetches the group roles for a specific user.
 // GET https://groups.roblox.com/v1/users/{userId}/groups/roles
-func (r *Resource) GetUserGroupRoles(ctx context.Context, params UserGroupRolesParams) ([]types.UserGroupRolesResponse, error) {
+func (r *Resource) GetUserGroupRoles(ctx context.Context, params UserGroupRolesParams) ([]types.UserGroupRoles, error) {
 	var userGroupRoles struct {
-		Data []types.UserGroupRolesResponse `json:"data"`
+		Data []types.UserGroupRoles `json:"data"`
 	}
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).

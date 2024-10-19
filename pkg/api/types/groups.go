@@ -86,16 +86,16 @@ type GroupSearch struct {
 	HasVerifiedBadge   bool      `json:"hasVerifiedBadge"`
 }
 
-// GroupLookupResponse represents the structure of group lookup results returned by the Roblox API.
-type GroupLookupResponse struct {
+// GroupLookup represents the structure of group lookup results returned by the Roblox API.
+type GroupLookup struct {
 	ID               uint64 `json:"id"`
 	Name             string `json:"name"`
 	MemberCount      uint64 `json:"memberCount"`
 	HasVerifiedBadge bool   `json:"hasVerifiedBadge"`
 }
 
-// GroupInfoResponse represents the structure of a single group's information returned by the Roblox API.
-type GroupInfoResponse struct {
+// GroupInfo represents the structure of a single group's information returned by the Roblox API.
+type GroupInfo struct {
 	ID               uint64     `json:"id"`
 	Name             string     `json:"name"`
 	Description      string     `json:"description"`
@@ -110,8 +110,8 @@ type GroupOwner struct {
 	Type string `json:"type"`
 }
 
-// UserGroupRolesResponse represents the structure of user group roles information returned by the Roblox API.
-type UserGroupRolesResponse struct {
+// UserGroupRoles represents the structure of user group roles information returned by the Roblox API.
+type UserGroupRoles struct {
 	Group GroupResponse `json:"group"`
 	Role  UserGroupRole `json:"role"`
 }

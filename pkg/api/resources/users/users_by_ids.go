@@ -10,13 +10,13 @@ import (
 
 // GetUsersByIDs fetches information for users with the given IDs.
 // POST https://users.roblox.com/v1/users
-func (r *Resource) GetUsersByIDs(ctx context.Context, p UsersByIDsParams) ([]types.VerifiedBadgeUserResponse, error) {
+func (r *Resource) GetUsersByIDs(ctx context.Context, p UsersByIDsParams) ([]types.VerifiedBadgeUser, error) {
 	if err := r.validate.Struct(p); err != nil {
 		return nil, err
 	}
 
 	var users struct {
-		Data []types.VerifiedBadgeUserResponse `json:"data"` // List of users fetched by user IDs
+		Data []types.VerifiedBadgeUser `json:"data"` // List of users fetched by user IDs
 	}
 	resp, err := r.client.NewRequest().
 		Method(http.MethodPost).

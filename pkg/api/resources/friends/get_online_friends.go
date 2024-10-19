@@ -13,7 +13,7 @@ import (
 
 // GetOnlineFriends fetches the online friends of a user.
 // GET https://friends.roblox.com/v1/users/{userID}/friends/online
-func (r *Resource) GetOnlineFriends(ctx context.Context, p GetOnlineFriendsParams) ([]types.OnlineFriendResponse, error) {
+func (r *Resource) GetOnlineFriends(ctx context.Context, p GetOnlineFriendsParams) ([]types.OnlineFriend, error) {
 	if err := r.validate.Struct(p); err != nil {
 		return nil, err
 	}
@@ -21,7 +21,7 @@ func (r *Resource) GetOnlineFriends(ctx context.Context, p GetOnlineFriendsParam
 	ctx = context.WithValue(ctx, auth.KeyAddCookie, true)
 
 	var friends struct {
-		Data []types.OnlineFriendResponse `json:"data"` // List of online friends
+		Data []types.OnlineFriend `json:"data"` // List of online friends
 	}
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).

@@ -10,9 +10,9 @@ import (
 
 // LookupGroup searches for groups based on the provided group name.
 // GET https://groups.roblox.com/v1/groups/search/lookup
-func (r *Resource) LookupGroup(ctx context.Context, groupName string) ([]types.GroupLookupResponse, error) {
+func (r *Resource) LookupGroup(ctx context.Context, groupName string) ([]types.GroupLookup, error) {
 	var lookupResults struct {
-		Data []types.GroupLookupResponse `json:"data"`
+		Data []types.GroupLookup `json:"data"`
 	}
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).

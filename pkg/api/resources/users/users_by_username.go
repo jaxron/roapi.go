@@ -10,13 +10,13 @@ import (
 
 // GetUsersByUsernames fetches information for users with the given usernames.
 // POST https://users.roblox.com/v1/usernames/users
-func (r *Resource) GetUsersByUsernames(ctx context.Context, p GetUsersByUsernamesParams) ([]types.UserByUsernameResponse, error) {
+func (r *Resource) GetUsersByUsernames(ctx context.Context, p GetUsersByUsernamesParams) ([]types.UserByUsername, error) {
 	if err := r.validate.Struct(p); err != nil {
 		return nil, err
 	}
 
 	var users struct {
-		Data []types.UserByUsernameResponse `json:"data"` // List of users fetched by usernames
+		Data []types.UserByUsername `json:"data"` // List of users fetched by usernames
 	}
 	resp, err := r.client.NewRequest().
 		Method(http.MethodPost).

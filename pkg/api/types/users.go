@@ -20,8 +20,8 @@ type AuthUserResponse struct {
 	DisplayName string `json:"displayName"` // Display name of the user
 }
 
-// UserByUsernameResponse represents a single user fetched by username.
-type UserByUsernameResponse struct {
+// UserByUsername represents a single user fetched by username.
+type UserByUsername struct {
 	ID                uint64 `json:"id"`                // Unique identifier for the user
 	Name              string `json:"name"`              // Current username of the user
 	DisplayName       string `json:"displayName"`       // Display name of the user
@@ -29,8 +29,8 @@ type UserByUsernameResponse struct {
 	HasVerifiedBadge  bool   `json:"hasVerifiedBadge"`  // Whether the user has a verified badge
 }
 
-// VerifiedBadgeUserResponse represents a single user with a verified badge.
-type VerifiedBadgeUserResponse struct {
+// VerifiedBadgeUser represents a single user with a verified badge.
+type VerifiedBadgeUser struct {
 	ID               uint64 `json:"id"`               // Unique identifier for the user
 	Name             string `json:"name"`             // Current username of the user
 	DisplayName      string `json:"displayName"`      // Display name of the user
