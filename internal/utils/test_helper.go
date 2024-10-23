@@ -75,10 +75,10 @@ func NewTestEnv(opts ...client.Option) (*client.Client, *validator.Validate) {
 	client := client.NewClient(
 		append([]client.Option{
 			client.WithLogger(logger),
-			client.WithMiddleware(retry.New(1, 5000, 10000)),
-			client.WithMiddleware(auth),
-			client.WithMiddleware(proxy),
-			client.WithMiddleware(jsonheader.New()),
+			client.WithMiddleware(2, retry.New(1, 5000, 10000)),
+			client.WithMiddleware(1, proxy),
+			client.WithMiddleware(1, auth),
+			client.WithMiddleware(1, jsonheader.New()),
 		}, opts...)...,
 	)
 

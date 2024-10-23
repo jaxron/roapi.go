@@ -5,6 +5,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/gabriel-vasile/mimetype v1.4.5 h1:J7wGKdGu33ocBOhGy0z653k/lFKLFDPJMG8Gql0kxn4=
 github.com/gabriel-vasile/mimetype v1.4.5/go.mod h1:ibHel+/kbxn9x2407k1izTA1S81ku1z/DlgOW2QE0M4=
+github.com/gabriel-vasile/mimetype v1.4.6 h1:3+PzJTKLkvgjeTbts6msPJt4DixhT4YtFNf1gtGe3zc=
+github.com/gabriel-vasile/mimetype v1.4.6/go.mod h1:JX1qVKqZd40hUPpAfiNTe0Sne7hdfKSbOqqmkq8GCXc=
 github.com/go-playground/assert/v2 v2.2.0 h1:JvknZsQTYeFEAhQwI4qEt9cyV5ONwRHC+lYKSsYSR8s=
 github.com/go-playground/assert/v2 v2.2.0/go.mod h1:VDjEfimB/XKnb+ZQfWdccd7VUvScMdVu0Titje2rxJ4=
 github.com/go-playground/locales v0.14.1 h1:EWaQ/wswjilfKLTECiXz7Rh+3BjFhfDFKv/oXslEjJA=
@@ -15,10 +17,16 @@ github.com/go-playground/validator/v10 v10.22.1 h1:40JcKH+bBNGFczGuoBYgX4I6m/i27
 github.com/go-playground/validator/v10 v10.22.1/go.mod h1:dbuPbCMFw/DrkbEynArYaCwl3amGuJotoKCe95atGMM=
 github.com/jaxron/axonet v0.0.0-20241009045600-f73d347dcdfe h1:VOG6pe/Jku50erxZaw1w8b8f/NWtZAc8E80UQzYeWPQ=
 github.com/jaxron/axonet v0.0.0-20241009045600-f73d347dcdfe/go.mod h1:92DgyJvbzpypIYiDDCbdEQiyDKQ6vUJN/i948GmChhI=
+github.com/jaxron/axonet v0.0.0-20241023122609-a8b5cc17bf74 h1:EJWNDLHwK0mMCH0NVKrWNyA/uE+LGojfLQ40ZnJCLus=
+github.com/jaxron/axonet v0.0.0-20241023122609-a8b5cc17bf74/go.mod h1:92DgyJvbzpypIYiDDCbdEQiyDKQ6vUJN/i948GmChhI=
 github.com/jaxron/axonet/middleware/proxy v0.0.0-20241009045600-f73d347dcdfe h1:hvSPgtBU7MZQ2a8sB/KKdE3fsPeBdpJOECetQpju27g=
 github.com/jaxron/axonet/middleware/proxy v0.0.0-20241009045600-f73d347dcdfe/go.mod h1:JhkZLTvbs0GPKQOgdGVlbkxmQnKd8N6IzSNrFCdemb8=
+github.com/jaxron/axonet/middleware/proxy v0.0.0-20241023122609-a8b5cc17bf74 h1:rxshBirdnU8M+AnnOFJ9bQvwQH3cqX9hzpmzt+0qRBM=
+github.com/jaxron/axonet/middleware/proxy v0.0.0-20241023122609-a8b5cc17bf74/go.mod h1:4a1l/OyPBOHLJkkUJzjRJKZDGwLR8+KaH2zWTHoTuWQ=
 github.com/jaxron/axonet/middleware/retry v0.0.0-20241009045600-f73d347dcdfe h1:wSPk5zBHih8mQzN9ZNW3GzTo9y8F5qanTSLL2u82ZUI=
 github.com/jaxron/axonet/middleware/retry v0.0.0-20241009045600-f73d347dcdfe/go.mod h1:gr8gL+kzzxbztyb46hu5AF5VTdByPf0S7hg5aDAHGYA=
+github.com/jaxron/axonet/middleware/retry v0.0.0-20241023122609-a8b5cc17bf74 h1:t6egoPr3hdEgPC4zqrE5p/CDV4lKn0jfkMGneDRBoMs=
+github.com/jaxron/axonet/middleware/retry v0.0.0-20241023122609-a8b5cc17bf74/go.mod h1:dumWAwJ8AUoaHvsFvlEpUp+j4J0MWBrwPnr/FluyYtY=
 github.com/kr/pretty v0.1.0 h1:L/CwN0zerZDmRFUapSPitk6f+Q3+0za1rQkzVuMiMFI=
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
