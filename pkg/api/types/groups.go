@@ -12,6 +12,7 @@ type GroupResponse struct {
 	MemberCount        uint64      `json:"memberCount"`
 	IsBuildersClubOnly bool        `json:"isBuildersClubOnly"`
 	PublicEntryAllowed bool        `json:"publicEntryAllowed"`
+	IsLocked           *bool       `json:"isLocked"`
 	HasVerifiedBadge   bool        `json:"hasVerifiedBadge"`
 }
 
