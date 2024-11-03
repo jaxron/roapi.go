@@ -36,13 +36,14 @@ RoAPI.go offers features that prioritize flexibility and reliability. Key featur
   - Easy-to-use wrappers for Roblox API endpoints
   - Cookie rotation for distributed requests
   - Automatic CSRF token handling and refresh
-- **Extensibility:**
-  - Utilize axonet's middleware system to add custom functionality
-  - Extend the API wrapper with custom methods
 - **Developer-Friendly:**
   - Simple request construction using builders
   - No need to understand Roblox's API in-depth
   - Detailed errors with root cause and response body
+  - Built-in parameter validation for all methods
+- **Extensibility:**
+  - Utilize axonet's middleware system to add custom functionality
+  - Extend the API wrapper with custom methods
 
 For a complete list of axonet features and capabilities, please refer to the [axonet repository](https://github.com/jaxron/axonet).
 
