@@ -8,6 +8,7 @@ import (
 	"github.com/jaxron/roapi.go/pkg/api/resources/avatar"
 	"github.com/jaxron/roapi.go/pkg/api/resources/friends"
 	"github.com/jaxron/roapi.go/pkg/api/resources/groups"
+	"github.com/jaxron/roapi.go/pkg/api/resources/presence"
 	"github.com/jaxron/roapi.go/pkg/api/resources/thumbnails"
 	"github.com/jaxron/roapi.go/pkg/api/resources/users"
 )
@@ -21,6 +22,7 @@ type API struct {
 	groups     *groups.Resource     // Resource for group-related API operations
 	thumbnails *thumbnails.Resource // Resource for thumbnail-related API operations
 	avatar     *avatar.Resource     // Resource for avatar-related API operations
+	presence   *presence.Resource
 }
 
 // New creates a new instance of API with the provided options.
@@ -46,6 +48,7 @@ func New(cookies []string, opts ...client.Option) *API {
 		groups:     groups.New(c, v),
 		thumbnails: thumbnails.New(c, v),
 		avatar:     avatar.New(c, v),
+		presence:   presence.New(c, v),
 	}
 }
 
@@ -83,4 +86,10 @@ func (api *API) Thumbnails() *thumbnails.Resource {
 // This provides access to methods for interacting with avatar data via the Roblox API.
 func (api *API) Avatar() *avatar.Resource {
 	return api.avatar
+}
+
+// Presence returns the Resource instance for presence-related operations.
+// This provides access to methods for interacting with presence data via the Roblox API.
+func (api *API) Presence() *presence.Resource {
+	return api.presence
 }

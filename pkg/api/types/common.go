@@ -7,6 +7,7 @@ const (
 	GroupsEndpoint     = "https://groups.roblox.com"
 	ThumbnailsEndpoint = "https://thumbnails.roblox.com"
 	AvatarEndpoint     = "https://avatar.roblox.com"
+	PresenceEndpoint   = "https://presence.roblox.com"
 )
 
 // SortOrder represents the sort order of the results.
