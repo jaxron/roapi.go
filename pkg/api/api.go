@@ -7,6 +7,7 @@ import (
 	"github.com/jaxron/roapi.go/internal/middleware/jsonheader"
 	"github.com/jaxron/roapi.go/pkg/api/resources/avatar"
 	"github.com/jaxron/roapi.go/pkg/api/resources/friends"
+	"github.com/jaxron/roapi.go/pkg/api/resources/games"
 	"github.com/jaxron/roapi.go/pkg/api/resources/groups"
 	"github.com/jaxron/roapi.go/pkg/api/resources/presence"
 	"github.com/jaxron/roapi.go/pkg/api/resources/thumbnails"
@@ -22,7 +23,8 @@ type API struct {
 	groups     *groups.Resource     // Resource for group-related API operations
 	thumbnails *thumbnails.Resource // Resource for thumbnail-related API operations
 	avatar     *avatar.Resource     // Resource for avatar-related API operations
-	presence   *presence.Resource
+	presence   *presence.Resource   // Resource for presence-related API operations
+	games      *games.Resource      // Resource for game-related API operations
 }
 
 // New creates a new instance of API with the provided options.
@@ -49,6 +51,7 @@ func New(cookies []string, opts ...client.Option) *API {
 		thumbnails: thumbnails.New(c, v),
 		avatar:     avatar.New(c, v),
 		presence:   presence.New(c, v),
+		games:      games.New(c, v),
 	}
 }
 
@@ -92,4 +95,10 @@ func (api *API) Avatar() *avatar.Resource {
 // This provides access to methods for interacting with presence data via the Roblox API.
 func (api *API) Presence() *presence.Resource {
 	return api.presence
+}
+
+// Games returns the Resource instance for game-related operations.
+// This provides access to methods for interacting with game data via the Roblox API.
+func (api *API) Games() *games.Resource {
+	return api.games
 }
