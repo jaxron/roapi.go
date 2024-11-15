@@ -34,7 +34,7 @@ func (r *Resource) GetUserPresences(ctx context.Context, p UserPresencesParams) 
 
 // UserPresencesParams holds the parameters for getting user presences.
 type UserPresencesParams struct {
-	UserIDs []uint64 `json:"userIds" validate:"required,min=1,max=100"`
+	UserIDs []uint64 `json:"userIds" validate:"required,min=1,max=50"`
 }
 
 // UserPresencesBuilder is a builder for UserPresencesParams.
