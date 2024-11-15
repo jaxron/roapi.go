@@ -11,6 +11,7 @@ import (
 // ResourceInterface defines the methods available for game-related operations.
 type ResourceInterface interface {
 	GetUserGames(ctx context.Context, p UserGamesParams) (*types.GameResponse, error)
+	GetGameFavoritesCount(ctx context.Context, universeID uint64) (*types.GameFavoritesCountResponse, error)
 }
 
 // Ensure Resource implements ResourceInterface.

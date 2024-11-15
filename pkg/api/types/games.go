@@ -2,6 +2,7 @@ package types
 
 import "time"
 
+// GameResponse represents the structure of a game response returned by the Roblox API.
 type GameResponse struct {
 	PreviousPageCursor *string `json:"previousPageCursor"` // Cursor for the previous page of results (if any)
 	NextPageCursor     *string `json:"nextPageCursor"`     // Cursor for the next page of results (if any)
@@ -30,4 +31,9 @@ type Creator struct {
 type Place struct {
 	ID   uint64 `json:"id"`   // Place's unique identifier
 	Type string `json:"type"` // Type of place
+}
+
+// GameFavoritesCountResponse represents the favorites count for a game.
+type GameFavoritesCountResponse struct {
+	FavoritesCount uint64 `json:"favoritesCount"` // Number of times the game has been favorited
 }

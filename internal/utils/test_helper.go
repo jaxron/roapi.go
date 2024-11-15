@@ -49,6 +49,9 @@ const (
 	InvalidGroupID   = uint64(math.MaxUint64)
 	InvalidGroupName = "ThisGroupShouldNotExist12345"
 	InvalidRoleID    = uint64(math.MaxUint64)
+
+	SampleUniverseID  = uint64(6591173970)
+	InvalidUniverseID = uint64(0)
 )
 
 // NewTestEnv creates a new client.Client instance and a validator.Validate for testing purposes.
