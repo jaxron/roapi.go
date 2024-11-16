@@ -2,6 +2,7 @@ package groups
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -13,7 +14,7 @@ import (
 // GET https://groups.roblox.com/v1/groups/search
 func (r *Resource) SearchGroups(ctx context.Context, p SearchGroupsParams) (*types.SearchGroupsResponse, error) {
 	if err := r.validate.Struct(p); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
 	}
 
 	var searchResults types.SearchGroupsResponse
@@ -30,6 +31,10 @@ func (r *Resource) SearchGroups(ctx context.Context, p SearchGroupsParams) (*typ
 		return nil, errors.HandleAPIError(resp, err)
 	}
 	defer resp.Body.Close()
+
+	if err := r.validate.Struct(&searchResults); err != nil {
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
+	}
 
 	return &searchResults, nil
 }

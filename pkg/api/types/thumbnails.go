@@ -62,23 +62,23 @@ const (
 
 // ThumbnailRequest represents a single thumbnail request.
 type ThumbnailRequest struct {
-	Type       ThumbnailType   `json:"type"`
-	Size       ThumbnailSize   `json:"size"`
-	RequestID  string          `json:"requestId"`
-	TargetID   uint64          `json:"targetId"`
-	Token      string          `json:"token,omitempty"`
-	Alias      string          `json:"alias,omitempty"`
-	Format     ThumbnailFormat `json:"format,omitempty"`
-	IsCircular bool            `json:"isCircular,omitempty"`
+	Type       ThumbnailType   `json:"type"       validate:"required"`       // Type of thumbnail to request
+	Size       ThumbnailSize   `json:"size"       validate:"required"`       // Size of the thumbnail
+	RequestID  string          `json:"requestId"  validate:"required"`       // Unique identifier for the request
+	TargetID   uint64          `json:"targetId"   validate:"required,min=1"` // ID of the target item
+	Token      string          `json:"token"      validate:"omitempty"`      // Optional authentication token
+	Alias      string          `json:"alias"      validate:"omitempty"`      // Optional alias for the thumbnail
+	Format     ThumbnailFormat `json:"format"     validate:"omitempty"`      // Optional format for the thumbnail
+	IsCircular bool            `json:"isCircular"`                           // Whether the thumbnail should be circular
 }
 
-// ThumbnailData represents the data for a single thumbnail in the response returned by the Roblox API.
+// ThumbnailData represents the data for a single thumbnail in the response.
 type ThumbnailData struct {
-	RequestID    string         `json:"requestId"`
-	ErrorCode    int            `json:"errorCode"`
-	ErrorMessage string         `json:"errorMessage"`
-	TargetID     uint64         `json:"targetId"`
-	State        ThumbnailState `json:"state"`
-	ImageURL     *string        `json:"imageUrl"`
-	Version      *string        `json:"version"`
+	RequestID    string         `json:"requestId"    validate:"required"`                                  // Unique identifier for the request
+	ErrorCode    int            `json:"errorCode"`                                                         // Error code (0 if no error)
+	ErrorMessage string         `json:"errorMessage" validate:"excluded_if=ErrorCode 0"`                   // Error message (empty if no error)
+	TargetID     uint64         `json:"targetId"     validate:"required,min=1"`                            // ID of the target item
+	State        ThumbnailState `json:"state"        validate:"required,oneof=Completed Pending Blocked"`  // Current state of the thumbnail
+	ImageURL     *string        `json:"imageUrl"     validate:"required_if=State Completed,omitempty,url"` // URL of the thumbnail image
+	Version      *string        `json:"version"      validate:"omitempty"`                                 // Version of the thumbnail
 }

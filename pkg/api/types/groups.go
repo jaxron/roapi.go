@@ -4,122 +4,122 @@ import "time"
 
 // GroupResponse represents the structure of group information returned by the Roblox API.
 type GroupResponse struct {
-	ID                 uint64      `json:"id"`
-	Name               string      `json:"name"`
-	Description        string      `json:"description"`
-	Owner              GroupUser   `json:"owner"`
-	Shout              *GroupShout `json:"shout"`
-	MemberCount        uint64      `json:"memberCount"`
-	IsBuildersClubOnly bool        `json:"isBuildersClubOnly"`
-	PublicEntryAllowed bool        `json:"publicEntryAllowed"`
-	IsLocked           *bool       `json:"isLocked"`
-	HasVerifiedBadge   bool        `json:"hasVerifiedBadge"`
+	ID                 uint64      `json:"id"                 validate:"required,min=1"` // Unique identifier for the group
+	Name               string      `json:"name"               validate:"required,min=1"` // Name of the group
+	Description        string      `json:"description"`                                  // Description of the group
+	Owner              GroupUser   `json:"owner"              validate:"required"`       // Owner information
+	Shout              *GroupShout `json:"shout"              validate:"omitempty"`      // Group shout (if any)
+	MemberCount        uint64      `json:"memberCount"        validate:"min=0"`          // Number of members in the group
+	IsBuildersClubOnly bool        `json:"isBuildersClubOnly"`                           // Whether the group is builders club only
+	PublicEntryAllowed bool        `json:"publicEntryAllowed"`                           // Whether public entry is allowed
+	IsLocked           *bool       `json:"isLocked"`                                     // Whether the group is locked
+	HasVerifiedBadge   bool        `json:"hasVerifiedBadge"`                             // Whether the group has a verified badge
 }
 
 // GroupUser represents a user in the context of a group.
 type GroupUser struct {
-	UserID           uint64 `json:"userId"`
-	Username         string `json:"username"`
-	DisplayName      string `json:"displayName"`
-	HasVerifiedBadge bool   `json:"hasVerifiedBadge"`
+	UserID           uint64 `json:"userId"           validate:"required,min=1"` // User's unique identifier
+	Username         string `json:"username"         validate:"required,min=1"` // Username of the user
+	DisplayName      string `json:"displayName"      validate:"required,min=1"` // Display name of the user
+	HasVerifiedBadge bool   `json:"hasVerifiedBadge"`                           // Whether the user has a verified badge
 }
 
 // GroupShout represents a group shout.
 type GroupShout struct {
-	Body    string    `json:"body"`
-	Poster  GroupUser `json:"poster"`
-	Created time.Time `json:"created"`
-	Updated time.Time `json:"updated"`
+	Body    string    `json:"body"    validate:"required"`         // Content of the shout
+	Poster  GroupUser `json:"poster"  validate:"required"`         // User who posted the shout
+	Created time.Time `json:"created" validate:"required"`         // When the shout was created
+	Updated time.Time `json:"updated" validate:"gtefield=Created"` // When the shout was last updated
 }
 
 // GroupUsersResponse represents the structure of group users information returned by the Roblox API.
 type GroupUsersResponse struct {
-	PreviousPageCursor *string         `json:"previousPageCursor"`
-	NextPageCursor     *string         `json:"nextPageCursor"`
-	Data               []GroupUserData `json:"data"`
+	PreviousPageCursor *string         `json:"previousPageCursor" validate:"omitempty"`     // Cursor for the previous page of results (if any)
+	NextPageCursor     *string         `json:"nextPageCursor"     validate:"omitempty"`     // Cursor for the next page of results (if any)
+	Data               []GroupUserData `json:"data"               validate:"required,dive"` // List of group users
 }
 
 // GroupUserData represents a single user in a group's user list.
 type GroupUserData struct {
-	User GroupUser `json:"user"`
-	Role GroupRole `json:"role"`
+	User GroupUser `json:"user" validate:"required"` // User information
+	Role GroupRole `json:"role" validate:"required"` // User's role in the group
 }
 
 // GroupRole represents a role in a group.
 type GroupRole struct {
-	ID          uint64 `json:"id"`
-	Name        string `json:"name"`
-	Rank        uint64 `json:"rank"`
-	MemberCount uint64 `json:"memberCount"`
+	ID          uint64 `json:"id"          validate:"required,min=1"` // Role's unique identifier
+	Name        string `json:"name"        validate:"required,min=1"` // Name of the role
+	Rank        uint64 `json:"rank"`                                  // Rank of the role (0 is lowest)
+	MemberCount uint64 `json:"memberCount"`                           // Number of members with this role
 }
 
 // GroupRolesResponse represents the structure of group roles information returned by the Roblox API.
 type GroupRolesResponse struct {
-	GroupID uint64      `json:"groupId"`
-	Roles   []GroupRole `json:"roles"`
+	GroupID uint64      `json:"groupId" validate:"required,min=1"` // Unique identifier for the group
+	Roles   []GroupRole `json:"roles"   validate:"required,dive"`  // List of roles in the group
 }
 
 // RoleUsersResponse represents the structure of role users information returned by the Roblox API.
 type RoleUsersResponse struct {
-	PreviousPageCursor *string     `json:"previousPageCursor"`
-	NextPageCursor     *string     `json:"nextPageCursor"`
-	Data               []GroupUser `json:"data"`
+	PreviousPageCursor *string     `json:"previousPageCursor" validate:"omitempty"`     // Cursor for the previous page of results (if any)
+	NextPageCursor     *string     `json:"nextPageCursor"     validate:"omitempty"`     // Cursor for the next page of results (if any)
+	Data               []GroupUser `json:"data"               validate:"required,dive"` // List of users with the role
 }
 
 // SearchGroupsResponse represents the structure of group search results returned by the Roblox API.
 type SearchGroupsResponse struct {
-	Keyword            string        `json:"keyword"`
-	PreviousPageCursor *string       `json:"previousPageCursor"`
-	NextPageCursor     *string       `json:"nextPageCursor"`
-	Data               []GroupSearch `json:"data"`
+	Keyword            string        `json:"keyword"            validate:"required"`      // Search keyword used
+	PreviousPageCursor *string       `json:"previousPageCursor" validate:"omitempty"`     // Cursor for the previous page of results (if any)
+	NextPageCursor     *string       `json:"nextPageCursor"     validate:"omitempty"`     // Cursor for the next page of results (if any)
+	Data               []GroupSearch `json:"data"               validate:"required,dive"` // List of groups matching the search criteria
 }
 
 // GroupSearch represents a single group in the search results.
 type GroupSearch struct {
-	ID                 uint64    `json:"id"`
-	Name               string    `json:"name"`
-	Description        string    `json:"description"`
-	MemberCount        uint64    `json:"memberCount"`
-	PreviousName       string    `json:"previousName"`
-	PublicEntryAllowed bool      `json:"publicEntryAllowed"`
-	Created            time.Time `json:"created"`
-	Updated            time.Time `json:"updated"`
-	HasVerifiedBadge   bool      `json:"hasVerifiedBadge"`
+	ID                 uint64    `json:"id"                 validate:"required,min=1"`   // Unique identifier for the group
+	Name               string    `json:"name"               validate:"required,min=1"`   // Name of the group
+	Description        string    `json:"description"`                                    // Description of the group
+	MemberCount        uint64    `json:"memberCount"        validate:"min=0"`            // Number of members in the group
+	PreviousName       string    `json:"previousName"`                                   // Previous name of the group (if any)
+	PublicEntryAllowed bool      `json:"publicEntryAllowed"`                             // Whether public entry is allowed
+	Created            time.Time `json:"created"            validate:"required"`         // When the group was created
+	Updated            time.Time `json:"updated"            validate:"gtefield=Created"` // When the group was last updated
+	HasVerifiedBadge   bool      `json:"hasVerifiedBadge"`                               // Whether the group has a verified badge
 }
 
 // GroupLookup represents the structure of group lookup results returned by the Roblox API.
 type GroupLookup struct {
-	ID               uint64 `json:"id"`
-	Name             string `json:"name"`
-	MemberCount      uint64 `json:"memberCount"`
-	HasVerifiedBadge bool   `json:"hasVerifiedBadge"`
+	ID               uint64 `json:"id"               validate:"required,min=1"` // Unique identifier for the group
+	Name             string `json:"name"             validate:"required,min=1"` // Name of the group
+	MemberCount      uint64 `json:"memberCount"      validate:"min=0"`          // Number of members in the group
+	HasVerifiedBadge bool   `json:"hasVerifiedBadge"`                           // Whether the group has a verified badge
 }
 
 // GroupInfo represents the structure of a single group's information returned by the Roblox API.
 type GroupInfo struct {
-	ID               uint64     `json:"id"`
-	Name             string     `json:"name"`
-	Description      string     `json:"description"`
-	Owner            GroupOwner `json:"owner"`
-	Created          time.Time  `json:"created"`
-	HasVerifiedBadge bool       `json:"hasVerifiedBadge"`
+	ID               uint64     `json:"id"               validate:"required,min=1"` // Unique identifier for the group
+	Name             string     `json:"name"             validate:"required,min=1"` // Name of the group
+	Description      string     `json:"description"`                                // Description of the group
+	Owner            GroupOwner `json:"owner"            validate:"required"`       // Owner information
+	Created          time.Time  `json:"created"          validate:"required"`       // When the group was created
+	HasVerifiedBadge bool       `json:"hasVerifiedBadge"`                           // Whether the group has a verified badge
 }
 
 // GroupOwner represents the owner of a group.
 type GroupOwner struct {
-	ID   uint64 `json:"id"`
-	Type string `json:"type"`
+	ID   uint64 `json:"id"   validate:"required,min=1"` // Owner's unique identifier
+	Type string `json:"type" validate:"required"`       // Type of owner
 }
 
 // UserGroupRoles represents the structure of user group roles information returned by the Roblox API.
 type UserGroupRoles struct {
-	Group GroupResponse `json:"group"`
-	Role  UserGroupRole `json:"role"`
+	Group GroupResponse `json:"group" validate:"required"` // Group information
+	Role  UserGroupRole `json:"role"  validate:"required"` // User's role in the group
 }
 
 // UserGroupRole represents a single group role for a user.
 type UserGroupRole struct {
-	ID   uint64 `json:"id"`
-	Name string `json:"name"`
-	Rank uint64 `json:"rank"`
+	ID   uint64 `json:"id"   validate:"required,min=1"` // Role's unique identifier
+	Name string `json:"name" validate:"required,min=1"` // Name of the role
+	Rank uint64 `json:"rank"`                           // Rank of the role (0 is lowest)
 }

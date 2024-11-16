@@ -15,13 +15,13 @@ import (
 // GET https://friends.roblox.com/v1/users/{userID}/friends/online
 func (r *Resource) GetOnlineFriends(ctx context.Context, p GetOnlineFriendsParams) ([]types.OnlineFriend, error) {
 	if err := r.validate.Struct(p); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
 	}
 
 	ctx = context.WithValue(ctx, auth.KeyAddCookie, true)
 
 	var friends struct {
-		Data []types.OnlineFriend `json:"data"` // List of online friends
+		Data []types.OnlineFriend `json:"data" validate:"required,dive"` // List of online friends
 	}
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
@@ -34,13 +34,17 @@ func (r *Resource) GetOnlineFriends(ctx context.Context, p GetOnlineFriendsParam
 	}
 	defer resp.Body.Close()
 
+	if err := r.validate.Struct(&friends); err != nil {
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
+	}
+
 	return friends.Data, nil
 }
 
 // GetOnlineFriendsParams holds the parameters for fetching online friends.
 type GetOnlineFriendsParams struct {
-	UserID   uint64 `json:"userId"   validate:"required"`    // Required: ID of the user to fetch online friends for
-	UserSort uint64 `json:"userSort" validate:"oneof=0 1 2"` // Optional: Sort order for results (default: 0)
+	UserID   uint64 `json:"userId"   validate:"required,gt=0"` // Required: ID of the user to fetch online friends for
+	UserSort uint64 `json:"userSort" validate:"oneof=0 1 2"`   // Optional: Sort order for results (default: 0)
 }
 
 // GetOnlineFriendsBuilder is a builder for GetOnlineFriendsParams.

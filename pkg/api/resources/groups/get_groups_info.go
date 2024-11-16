@@ -2,6 +2,7 @@ package groups
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -14,11 +15,11 @@ import (
 // GET https://groups.roblox.com/v2/groups
 func (r *Resource) GetGroupsInfo(ctx context.Context, p GetGroupsInfoParams) ([]types.GroupInfo, error) {
 	if err := r.validate.Struct(p); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
 	}
 
 	var groupsInfo struct {
-		Data []types.GroupInfo `json:"data"`
+		Data []types.GroupInfo `json:"data" validate:"required,dive"`
 	}
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
@@ -30,6 +31,10 @@ func (r *Resource) GetGroupsInfo(ctx context.Context, p GetGroupsInfoParams) ([]
 		return nil, errors.HandleAPIError(resp, err)
 	}
 	defer resp.Body.Close()
+
+	if err := r.validate.Struct(&groupsInfo); err != nil {
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
+	}
 
 	return groupsInfo.Data, nil
 }

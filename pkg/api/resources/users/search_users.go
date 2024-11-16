@@ -2,6 +2,7 @@ package users
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -13,7 +14,7 @@ import (
 // GET https://users.roblox.com/v1/users/search
 func (r *Resource) SearchUsers(ctx context.Context, p SearchUsersParams) (*types.UserSearchPageResponse, error) {
 	if err := r.validate.Struct(p); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
 	}
 
 	var result types.UserSearchPageResponse
@@ -30,12 +31,16 @@ func (r *Resource) SearchUsers(ctx context.Context, p SearchUsersParams) (*types
 	}
 	defer resp.Body.Close()
 
+	if err := r.validate.Struct(&result); err != nil {
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
+	}
+
 	return &result, nil
 }
 
 // SearchUsersParams holds the parameters for searching users.
 type SearchUsersParams struct {
-	Username string `json:"username" validate:"required"`           // Required: Username to search for
+	Username string `json:"username" validate:"required,min=1"`     // Required: Username to search for
 	Limit    uint64 `json:"limit"    validate:"oneof=10 25 50 100"` // Optional: Maximum number of results to return (default: 10)
 	Cursor   string `json:"cursor"   validate:"omitempty,base64"`   // Optional: Cursor for pagination
 }

@@ -10,7 +10,7 @@ import (
 
 // ResourceInterface defines the interface for presence-related operations.
 type ResourceInterface interface {
-	GetUserPresences(ctx context.Context, p UserPresencesParams) ([]types.UserPresence, error)
+	GetUserPresences(ctx context.Context, p UserPresencesParams) ([]types.UserPresenceResponse, error)
 }
 
 // Ensure Resource implements the ResourceInterface.

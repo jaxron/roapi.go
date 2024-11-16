@@ -23,7 +23,7 @@ func TestGetUserOutfits(t *testing.T) {
 		assert.NotEmpty(t, userOutfits)
 
 		// Check if outfits are properly populated
-		for _, outfit := range userOutfits {
+		for _, outfit := range userOutfits.Data {
 			assert.NotZero(t, outfit.ID)
 			assert.NotEmpty(t, outfit.Name)
 			assert.True(t, outfit.IsEditable)

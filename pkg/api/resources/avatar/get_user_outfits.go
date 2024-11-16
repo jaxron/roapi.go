@@ -12,14 +12,12 @@ import (
 
 // GetUserOutfits fetches the outfits for a specific user.
 // GET https://avatar.roblox.com/v2/avatar/users/{userId}/outfits
-func (r *Resource) GetUserOutfits(ctx context.Context, p UserOutfitsParams) ([]types.Outfit, error) {
+func (r *Resource) GetUserOutfits(ctx context.Context, p UserOutfitsParams) (*types.OutfitResponse, error) {
 	if err := r.validate.Struct(p); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
 	}
 
-	var userOutfits struct {
-		Data []types.Outfit `json:"data"`
-	}
+	var userOutfits types.OutfitResponse
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v2/avatar/users/%d/outfits", types.AvatarEndpoint, p.UserID)).
@@ -34,12 +32,16 @@ func (r *Resource) GetUserOutfits(ctx context.Context, p UserOutfitsParams) ([]t
 	}
 	defer resp.Body.Close()
 
-	return userOutfits.Data, nil
+	if err := r.validate.Struct(&userOutfits); err != nil {
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
+	}
+
+	return &userOutfits, nil
 }
 
 // UserOutfitsParams holds the parameters for getting user outfits.
 type UserOutfitsParams struct {
-	UserID          uint64 `json:"userId"          validate:"required"`
+	UserID          uint64 `json:"userId"          validate:"required,gt=0"`
 	IsEditable      bool   `json:"isEditable"`
 	ItemsPerPage    int    `json:"itemsPerPage"    validate:"min=1"`
 	OutfitType      string `json:"outfitType"`

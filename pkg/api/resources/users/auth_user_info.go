@@ -2,6 +2,7 @@ package users
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/jaxron/roapi.go/internal/middleware/auth"
@@ -24,6 +25,10 @@ func (r *Resource) GetAuthUserInfo(ctx context.Context) (*types.AuthUserResponse
 		return nil, errors.HandleAPIError(resp, err)
 	}
 	defer resp.Body.Close()
+
+	if err := r.validate.Struct(&user); err != nil {
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
+	}
 
 	return &user, nil
 }

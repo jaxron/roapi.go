@@ -14,7 +14,7 @@ import (
 // GET https://users.roblox.com/v1/users/{userID}/username-history
 func (r *Resource) GetUsernameHistory(ctx context.Context, p UsernameHistoryParams) (*types.UsernameHistoryPageResponse, error) {
 	if err := r.validate.Struct(p); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
 	}
 
 	var history types.UsernameHistoryPageResponse
@@ -31,12 +31,16 @@ func (r *Resource) GetUsernameHistory(ctx context.Context, p UsernameHistoryPara
 	}
 	defer resp.Body.Close()
 
+	if err := r.validate.Struct(&history); err != nil {
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
+	}
+
 	return &history, nil
 }
 
 // UsernameHistoryParams holds the parameters for fetching username history.
 type UsernameHistoryParams struct {
-	UserID    uint64          `json:"userId"    validate:"required"`
+	UserID    uint64          `json:"userId"    validate:"required,gt=0"`
 	Limit     uint64          `json:"limit"     validate:"oneof=10 25 50 100"`
 	SortOrder types.SortOrder `json:"sortOrder" validate:"omitempty,oneof=Asc Desc"`
 	Cursor    string          `json:"cursor"    validate:"omitempty,base64"`

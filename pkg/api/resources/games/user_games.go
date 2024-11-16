@@ -14,7 +14,7 @@ import (
 // GET https://games.roblox.com/v2/users/{userId}/games
 func (r *Resource) GetUserGames(ctx context.Context, p UserGamesParams) (*types.GameResponse, error) {
 	if err := r.validate.Struct(p); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
 	}
 
 	var result types.GameResponse
@@ -32,6 +32,10 @@ func (r *Resource) GetUserGames(ctx context.Context, p UserGamesParams) (*types.
 	}
 	defer resp.Body.Close()
 
+	if err := r.validate.Struct(&result); err != nil {
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
+	}
+
 	return &result, nil
 }
 
@@ -46,7 +50,7 @@ const (
 
 // UserGamesParams holds the parameters for fetching user games.
 type UserGamesParams struct {
-	UserID       uint64          `validate:"required"`
+	UserID       uint64          `validate:"required,gt=0"`
 	AccessFilter AccessFilter    `validate:"oneof=1 2 4"`
 	Limit        uint64          `validate:"oneof=10 25 50"`
 	Cursor       string          `validate:"omitempty,base64"`

@@ -15,7 +15,7 @@ import (
 // GET https://friends.roblox.com/v1/users/{userID}/friends/find
 func (r *Resource) FindFriends(ctx context.Context, p FindFriendsParams) (*types.FriendPageResponse, error) {
 	if err := r.validate.Struct(p); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
 	}
 
 	ctx = context.WithValue(ctx, auth.KeyAddCookie, true)
@@ -34,15 +34,19 @@ func (r *Resource) FindFriends(ctx context.Context, p FindFriendsParams) (*types
 	}
 	defer resp.Body.Close()
 
+	if err := r.validate.Struct(&friends); err != nil {
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
+	}
+
 	return &friends, nil
 }
 
 // FindFriendsParams holds the parameters for finding friends.
 type FindFriendsParams struct {
-	UserID   uint64 `json:"userId"   validate:"required"`     // Required: ID of the user to fetch friends for
-	UserSort uint64 `json:"userSort" validate:"oneof=0 1 2"`  // Optional: Sort order for results
-	Limit    uint64 `json:"limit"    validate:"min=1,max=50"` // Optional: Maximum number of results to return (default: 50)
-	Cursor   string `json:"cursor"`                           // Optional: Cursor for pagination
+	UserID   uint64 `json:"userId"   validate:"required,gt=0"` // Required: ID of the user to fetch friends for
+	UserSort uint64 `json:"userSort" validate:"oneof=0 1 2"`   // Optional: Sort order for results
+	Limit    uint64 `json:"limit"    validate:"min=1,max=50"`  // Optional: Maximum number of results to return (default: 50)
+	Cursor   string `json:"cursor"`                            // Optional: Cursor for pagination
 }
 
 // FindFriendsBuilder is a builder for FindFriendsParams.

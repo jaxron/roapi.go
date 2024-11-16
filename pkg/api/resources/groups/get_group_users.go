@@ -14,7 +14,7 @@ import (
 // GET https://groups.roblox.com/v1/groups/{groupID}/users
 func (r *Resource) GetGroupUsers(ctx context.Context, p GroupUsersParams) (*types.GroupUsersResponse, error) {
 	if err := r.validate.Struct(p); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
 	}
 
 	var groupUsers types.GroupUsersResponse
@@ -31,12 +31,16 @@ func (r *Resource) GetGroupUsers(ctx context.Context, p GroupUsersParams) (*type
 	}
 	defer resp.Body.Close()
 
+	if err := r.validate.Struct(&groupUsers); err != nil {
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
+	}
+
 	return &groupUsers, nil
 }
 
 // GroupUsersParams holds the parameters for getting group users.
 type GroupUsersParams struct {
-	GroupID   uint64          `json:"groupId"   validate:"required"`
+	GroupID   uint64          `json:"groupId"   validate:"required,gt=0"`
 	Limit     uint64          `json:"limit"     validate:"omitempty,oneof=10 25 50 100"`
 	Cursor    string          `json:"cursor"    validate:"omitempty"`
 	SortOrder types.SortOrder `json:"sortOrder" validate:"omitempty,oneof=Asc Desc"`

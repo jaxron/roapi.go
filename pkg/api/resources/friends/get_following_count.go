@@ -12,6 +12,10 @@ import (
 // GetFollowingCount fetches the count of users a user is following.
 // GET https://friends.roblox.com/v1/users/{userID}/followings/count
 func (r *Resource) GetFollowingCount(ctx context.Context, userID uint64) (uint64, error) {
+	if err := r.validate.Var(userID, "required,gt=0"); err != nil {
+		return 0, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
+	}
+
 	var count struct {
 		Count uint64 `json:"count"` // The number of users being followed
 	}

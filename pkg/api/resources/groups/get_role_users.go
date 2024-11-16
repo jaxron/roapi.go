@@ -14,7 +14,7 @@ import (
 // GET https://groups.roblox.com/v1/groups/{groupID}/roles/{roleID}/users
 func (r *Resource) GetRoleUsers(ctx context.Context, p RoleUsersParams) (*types.RoleUsersResponse, error) {
 	if err := r.validate.Struct(p); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
 	}
 
 	var roleUsers types.RoleUsersResponse
@@ -31,13 +31,17 @@ func (r *Resource) GetRoleUsers(ctx context.Context, p RoleUsersParams) (*types.
 	}
 	defer resp.Body.Close()
 
+	if err := r.validate.Struct(&roleUsers); err != nil {
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
+	}
+
 	return &roleUsers, nil
 }
 
 // RoleUsersParams holds the parameters for getting role users.
 type RoleUsersParams struct {
-	GroupID   uint64          `json:"groupId"   validate:"required"`
-	RoleID    uint64          `json:"roleId"    validate:"required"`
+	GroupID   uint64          `json:"groupId"   validate:"required,gt=0"`
+	RoleID    uint64          `json:"roleId"    validate:"required,gt=0"`
 	Limit     uint64          `json:"limit"     validate:"omitempty,oneof=10 25 50 100"`
 	Cursor    string          `json:"cursor"    validate:"omitempty"`
 	SortOrder types.SortOrder `json:"sortOrder" validate:"omitempty,oneof=Asc Desc"`

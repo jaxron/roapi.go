@@ -33,7 +33,7 @@ func TestLookupGroup(t *testing.T) {
 	t.Run("Lookup with Empty Group Name", func(t *testing.T) {
 		_, err := api.LookupGroup(context.Background(), "")
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "Name")
+		assert.Contains(t, err.Error(), "required")
 	})
 
 	// Test case: Lookup with non-existent group name

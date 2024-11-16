@@ -2,6 +2,7 @@ package thumbnails
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/jaxron/roapi.go/pkg/api/errors"
@@ -12,11 +13,11 @@ import (
 // POST https://thumbnails.roblox.com/v1/batch
 func (r *Resource) GetBatchThumbnails(ctx context.Context, p BatchThumbnailsParams) ([]types.ThumbnailData, error) {
 	if err := r.validate.Struct(p); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
 	}
 
 	var batchThumbnails struct {
-		Data []types.ThumbnailData `json:"data"`
+		Data []types.ThumbnailData `json:"data" validate:"required,dive"`
 	}
 	resp, err := r.client.NewRequest().
 		Method(http.MethodPost).
@@ -28,6 +29,10 @@ func (r *Resource) GetBatchThumbnails(ctx context.Context, p BatchThumbnailsPara
 		return nil, errors.HandleAPIError(resp, err)
 	}
 	defer resp.Body.Close()
+
+	if err := r.validate.Struct(&batchThumbnails); err != nil {
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
+	}
 
 	return batchThumbnails.Data, nil
 }

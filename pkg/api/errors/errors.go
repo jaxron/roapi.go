@@ -14,6 +14,9 @@ var (
 	ErrNoMessage = errors.New("no error message available")
 	ErrReadBody  = errors.New("failed to read response body")
 	ErrParseJSON = errors.New("invalid JSON response")
+
+	ErrInvalidRequest  = errors.New("invalid request")
+	ErrInvalidResponse = errors.New("invalid response")
 )
 
 // APIError represents a list of errors returned by the Roblox API.

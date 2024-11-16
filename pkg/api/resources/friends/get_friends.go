@@ -12,8 +12,12 @@ import (
 // GetFriends fetches the friends of a user.
 // GET https://friends.roblox.com/v1/users/{userID}/friends
 func (r *Resource) GetFriends(ctx context.Context, userID uint64) ([]types.Friend, error) {
+	if err := r.validate.Var(userID, "required,gt=0"); err != nil {
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
+	}
+
 	var friends struct {
-		Data []types.Friend `json:"data"` // List of friend information
+		Data []types.Friend `json:"data" validate:"required,dive"` // List of friend information
 	}
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
@@ -24,6 +28,10 @@ func (r *Resource) GetFriends(ctx context.Context, userID uint64) ([]types.Frien
 		return nil, errors.HandleAPIError(resp, err)
 	}
 	defer resp.Body.Close()
+
+	if err := r.validate.Struct(&friends); err != nil {
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
+	}
 
 	return friends.Data, nil
 }

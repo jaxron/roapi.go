@@ -14,7 +14,7 @@ import (
 // GET https://friends.roblox.com/v1/users/{userID}/followers
 func (r *Resource) GetFollowers(ctx context.Context, p GetFollowersParams) (*types.FollowerPageResponse, error) {
 	if err := r.validate.Struct(p); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
 	}
 
 	var followers types.FollowerPageResponse
@@ -31,12 +31,16 @@ func (r *Resource) GetFollowers(ctx context.Context, p GetFollowersParams) (*typ
 	}
 	defer resp.Body.Close()
 
+	if err := r.validate.Struct(&followers); err != nil {
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
+	}
+
 	return &followers, nil
 }
 
 // GetFollowersParams holds the parameters for getting followers.
 type GetFollowersParams struct {
-	UserID    uint64          `json:"userId"    validate:"required"`                 // Required: ID of the user to fetch followers for
+	UserID    uint64          `json:"userId"    validate:"required,gt=0"`            // Required: ID of the user to fetch followers for
 	Limit     uint64          `json:"limit"     validate:"oneof=10 18 25 50 100"`    // Optional: Maximum number of results to return (default: 10)
 	Cursor    string          `json:"cursor"    validate:"omitempty,base64"`         // Optional: Cursor for pagination
 	SortOrder types.SortOrder `json:"sortOrder" validate:"omitempty,oneof=Asc Desc"` // Optional: Sort order for results

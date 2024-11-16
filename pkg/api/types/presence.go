@@ -12,14 +12,14 @@ const (
 	InStudio UserPresenceType = 3
 )
 
-// UserPresence represents the presence information for a single user.
-type UserPresence struct {
-	UserPresenceType UserPresenceType `json:"userPresenceType"`
-	LastLocation     string           `json:"lastLocation"`
-	PlaceID          *uint64          `json:"placeId"`
-	RootPlaceID      *uint64          `json:"rootPlaceId"`
-	GameID           *string          `json:"gameId"`
-	UniverseID       *uint64          `json:"universeId"`
-	UserID           uint64           `json:"userId"`
-	LastOnline       time.Time        `json:"lastOnline"`
+// UserPresenceResponse represents the presence information for a single user.
+type UserPresenceResponse struct {
+	UserPresenceType UserPresenceType `json:"userPresenceType" validate:"oneof=0 1 2 3"`   // Type of presence (Offline, Website, InGame, InStudio)
+	LastLocation     string           `json:"lastLocation"     validate:"required"`        // Last known location of the user
+	PlaceID          *uint64          `json:"placeId"          validate:"omitempty,min=1"` // ID of the place if user is in game
+	RootPlaceID      *uint64          `json:"rootPlaceId"      validate:"omitempty,min=1"` // ID of the root place if user is in game
+	GameID           *string          `json:"gameId"           validate:"omitempty,min=1"` // ID of the game instance if user is in game
+	UniverseID       *uint64          `json:"universeId"       validate:"omitempty,min=1"` // ID of the universe if user is in game
+	UserID           uint64           `json:"userId"           validate:"required,min=1"`  // ID of the user
+	LastOnline       time.Time        `json:"lastOnline"       validate:"required"`        // Last time the user was online
 }

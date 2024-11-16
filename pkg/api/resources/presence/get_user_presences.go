@@ -2,6 +2,7 @@ package presence
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/jaxron/roapi.go/pkg/api/errors"
@@ -10,13 +11,13 @@ import (
 
 // GetUserPresences fetches presence information for multiple users.
 // POST https://presence.roblox.com/v1/presence/users
-func (r *Resource) GetUserPresences(ctx context.Context, p UserPresencesParams) ([]types.UserPresence, error) {
+func (r *Resource) GetUserPresences(ctx context.Context, p UserPresencesParams) ([]types.UserPresenceResponse, error) {
 	if err := r.validate.Struct(p); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
 	}
 
 	var presences struct {
-		UserPresences []types.UserPresence `json:"userPresences"`
+		UserPresences []types.UserPresenceResponse `json:"userPresences"`
 	}
 	resp, err := r.client.NewRequest().
 		Method(http.MethodPost).
@@ -28,6 +29,10 @@ func (r *Resource) GetUserPresences(ctx context.Context, p UserPresencesParams) 
 		return nil, errors.HandleAPIError(resp, err)
 	}
 	defer resp.Body.Close()
+
+	if err := r.validate.Struct(&presences); err != nil {
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
+	}
 
 	return presences.UserPresences, nil
 }

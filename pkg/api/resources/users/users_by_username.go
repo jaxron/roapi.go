@@ -2,6 +2,7 @@ package users
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/jaxron/roapi.go/pkg/api/errors"
@@ -12,11 +13,11 @@ import (
 // POST https://users.roblox.com/v1/usernames/users
 func (r *Resource) GetUsersByUsernames(ctx context.Context, p GetUsersByUsernamesParams) ([]types.UserByUsername, error) {
 	if err := r.validate.Struct(p); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
 	}
 
 	var users struct {
-		Data []types.UserByUsername `json:"data"` // List of users fetched by usernames
+		Data []types.UserByUsername `json:"data" validate:"required,dive"` // List of users fetched by usernames
 	}
 	resp, err := r.client.NewRequest().
 		Method(http.MethodPost).
@@ -34,6 +35,10 @@ func (r *Resource) GetUsersByUsernames(ctx context.Context, p GetUsersByUsername
 		return nil, errors.HandleAPIError(resp, err)
 	}
 	defer resp.Body.Close()
+
+	if err := r.validate.Struct(&users); err != nil {
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
+	}
 
 	return users.Data, nil
 }
