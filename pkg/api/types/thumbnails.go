@@ -79,6 +79,6 @@ type ThumbnailData struct {
 	ErrorMessage string         `json:"errorMessage" validate:"excluded_if=ErrorCode 0"`                  // Error message (empty if no error)
 	TargetID     uint64         `json:"targetId"     validate:"required,min=1"`                           // ID of the target item
 	State        ThumbnailState `json:"state"        validate:"required,oneof=Completed Pending Blocked"` // Current state of the thumbnail
-	ImageURL     *string        `json:"imageUrl"     validate:"omitempty,url"`                            // URL of the thumbnail image
+	ImageURL     *string        `json:"imageUrl"     validate:"omitempty"`                                // URL of the thumbnail image
 	Version      *string        `json:"version"      validate:"omitempty"`                                // Version of the thumbnail
 }
