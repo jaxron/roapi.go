@@ -11,14 +11,14 @@ type GameResponse struct {
 
 // Game represents a single game returned by the Roblox API.
 type Game struct {
-	ID          uint64    `json:"id"          validate:"required,min=1"`            // Unique identifier for the game
-	Name        string    `json:"name"        validate:"required,min=1"`            // Name of the game
-	Description string    `json:"description"`                                      // Description of the game
-	Creator     Creator   `json:"creator"     validate:"required"`                  // Creator information
-	RootPlace   Place     `json:"rootPlace"   validate:"required"`                  // Root place information
-	Created     time.Time `json:"created"     validate:"required"`                  // When the game was created
-	Updated     time.Time `json:"updated"     validate:"required,gtefield=Created"` // When the game was last updated
-	PlaceVisits uint64    `json:"placeVisits" validate:"min=0"`                     // Number of visits to the game
+	ID          uint64    `json:"id"          validate:"required,min=1"` // Unique identifier for the game
+	Name        string    `json:"name"        validate:"required,min=1"` // Name of the game
+	Description string    `json:"description"`                           // Description of the game
+	Creator     Creator   `json:"creator"     validate:"required"`       // Creator information
+	RootPlace   Place     `json:"rootPlace"   validate:"required"`       // Root place information
+	Created     time.Time `json:"created"     validate:"required"`       // When the game was created
+	Updated     time.Time `json:"updated"     validate:"required"`       // When the game was last updated
+	PlaceVisits uint64    `json:"placeVisits" validate:"min=0"`          // Number of visits to the game
 }
 
 // Creator represents the creator of a game.
