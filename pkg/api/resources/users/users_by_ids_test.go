@@ -21,9 +21,9 @@ func TestGetUsersByIDs(t *testing.T) {
 		result, err := api.GetUsersByIDs(context.Background(), builder.Build())
 		require.NoError(t, err)
 		assert.NotNil(t, result)
-		assert.Len(t, result, 2)
+		assert.Len(t, result.Data, 2)
 
-		for _, user := range result {
+		for _, user := range result.Data {
 			assert.Contains(t, userIDs, user.ID)
 		}
 	})
@@ -34,9 +34,9 @@ func TestGetUsersByIDs(t *testing.T) {
 		result, err := api.GetUsersByIDs(context.Background(), builder.Build())
 		require.NoError(t, err)
 		assert.NotNil(t, result)
-		assert.Len(t, result, 1) // Only one user should be returned
+		assert.Len(t, result.Data, 1) // Only one user should be returned
 
-		assert.Equal(t, utils.SampleUserID1, result[0].ID)
+		assert.Equal(t, utils.SampleUserID1, result.Data[0].ID)
 	})
 
 	t.Run("Test Builder Methods", func(t *testing.T) {

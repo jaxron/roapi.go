@@ -19,7 +19,7 @@ func TestGetFriends(t *testing.T) {
 		friends, err := api.GetFriends(context.Background(), utils.SampleUserID1)
 		require.NoError(t, err)
 		assert.NotNil(t, friends)
-		assert.NotEmpty(t, friends)
+		assert.NotEmpty(t, friends.Data)
 	})
 
 	// Test case: Attempt to fetch friends for a non-existent user

@@ -20,10 +20,10 @@ func TestGetUsersByUsernames(t *testing.T) {
 		result, err := api.GetUsersByUsernames(context.Background(), builder.Build())
 		require.NoError(t, err)
 		assert.NotNil(t, result)
-		assert.Len(t, result, 2)
+		assert.Len(t, result.Data, 2)
 
 		// Check if the returned users match the requested usernames
-		for _, user := range result {
+		for _, user := range result.Data {
 			assert.Contains(t, usernames, user.Name)
 		}
 	})
@@ -34,9 +34,9 @@ func TestGetUsersByUsernames(t *testing.T) {
 		result, err := api.GetUsersByUsernames(context.Background(), builder.Build())
 		require.NoError(t, err)
 		assert.NotNil(t, result)
-		assert.Len(t, result, 1) // Only one user should be returned
+		assert.Len(t, result.Data, 1) // Only one user should be returned
 
-		assert.Equal(t, utils.SampleUsername4, result[0].Name)
+		assert.Equal(t, utils.SampleUsername4, result.Data[0].Name)
 	})
 
 	t.Run("Test Builder Methods", func(t *testing.T) {

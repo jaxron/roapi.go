@@ -20,6 +20,11 @@ type AuthUserResponse struct {
 	DisplayName string `json:"displayName" validate:"required,min=1"` // Display name of the user
 }
 
+// UsersByUsernameResponse represents the structure of users fetched by username.
+type UsersByUsernameResponse struct {
+	Data []UserByUsername `json:"data" validate:"required,dive"` // List of users fetched by username
+}
+
 // UserByUsername represents a single user fetched by username.
 type UserByUsername struct {
 	ID                uint64 `json:"id"                validate:"required,min=1"` // Unique identifier for the user
@@ -27,6 +32,11 @@ type UserByUsername struct {
 	DisplayName       string `json:"displayName"       validate:"required,min=1"` // Display name of the user
 	RequestedUsername string `json:"requestedUsername" validate:"required,min=1"` // The username that was requested in the API call
 	HasVerifiedBadge  bool   `json:"hasVerifiedBadge"`                            // Whether the user has a verified badge
+}
+
+// UsersByIDsResponse represents the structure of users fetched by ID.
+type UsersByIDsResponse struct {
+	Data []VerifiedBadgeUser `json:"data" validate:"required,dive"` // List of users fetched by ID
 }
 
 // VerifiedBadgeUser represents a single user with a verified badge.

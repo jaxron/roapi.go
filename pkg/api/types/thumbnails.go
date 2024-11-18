@@ -72,6 +72,11 @@ type ThumbnailRequest struct {
 	IsCircular bool            `json:"isCircular"`                           // Whether the thumbnail should be circular
 }
 
+// BatchThumbnailsResponse represents the structure of batch thumbnails returned by the Roblox API.
+type BatchThumbnailsResponse struct {
+	Data []ThumbnailData `json:"data" validate:"required,dive"` // List of thumbnail data
+}
+
 // ThumbnailData represents the data for a single thumbnail in the response.
 type ThumbnailData struct {
 	RequestID    string         `json:"requestId"    validate:"required"`                                 // Unique identifier for the request

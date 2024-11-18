@@ -11,14 +11,12 @@ import (
 
 // GetUserPresences fetches presence information for multiple users.
 // POST https://presence.roblox.com/v1/presence/users
-func (r *Resource) GetUserPresences(ctx context.Context, p UserPresencesParams) ([]types.UserPresenceResponse, error) {
+func (r *Resource) GetUserPresences(ctx context.Context, p UserPresencesParams) (*types.UserPresencesResponse, error) {
 	if err := r.validate.Struct(p); err != nil {
 		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
 	}
 
-	var presences struct {
-		UserPresences []types.UserPresenceResponse `json:"userPresences"`
-	}
+	var presences types.UserPresencesResponse
 	resp, err := r.client.NewRequest().
 		Method(http.MethodPost).
 		URL(types.PresenceEndpoint + "/v1/presence/users").
@@ -34,7 +32,7 @@ func (r *Resource) GetUserPresences(ctx context.Context, p UserPresencesParams) 
 		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
 	}
 
-	return presences.UserPresences, nil
+	return &presences, nil
 }
 
 // UserPresencesParams holds the parameters for getting user presences.

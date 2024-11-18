@@ -12,6 +12,11 @@ const (
 	InStudio UserPresenceType = 3
 )
 
+// UserPresencesResponse represents the structure of user presences information returned by the Roblox API.
+type UserPresencesResponse struct {
+	UserPresences []UserPresenceResponse `json:"userPresences" validate:"required,dive"` // List of user presences
+}
+
 // UserPresenceResponse represents the presence information for a single user.
 type UserPresenceResponse struct {
 	UserPresenceType UserPresenceType `json:"userPresenceType" validate:"oneof=0 1 2 3"`   // Type of presence (Offline, Website, InGame, InStudio)

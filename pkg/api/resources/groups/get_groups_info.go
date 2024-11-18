@@ -13,14 +13,12 @@ import (
 
 // GetGroupsInfo fetches information about multiple groups.
 // GET https://groups.roblox.com/v2/groups
-func (r *Resource) GetGroupsInfo(ctx context.Context, p GetGroupsInfoParams) ([]types.GroupInfo, error) {
+func (r *Resource) GetGroupsInfo(ctx context.Context, p GetGroupsInfoParams) (*types.GroupsInfoResponse, error) {
 	if err := r.validate.Struct(p); err != nil {
 		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
 	}
 
-	var groupsInfo struct {
-		Data []types.GroupInfo `json:"data" validate:"required,dive"`
-	}
+	var groupsInfo types.GroupsInfoResponse
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(types.GroupsEndpoint+"/v2/groups").
@@ -36,7 +34,7 @@ func (r *Resource) GetGroupsInfo(ctx context.Context, p GetGroupsInfoParams) ([]
 		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
 	}
 
-	return groupsInfo.Data, nil
+	return &groupsInfo, nil
 }
 
 // GetGroupsInfoParams holds the parameters for getting information about multiple groups.

@@ -10,7 +10,7 @@ import (
 
 // ResourceInterface defines the interface for thumbnail-related operations.
 type ResourceInterface interface {
-	GetBatchThumbnails(ctx context.Context, p BatchThumbnailsParams) ([]types.ThumbnailData, error)
+	GetBatchThumbnails(ctx context.Context, p BatchThumbnailsParams) (*types.BatchThumbnailsResponse, error)
 }
 
 // Ensure Resource implements the ResourceInterface.

@@ -20,9 +20,9 @@ func TestGetUserPresences(t *testing.T) {
 		result, err := api.GetUserPresences(context.Background(), builder.Build())
 		require.NoError(t, err)
 		assert.NotNil(t, result)
-		assert.Len(t, result, 2)
+		assert.Len(t, result.UserPresences, 2)
 
-		for _, presence := range result {
+		for _, presence := range result.UserPresences {
 			assert.Contains(t, userIDs, presence.UserID)
 			assert.NotZero(t, presence.LastOnline)
 			assert.NotEmpty(t, presence.LastLocation)
@@ -33,7 +33,7 @@ func TestGetUserPresences(t *testing.T) {
 		builder := presence.NewUserPresencesBuilder(utils.InvalidUserID)
 		result, err := api.GetUserPresences(context.Background(), builder.Build())
 		require.NoError(t, err)
-		assert.Len(t, result, 0)
+		assert.Len(t, result.UserPresences, 0)
 	})
 
 	t.Run("Test Builder Methods", func(t *testing.T) {

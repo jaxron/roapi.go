@@ -12,14 +12,12 @@ import (
 
 // GetUserGroupRoles fetches the group roles for a specific user.
 // GET https://groups.roblox.com/v1/users/{userId}/groups/roles
-func (r *Resource) GetUserGroupRoles(ctx context.Context, params UserGroupRolesParams) ([]types.UserGroupRoles, error) {
+func (r *Resource) GetUserGroupRoles(ctx context.Context, params UserGroupRolesParams) (*types.UserGroupRolesResponse, error) {
 	if err := r.validate.Struct(params); err != nil {
 		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
 	}
 
-	var userGroupRoles struct {
-		Data []types.UserGroupRoles `json:"data" validate:"required,dive"`
-	}
+	var userGroupRoles types.UserGroupRolesResponse
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v1/users/%d/groups/roles", types.GroupsEndpoint, params.UserID)).
@@ -36,7 +34,7 @@ func (r *Resource) GetUserGroupRoles(ctx context.Context, params UserGroupRolesP
 		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
 	}
 
-	return userGroupRoles.Data, nil
+	return &userGroupRoles, nil
 }
 
 // UserGroupRolesParams holds the parameters for fetching user group roles.

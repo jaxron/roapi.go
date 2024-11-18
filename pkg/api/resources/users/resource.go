@@ -12,8 +12,8 @@ import (
 type ResourceInterface interface {
 	GetUserByID(ctx context.Context, userID uint64) (*types.UserByIDResponse, error)
 	GetAuthUserInfo(ctx context.Context) (*types.AuthUserResponse, error)
-	GetUsersByUsernames(ctx context.Context, params GetUsersByUsernamesParams) ([]types.UserByUsername, error)
-	GetUsersByIDs(ctx context.Context, params UsersByIDsParams) ([]types.VerifiedBadgeUser, error)
+	GetUsersByUsernames(ctx context.Context, params GetUsersByUsernamesParams) (*types.UsersByUsernameResponse, error)
+	GetUsersByIDs(ctx context.Context, params UsersByIDsParams) (*types.UsersByIDsResponse, error)
 	GetUsernameHistory(ctx context.Context, params UsernameHistoryParams) (*types.UsernameHistoryPageResponse, error)
 	SearchUsers(ctx context.Context, params SearchUsersParams) (*types.UserSearchPageResponse, error)
 }

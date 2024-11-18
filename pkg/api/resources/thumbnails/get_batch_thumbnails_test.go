@@ -38,10 +38,10 @@ func TestGetBatchThumbnails(t *testing.T) {
 		batchThumbnails, err := api.GetBatchThumbnails(context.Background(), builder.Build())
 		require.NoError(t, err)
 		assert.NotNil(t, batchThumbnails)
-		assert.Len(t, batchThumbnails, 2)
+		assert.Len(t, batchThumbnails.Data, 2)
 
 		// Check if thumbnails are properly populated
-		for _, thumbnail := range batchThumbnails {
+		for _, thumbnail := range batchThumbnails.Data {
 			assert.NotEmpty(t, thumbnail.RequestID)
 			assert.NotZero(t, thumbnail.TargetID)
 			assert.NotEmpty(t, thumbnail.State)

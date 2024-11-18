@@ -30,6 +30,11 @@ type FollowingPageResponse struct {
 	Data               []Friend `json:"data"               validate:"required,dive"`    // List of users being followed
 }
 
+// FriendsResponse represents the structure of a user's friends list returned by the Roblox API.
+type FriendsResponse struct {
+	Data []Friend `json:"data" validate:"required,dive"` // List of friends
+}
+
 // Friend represents a single friend in a user's friend list.
 type Friend struct {
 	ID uint64 `json:"id" validate:"required,min=1"` // Unique identifier for the friend

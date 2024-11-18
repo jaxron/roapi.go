@@ -20,7 +20,7 @@ func TestGetUserOutfits(t *testing.T) {
 		userOutfits, err := api.GetUserOutfits(context.Background(), builder.Build())
 		require.NoError(t, err)
 		assert.NotNil(t, userOutfits)
-		assert.NotEmpty(t, userOutfits)
+		assert.NotEmpty(t, userOutfits.Data)
 
 		// Check if outfits are properly populated
 		for _, outfit := range userOutfits.Data {

@@ -11,14 +11,12 @@ import (
 
 // LookupGroup searches for groups based on the provided group name.
 // GET https://groups.roblox.com/v1/groups/search/lookup
-func (r *Resource) LookupGroup(ctx context.Context, groupName string) ([]types.GroupLookup, error) {
+func (r *Resource) LookupGroup(ctx context.Context, groupName string) (*types.GroupLookupResponse, error) {
 	if err := r.validate.Var(groupName, "required"); err != nil {
 		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
 	}
 
-	var lookupResults struct {
-		Data []types.GroupLookup `json:"data" validate:"required,dive"`
-	}
+	var lookupResults types.GroupLookupResponse
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(types.GroupsEndpoint+"/v1/groups/search/lookup").
@@ -34,5 +32,5 @@ func (r *Resource) LookupGroup(ctx context.Context, groupName string) ([]types.G
 		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
 	}
 
-	return lookupResults.Data, nil
+	return &lookupResults, nil
 }

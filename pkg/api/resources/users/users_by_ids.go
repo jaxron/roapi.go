@@ -11,14 +11,12 @@ import (
 
 // GetUsersByIDs fetches information for users with the given IDs.
 // POST https://users.roblox.com/v1/users
-func (r *Resource) GetUsersByIDs(ctx context.Context, p UsersByIDsParams) ([]types.VerifiedBadgeUser, error) {
+func (r *Resource) GetUsersByIDs(ctx context.Context, p UsersByIDsParams) (*types.UsersByIDsResponse, error) {
 	if err := r.validate.Struct(p); err != nil {
 		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
 	}
 
-	var users struct {
-		Data []types.VerifiedBadgeUser `json:"data" validate:"required,dive"` // List of users fetched by user IDs
-	}
+	var users types.UsersByIDsResponse
 	resp, err := r.client.NewRequest().
 		Method(http.MethodPost).
 		URL(types.UsersEndpoint + "/v1/users").
@@ -34,7 +32,7 @@ func (r *Resource) GetUsersByIDs(ctx context.Context, p UsersByIDsParams) ([]typ
 		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
 	}
 
-	return users.Data, nil
+	return &users, nil
 }
 
 // UsersByIDsParams holds the parameters for fetching users by IDs.
