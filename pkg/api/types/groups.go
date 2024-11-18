@@ -26,7 +26,7 @@ type GroupUser struct {
 
 // GroupShout represents a group shout.
 type GroupShout struct {
-	Body    string    `json:"body"    validate:"required"`         // Content of the shout
+	Body    string    `json:"body"`                                // Content of the shout
 	Poster  GroupUser `json:"poster"  validate:"required"`         // User who posted the shout
 	Created time.Time `json:"created" validate:"required"`         // When the shout was created
 	Updated time.Time `json:"updated" validate:"gtefield=Created"` // When the shout was last updated
@@ -122,4 +122,26 @@ type UserGroupRole struct {
 	ID   uint64 `json:"id"   validate:"required,min=1"` // Role's unique identifier
 	Name string `json:"name" validate:"required,min=1"` // Name of the role
 	Rank uint64 `json:"rank"`                           // Rank of the role (0 is lowest)
+}
+
+// GroupWallPostsResponse represents the structure of group wall posts returned by the Roblox API.
+type GroupWallPostsResponse struct {
+	PreviousPageCursor *string         `json:"previousPageCursor" validate:"omitempty"`     // Cursor for the previous page of results (if any)
+	NextPageCursor     *string         `json:"nextPageCursor"     validate:"omitempty"`     // Cursor for the next page of results (if any)
+	Data               []GroupWallPost `json:"data"               validate:"required,dive"` // List of wall posts
+}
+
+// GroupWallPost represents a single wall post in a group.
+type GroupWallPost struct {
+	ID      uint64           `json:"id"      validate:"required,min=1"` // Unique identifier for the wall post
+	Poster  *GroupWallPoster `json:"poster"  validate:"omitempty"`      // User who posted the wall post
+	Body    string           `json:"body"`                              // Content of the wall post
+	Created time.Time        `json:"created" validate:"required"`       // When the wall post was created
+	Updated time.Time        `json:"updated" validate:"required"`       // When the wall post was last updated
+}
+
+// GroupWallPoster represents the user who posted a wall post.
+type GroupWallPoster struct {
+	User GroupUser `json:"user" validate:"required"` // User information
+	Role GroupRole `json:"role" validate:"required"` // User's role in the group
 }

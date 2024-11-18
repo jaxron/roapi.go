@@ -44,6 +44,7 @@ const (
 
 	SampleGroupID    = uint64(3336691)
 	SampleGroupID2   = uint64(7)
+	SampleGroupID3   = uint64(6303746)
 	SampleGroupName  = "test"
 	SampleRoleID     = uint64(23018355)
 	InvalidGroupID   = uint64(math.MaxUint64)
