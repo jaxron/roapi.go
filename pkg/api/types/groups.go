@@ -7,7 +7,7 @@ type GroupResponse struct {
 	ID                 uint64      `json:"id"                 validate:"required,min=1"` // Unique identifier for the group
 	Name               string      `json:"name"               validate:"required,min=1"` // Name of the group
 	Description        string      `json:"description"`                                  // Description of the group
-	Owner              GroupUser   `json:"owner"              validate:"required"`       // Owner information
+	Owner              GroupUser   `json:"owner"`                                        // Owner information
 	Shout              *GroupShout `json:"shout"              validate:"omitempty"`      // Group shout (if any)
 	MemberCount        uint64      `json:"memberCount"        validate:"min=0"`          // Number of members in the group
 	IsBuildersClubOnly bool        `json:"isBuildersClubOnly"`                           // Whether the group is builders club only
@@ -110,7 +110,7 @@ type GroupInfo struct {
 	ID               uint64     `json:"id"               validate:"required,min=1"` // Unique identifier for the group
 	Name             string     `json:"name"             validate:"required,min=1"` // Name of the group
 	Description      string     `json:"description"`                                // Description of the group
-	Owner            GroupOwner `json:"owner"            validate:"required"`       // Owner information
+	Owner            GroupOwner `json:"owner"`                                      // Owner information
 	Created          time.Time  `json:"created"          validate:"required"`       // When the group was created
 	HasVerifiedBadge bool       `json:"hasVerifiedBadge"`                           // Whether the group has a verified badge
 }
