@@ -4,9 +4,9 @@ import "time"
 
 // GameResponse represents the structure of a game response returned by the Roblox API.
 type GameResponse struct {
-	PreviousPageCursor *string `json:"previousPageCursor" validate:"omitempty,base64"` // Cursor for the previous page of results (if any)
-	NextPageCursor     *string `json:"nextPageCursor"     validate:"omitempty,base64"` // Cursor for the next page of results (if any)
-	Data               []Game  `json:"data"               validate:"required,dive"`    // List of games
+	PreviousPageCursor *string `json:"previousPageCursor" validate:"omitempty"`     // Cursor for the previous page of results (if any)
+	NextPageCursor     *string `json:"nextPageCursor"     validate:"omitempty"`     // Cursor for the next page of results (if any)
+	Data               []Game  `json:"data"               validate:"required,dive"` // List of games
 }
 
 // Game represents a single game returned by the Roblox API.
