@@ -7,7 +7,7 @@ type GroupResponse struct {
 	ID                 uint64      `json:"id"                 validate:"required,min=1"` // Unique identifier for the group
 	Name               string      `json:"name"               validate:"required,min=1"` // Name of the group
 	Description        string      `json:"description"`                                  // Description of the group
-	Owner              GroupUser   `json:"owner"`                                        // Owner information
+	Owner              *GroupUser  `json:"owner"              validate:"omitempty"`      // Owner information
 	Shout              *GroupShout `json:"shout"              validate:"omitempty"`      // Group shout (if any)
 	MemberCount        uint64      `json:"memberCount"        validate:"min=0"`          // Number of members in the group
 	IsBuildersClubOnly bool        `json:"isBuildersClubOnly"`                           // Whether the group is builders club only
