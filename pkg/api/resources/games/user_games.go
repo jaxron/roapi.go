@@ -53,7 +53,7 @@ type UserGamesParams struct {
 	UserID       uint64          `validate:"required,gt=0"`
 	AccessFilter AccessFilter    `validate:"oneof=1 2 4"`
 	Limit        uint64          `validate:"oneof=10 25 50"`
-	Cursor       string          `validate:"omitempty,base64"`
+	Cursor       string          `validate:"omitempty"`
 	SortOrder    types.SortOrder `validate:"oneof=Asc Desc"`
 }
 

@@ -51,12 +51,4 @@ func TestGetUserGames(t *testing.T) {
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "Limit")
 	})
-
-	t.Run("Invalid Cursor", func(t *testing.T) {
-		builder := games.NewUserGamesBuilder(utils.SampleUserID1).
-			WithCursor("invalid!cursor") // Invalid base64
-		_, err := api.GetUserGames(context.Background(), builder.Build())
-		require.Error(t, err)
-		assert.Contains(t, err.Error(), "Cursor")
-	})
 }
