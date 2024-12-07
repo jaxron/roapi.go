@@ -9,7 +9,7 @@ type OutfitResponse struct {
 // Outfit represents a single outfit in the user's outfits.
 type Outfit struct {
 	ID         uint64 `json:"id"         validate:"required,min=1"` // Unique identifier for the outfit
-	Name       string `json:"name"       validate:"required,min=1"` // Name of the outfit
+	Name       string `json:"name"       validate:"omitempty"`      // Name of the outfit
 	IsEditable bool   `json:"isEditable"`                           // Whether the outfit can be edited
 	OutfitType string `json:"outfitType" validate:"required"`       // Type of outfit
 }

@@ -20,7 +20,7 @@ type UserPresencesResponse struct {
 // UserPresenceResponse represents the presence information for a single user.
 type UserPresenceResponse struct {
 	UserPresenceType UserPresenceType `json:"userPresenceType" validate:"oneof=0 1 2 3"`   // Type of presence (Offline, Website, InGame, InStudio)
-	LastLocation     string           `json:"lastLocation"     validate:"required"`        // Last known location of the user
+	LastLocation     string           `json:"lastLocation"     validate:"omitempty"`       // Last known location of the user
 	PlaceID          *uint64          `json:"placeId"          validate:"omitempty,min=1"` // ID of the place if user is in game
 	RootPlaceID      *uint64          `json:"rootPlaceId"      validate:"omitempty,min=1"` // ID of the root place if user is in game
 	GameID           *string          `json:"gameId"           validate:"omitempty,min=1"` // ID of the game instance if user is in game
