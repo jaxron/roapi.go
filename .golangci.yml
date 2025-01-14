@@ -21,9 +21,7 @@ linters:
     - mnd # Not needed
     - forcetypeassert # Not needed
     - dupl # Not needed
-    - gomnd # Deprecated
     - exportloopref # Deprecated
-    - execinquery # Deprecated
 
 linters-settings:
   lll:

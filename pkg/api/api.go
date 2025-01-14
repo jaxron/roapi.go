@@ -32,11 +32,12 @@ type API struct {
 func New(cookies []string, opts ...client.Option) *API {
 	// Initialize the client with custom options and middleware
 	auth := auth.New(cookies)
-	c := client.NewClient(append(
-		opts,
-		client.WithMiddleware(1, auth),
-		client.WithMiddleware(1, jsonheader.New()),
-	)...)
+	c := client.NewClient(
+		append(opts,
+			client.WithMiddleware(auth),
+			client.WithMiddleware(jsonheader.New()),
+		)...,
+	)
 
 	// Randomize the order of cookies for balancing
 	auth.Shuffle()
