@@ -81,8 +81,8 @@ type BatchThumbnailsResponse struct {
 // ThumbnailData represents the data for a single thumbnail in the response.
 type ThumbnailData struct {
 	RequestID    string         `json:"requestId"    validate:"required"`                                       // Unique identifier for the request
-	ErrorCode    int            `json:"errorCode"`                                                              // Error code (0 if no error)
-	ErrorMessage string         `json:"errorMessage" validate:"excluded_if=ErrorCode 0"`                        // Error message (empty if no error)
+	ErrorCode    *int           `json:"errorCode"    validate:"omitempty"`                                      // Error code
+	ErrorMessage *string        `json:"errorMessage" validate:"omitempty,required_with=ErrorCode"`              // Error message
 	TargetID     uint64         `json:"targetId"     validate:"required,min=1"`                                 // ID of the target item
 	State        ThumbnailState `json:"state"        validate:"required,oneof=Completed Pending Blocked Error"` // Current state of the thumbnail
 	ImageURL     *string        `json:"imageUrl"     validate:"omitempty"`                                      // URL of the thumbnail image

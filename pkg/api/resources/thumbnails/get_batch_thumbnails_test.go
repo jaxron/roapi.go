@@ -62,7 +62,7 @@ func TestGetBatchThumbnails(t *testing.T) {
 		builder := thumbnails.NewBatchThumbnailsBuilder()
 		builder.AddRequest(types.ThumbnailRequest{
 			Type:       "InvalidType",
-			TargetID:   utils.SampleUserID1,
+			TargetID:   utils.InvalidUserID,
 			Size:       "InvalidSize",
 			Format:     "InvalidFormat",
 			IsCircular: false,
