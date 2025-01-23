@@ -32,12 +32,19 @@ type FollowingPageResponse struct {
 
 // FriendsResponse represents the structure of a user's friends list returned by the Roblox API.
 type FriendsResponse struct {
-	Data []Friend `json:"data" validate:"required,dive"` // List of friends
+	Data []ExtendedFriend `json:"data" validate:"required,dive"` // List of friends
 }
 
 // Friend represents a single friend in a user's friend list.
 type Friend struct {
 	ID uint64 `json:"id" validate:"required,min=1"` // Unique identifier for the friend
+}
+
+// ExtendedFriend represents a friend with additional information.
+type ExtendedFriend struct {
+	Friend
+	Name        string `json:"name"        validate:"required,min=1"` // Current username of the user
+	DisplayName string `json:"displayName" validate:"required,min=1"` // Display name of the user
 }
 
 // FriendPageResponse represents the structure of a user's friend list returned by the Roblox API.
