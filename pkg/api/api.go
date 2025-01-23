@@ -3,8 +3,8 @@ package api
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/jaxron/axonet/pkg/client"
-	"github.com/jaxron/roapi.go/internal/middleware/auth"
-	"github.com/jaxron/roapi.go/internal/middleware/jsonheader"
+	"github.com/jaxron/roapi.go/pkg/api/middleware/auth"
+	"github.com/jaxron/roapi.go/pkg/api/middleware/jsonheader"
 	"github.com/jaxron/roapi.go/pkg/api/resources/avatar"
 	"github.com/jaxron/roapi.go/pkg/api/resources/friends"
 	"github.com/jaxron/roapi.go/pkg/api/resources/games"

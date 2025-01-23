@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/jaxron/axonet/pkg/client/logger"
-	"github.com/jaxron/roapi.go/internal/middleware/jsonheader"
+	"github.com/jaxron/roapi.go/pkg/api/middleware/jsonheader"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
