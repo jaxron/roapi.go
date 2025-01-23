@@ -58,6 +58,7 @@ const (
 	ThumbnailStateCompleted ThumbnailState = "Completed"
 	ThumbnailStatePending   ThumbnailState = "Pending"
 	ThumbnailStateBlocked   ThumbnailState = "Blocked"
+	ThumbnailStateError     ThumbnailState = "Error"
 )
 
 // ThumbnailRequest represents a single thumbnail request.
@@ -79,11 +80,11 @@ type BatchThumbnailsResponse struct {
 
 // ThumbnailData represents the data for a single thumbnail in the response.
 type ThumbnailData struct {
-	RequestID    string         `json:"requestId"    validate:"required"`                                 // Unique identifier for the request
-	ErrorCode    int            `json:"errorCode"`                                                        // Error code (0 if no error)
-	ErrorMessage string         `json:"errorMessage" validate:"excluded_if=ErrorCode 0"`                  // Error message (empty if no error)
-	TargetID     uint64         `json:"targetId"     validate:"required,min=1"`                           // ID of the target item
-	State        ThumbnailState `json:"state"        validate:"required,oneof=Completed Pending Blocked"` // Current state of the thumbnail
-	ImageURL     *string        `json:"imageUrl"     validate:"omitempty"`                                // URL of the thumbnail image
-	Version      *string        `json:"version"      validate:"omitempty"`                                // Version of the thumbnail
+	RequestID    string         `json:"requestId"    validate:"required"`                                       // Unique identifier for the request
+	ErrorCode    int            `json:"errorCode"`                                                              // Error code (0 if no error)
+	ErrorMessage string         `json:"errorMessage" validate:"excluded_if=ErrorCode 0"`                        // Error message (empty if no error)
+	TargetID     uint64         `json:"targetId"     validate:"required,min=1"`                                 // ID of the target item
+	State        ThumbnailState `json:"state"        validate:"required,oneof=Completed Pending Blocked Error"` // Current state of the thumbnail
+	ImageURL     *string        `json:"imageUrl"     validate:"omitempty"`                                      // URL of the thumbnail image
+	Version      *string        `json:"version"      validate:"omitempty"`                                      // Version of the thumbnail
 }
