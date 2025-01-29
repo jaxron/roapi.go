@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	"github.com/jaxron/roapi.go/pkg/api/errors"
-	"github.com/jaxron/roapi.go/pkg/api/middleware/auth"
 	"github.com/jaxron/roapi.go/pkg/api/types"
 )
 
@@ -17,8 +16,6 @@ func (r *Resource) FindFriends(ctx context.Context, p FindFriendsParams) (*types
 	if err := r.validate.Struct(p); err != nil {
 		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
 	}
-
-	ctx = context.WithValue(ctx, auth.KeyAddCookie, true)
 
 	var friends types.FriendPageResponse
 	resp, err := r.client.NewRequest().
