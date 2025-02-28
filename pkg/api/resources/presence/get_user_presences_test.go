@@ -24,8 +24,15 @@ func TestGetUserPresences(t *testing.T) {
 
 		for _, presence := range result.UserPresences {
 			assert.Contains(t, userIDs, presence.UserID)
-			assert.NotZero(t, presence.LastOnline)
 			assert.NotEmpty(t, presence.LastLocation)
+
+			// Check LastOnline based on which user ID we're looking at
+			if presence.UserID == utils.SampleUserID1 {
+				assert.NotNil(t, presence.LastOnline)
+				assert.False(t, presence.LastOnline.IsZero())
+			} else if presence.UserID == utils.SampleUserID2 {
+				assert.Nil(t, presence.LastOnline)
+			}
 		}
 	})
 

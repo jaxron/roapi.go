@@ -26,5 +26,5 @@ type UserPresenceResponse struct {
 	GameID           *string          `json:"gameId"           validate:"omitempty,min=1"` // ID of the game instance if user is in game
 	UniverseID       *uint64          `json:"universeId"       validate:"omitempty,min=1"` // ID of the universe if user is in game
 	UserID           uint64           `json:"userId"           validate:"required,min=1"`  // ID of the user
-	LastOnline       time.Time        `json:"lastOnline"       validate:"required"`        // Last time the user was online
+	LastOnline       *time.Time       `json:"lastOnline"       validate:"omitempty"`       // Last time the user was online
 }
