@@ -43,8 +43,8 @@ type Friend struct {
 // ExtendedFriend represents a friend with additional information.
 type ExtendedFriend struct {
 	Friend
-	Name        string `json:"name"        validate:"required,min=1"` // Current username of the user
-	DisplayName string `json:"displayName" validate:"required,min=1"` // Display name of the user
+	Name        string `json:"name"        validate:"omitempty,min=1"` // Current username of the user
+	DisplayName string `json:"displayName" validate:"omitempty,min=1"` // Display name of the user
 }
 
 // FriendPageResponse represents the structure of a user's friend list returned by the Roblox API.
