@@ -53,6 +53,7 @@ const (
 
 	SampleUniverseID  = uint64(6591173970)
 	SampleGameID      = uint64(104971911222178)
+	SampleGameID2     = uint64(116495829188952)
 	InvalidUniverseID = uint64(0)
 	InvalidGameID     = uint64(0)
 )

@@ -86,3 +86,21 @@ type GameDetailResponse struct {
 type GameDetailsResponse struct {
 	Data []GameDetailResponse `json:"data" validate:"required,dive"` // List of game details
 }
+
+// ServerResponse represents the response structure for game server queries.
+type ServerResponse struct {
+	PreviousPageCursor *string  `json:"previousPageCursor" validate:"omitempty"`     // Cursor for the previous page of results (if any)
+	NextPageCursor     *string  `json:"nextPageCursor"     validate:"omitempty"`     // Cursor for the next page of results (if any)
+	Data               []Server `json:"data"               validate:"required,dive"` // List of servers
+}
+
+// Server represents a single game server instance.
+type Server struct {
+	ID           string   `json:"id"           validate:"required"`       // Unique identifier for the server
+	MaxPlayers   int32    `json:"maxPlayers"   validate:"required,gt=0"`  // Maximum number of players allowed
+	Playing      int32    `json:"playing"      validate:"required,gte=0"` // Current number of players
+	PlayerTokens []string `json:"playerTokens" validate:"required"`       // List of player tokens
+	Players      []string `json:"players"`                                // List of players (may be empty)
+	FPS          float64  `json:"fps"          validate:"required"`       // Current server FPS
+	Ping         int32    `json:"ping"         validate:"gte=0"`          // Server ping in milliseconds (may be omitted)
+}
