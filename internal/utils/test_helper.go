@@ -52,7 +52,9 @@ const (
 	InvalidRoleID    = uint64(math.MaxUint64)
 
 	SampleUniverseID  = uint64(6591173970)
+	SampleGameID      = uint64(104971911222178)
 	InvalidUniverseID = uint64(0)
+	InvalidGameID     = uint64(0)
 )
 
 // NewTestEnv creates a new client.Client instance and a validator.Validate for testing purposes.

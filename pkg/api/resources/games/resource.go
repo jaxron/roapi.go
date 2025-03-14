@@ -12,6 +12,7 @@ import (
 type ResourceInterface interface {
 	GetUserGames(ctx context.Context, p UserGamesParams) (*types.GameResponse, error)
 	GetGameFavoritesCount(ctx context.Context, universeID uint64) (*types.GameFavoritesCountResponse, error)
+	GetUniverseIDFromPlace(ctx context.Context, placeID uint64) (*types.UniverseIDResponse, error)
 }
 
 // Ensure Resource implements ResourceInterface.

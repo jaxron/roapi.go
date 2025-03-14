@@ -37,3 +37,8 @@ type Place struct {
 type GameFavoritesCountResponse struct {
 	FavoritesCount uint64 `json:"favoritesCount" validate:"min=0"` // Number of times the game has been favorited
 }
+
+// UniverseIDResponse represents the response containing a universe ID.
+type UniverseIDResponse struct {
+	UniverseID uint64 `json:"universeId" validate:"required,min=1"` // Universe ID associated with the place
+}
