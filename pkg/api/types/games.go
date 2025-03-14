@@ -104,3 +104,22 @@ type Server struct {
 	FPS          float64  `json:"fps"          validate:"required"`       // Current server FPS
 	Ping         int32    `json:"ping"         validate:"gte=0"`          // Server ping in milliseconds (may be omitted)
 }
+
+// PlaceDetailResponse represents detailed information about a place.
+type PlaceDetailResponse struct {
+	PlaceID             uint64 `json:"placeId"             validate:"required,min=1"` // The place ID
+	Name                string `json:"name"                validate:"required"`       // The place name
+	Description         string `json:"description"`                                   // The place description
+	SourceName          string `json:"sourceName"`                                    // The place name in source language
+	SourceDescription   string `json:"sourceDescription"`                             // The place description in source language
+	URL                 string `json:"url"                 validate:"required"`       // URL to the place
+	Builder             string `json:"builder"             validate:"required"`       // Builder's username
+	BuilderID           uint64 `json:"builderId"           validate:"required,min=1"` // Builder's ID
+	HasVerifiedBadge    bool   `json:"hasVerifiedBadge"`                              // Whether the builder has verified badge
+	IsPlayable          bool   `json:"isPlayable"`                                    // Whether the place is playable
+	ReasonProhibited    string `json:"reasonProhibited"`                              // Reason why the place is not playable (if applicable)
+	UniverseID          uint64 `json:"universeId"          validate:"required,min=1"` // Associated universe ID
+	UniverseRootPlaceID uint64 `json:"universeRootPlaceId" validate:"required,min=1"` // Root place ID of the universe
+	Price               uint64 `json:"price"               validate:"min=0"`          // Price to access the place
+	ImageToken          string `json:"imageToken"          validate:"required"`       // Token for the place thumbnail
+}
