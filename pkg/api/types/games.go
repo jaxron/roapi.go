@@ -42,3 +42,47 @@ type GameFavoritesCountResponse struct {
 type UniverseIDResponse struct {
 	UniverseID uint64 `json:"universeId" validate:"required,min=1"` // Universe ID associated with the place
 }
+
+// GameCreator represents the extended information about the creator of a game.
+type GameCreator struct {
+	ID               uint64 `json:"id"               validate:"required,min=1"` // The game creator id
+	Name             string `json:"name"             validate:"required"`       // The game creator name
+	Type             string `json:"type"             validate:"required"`       // The game creator type
+	IsRNVAccount     bool   `json:"isRNVAccount"`                               // The game creator account is Luobu Real Name Verified
+	HasVerifiedBadge bool   `json:"hasVerifiedBadge"`                           // Builder verified badge status
+}
+
+// GameDetailResponse represents detailed information about a game.
+type GameDetailResponse struct {
+	ID                        uint64      `json:"id"                        validate:"required,min=1"` // The game universe id
+	RootPlaceID               uint64      `json:"rootPlaceId"               validate:"required,min=1"` // The game root place id
+	Name                      string      `json:"name"                      validate:"required"`       // The game name
+	Description               string      `json:"description"`                                         // The game description
+	SourceName                string      `json:"sourceName"`                                          // The game name in the source language
+	SourceDescription         string      `json:"sourceDescription"`                                   // The game description in the source language
+	Creator                   GameCreator `json:"creator"                   validate:"required"`       // Information about the game creator
+	Price                     *uint64     `json:"price"`                                               // The game paid access price
+	AllowedGearGenres         []string    `json:"allowedGearGenres"         validate:"required"`       // List of allowed gear genres
+	AllowedGearCategories     []string    `json:"allowedGearCategories"     validate:"required"`       // List of allowed gear categories
+	IsGenreEnforced           bool        `json:"isGenreEnforced"`                                     // Whether the game must specify a genre
+	CopyingAllowed            bool        `json:"copyingAllowed"`                                      // Whether the game allows place to be copied
+	Playing                   uint64      `json:"playing"`                                             // Current player count of the game
+	Visits                    uint64      `json:"visits"`                                              // The total visits to the game
+	MaxPlayers                uint32      `json:"maxPlayers"`                                          // The game max players
+	Created                   time.Time   `json:"created"                   validate:"required"`       // The game created time
+	Updated                   time.Time   `json:"updated"                   validate:"required"`       // The game updated time
+	StudioAccessToApisAllowed bool        `json:"studioAccessToApisAllowed"`                           // The setting of IsStudioAccessToApisAllowed of the universe
+	CreateVipServersAllowed   bool        `json:"createVipServersAllowed"`                             // Whether the VIP servers are allowed to be created
+	UniverseAvatarType        string      `json:"universeAvatarType"        validate:"required"`       // Avatar type. Possible values are MorphToR6, MorphToR15, and PlayerChoice
+	Genre                     string      `json:"genre"`                                               // The game genre display name
+	GenreL1                   string      `json:"genre_l1"`                                            // The game genre from experience-genres-service
+	GenreL2                   string      `json:"genre_l2"`                                            // The game subgenre from experience-genres-service
+	IsAllGenre                bool        `json:"isAllGenre"`                                          // Is this game all genre
+	IsFavoritedByUser         bool        `json:"isFavoritedByUser"`                                   // Is this game favorited by user
+	FavoritedCount            uint64      `json:"favoritedCount"`                                      // Game number of favorites
+}
+
+// GameDetailsResponse represents a response containing multiple game details.
+type GameDetailsResponse struct {
+	Data []GameDetailResponse `json:"data" validate:"required,dive"` // List of game details
+}

@@ -21,6 +21,7 @@ linters:
     - mnd # Not needed
     - forcetypeassert # Not needed
     - dupl # Not needed
+    - tagliatelle # Not needed
     - exportloopref # Deprecated
 
 linters-settings:
