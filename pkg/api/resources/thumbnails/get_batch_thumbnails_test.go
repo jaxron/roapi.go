@@ -70,8 +70,10 @@ func TestGetBatchThumbnails(t *testing.T) {
 		})
 
 		batchThumbnails, err := api.GetBatchThumbnails(context.Background(), builder.Build())
-		require.Error(t, err)
-		assert.Nil(t, batchThumbnails)
+		require.NoError(t, err)
+		assert.NotNil(t, batchThumbnails)
+		assert.NotNil(t, batchThumbnails.Data[0].ErrorCode)
+		assert.NotNil(t, batchThumbnails.Data[0].ErrorMessage)
 	})
 
 	// Test case: Test builder methods
