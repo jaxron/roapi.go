@@ -22,6 +22,21 @@ func TestGetMultiplePlaceDetails(t *testing.T) {
 		assert.Equal(t, utils.SampleGameID, result[0].PlaceID)
 	})
 
+	t.Run("Fetch Multiple Place Details Successfully", func(t *testing.T) {
+		placeIDs := []uint64{utils.SampleGameID, utils.SampleGameID2}
+		result, err := api.GetMultiplePlaceDetails(context.Background(), placeIDs)
+		require.NoError(t, err)
+		assert.NotNil(t, result)
+		assert.Len(t, result, 2)
+
+		// Verify both place IDs are in the response
+		resultIDs := make([]uint64, len(result))
+		for i, place := range result {
+			resultIDs[i] = place.PlaceID
+		}
+		assert.ElementsMatch(t, placeIDs, resultIDs)
+	})
+
 	t.Run("Fetch With Invalid Place ID", func(t *testing.T) {
 		_, err := api.GetMultiplePlaceDetails(context.Background(), []uint64{utils.InvalidGameID})
 		require.Error(t, err)

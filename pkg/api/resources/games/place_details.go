@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/jaxron/roapi.go/pkg/api/errors"
 	"github.com/jaxron/roapi.go/pkg/api/middleware/auth"
@@ -21,19 +20,24 @@ func (r *Resource) GetMultiplePlaceDetails(ctx context.Context, placeIDs []uint6
 
 	ctx = context.WithValue(ctx, auth.KeyAddCookie, true)
 
-	// Convert place IDs to strings and join them
+	// Convert place IDs to strings for query parameters
 	ids := make([]string, len(placeIDs))
 	for i, id := range placeIDs {
 		ids[i] = strconv.FormatUint(id, 10)
 	}
 
-	var result []types.PlaceDetailResponse
-	resp, err := r.client.NewRequest().
+	// Create request with multiple placeIds query parameters
+	req := r.client.NewRequest().
 		Method(http.MethodGet).
-		URL(types.GamesEndpoint+"/v1/games/multiget-place-details").
-		Query("placeIds", strings.Join(ids, ",")).
-		Result(&result).
-		Do(ctx)
+		URL(types.GamesEndpoint + "/v1/games/multiget-place-details")
+
+	// Add each placeId as a separate query parameter
+	for _, id := range ids {
+		req.Query("placeIds", id)
+	}
+
+	var result []types.PlaceDetailResponse
+	resp, err := req.Result(&result).Do(ctx)
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
