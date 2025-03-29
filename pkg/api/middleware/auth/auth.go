@@ -61,7 +61,7 @@ func (m *AuthMiddleware) Process(ctx context.Context, httpClient *http.Client, r
 	isTokenEnabled, tokenOk := ctx.Value(KeyAddToken).(bool)
 
 	// Skip middleware if cookies and tokens are disabled
-	if !((cookieOk && isCookieEnabled) || (tokenOk && isTokenEnabled)) {
+	if (!cookieOk || !isCookieEnabled) && (!tokenOk || !isTokenEnabled) {
 		return next(ctx, httpClient, req)
 	}
 
