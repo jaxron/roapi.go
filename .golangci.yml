@@ -1,42 +1,55 @@
+version: "2"
 run:
-  concurrency: 0
+  go: "1.24"
+  tests: false
   allow-parallel-runners: true
   allow-serial-runners: true
-  tests: false
-  go: '1.23'
-
 linters:
-  enable-all: true
+  default: all
   disable:
-    - goimports # Not needed 
-    - depguard # Not needed
-    - gci # Encountering issues
-    - gofmt # Replaced by gofumpt
-    - nlreturn # Not needed
-    - wsl # Too strict
-    - wrapcheck # Not needed 
-    - ireturn # Configuration is bugged
-    - bodyclose # Lots of false positives
-    - paralleltest # Makes it difficult to debug integration tests
-    - mnd # Not needed
-    - forcetypeassert # Not needed
-    - dupl # Not needed
-    - tagliatelle # Not needed
-    - exportloopref # Deprecated
-
-linters-settings:
-  lll:
-    line-length: 180
-  gosec:
-    excludes:
-      - G404 # We don't need to check for weak number generators
-  errorlint:
-    comparison: false # Too strict
-  revive:
-    rules:
-      - name: var-naming
-        arguments:
-          - ["IDS"] # Roblox API uses 'userIds'
-  varnamelen:
-    min-name-length: 1
-    
+    - bodyclose
+    - depguard
+    - dupl
+    - forcetypeassert
+    - ireturn
+    - mnd
+    - nlreturn
+    - paralleltest
+    - tagliatelle
+    - wrapcheck
+    - wsl
+  settings:
+    errorlint:
+      comparison: false
+    gosec:
+      excludes:
+        - G404
+    lll:
+      line-length: 180
+    revive:
+      rules:
+        - name: var-naming
+          arguments:
+            - - IDS
+    varnamelen:
+      min-name-length: 1
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gofumpt
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
