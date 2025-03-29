@@ -9,6 +9,7 @@ const (
 	AvatarEndpoint     = "https://avatar.roblox.com"
 	PresenceEndpoint   = "https://presence.roblox.com"
 	GamesEndpoint      = "https://games.roblox.com"
+	InventoryEndpoint  = "https://inventory.roblox.com"
 )
 
 // SortOrder represents the sort order of the results.
