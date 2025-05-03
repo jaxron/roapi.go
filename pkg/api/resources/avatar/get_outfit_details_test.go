@@ -40,7 +40,6 @@ func TestGetOutfitDetails(t *testing.T) {
 		assert.NotZero(t, outfitDetails.Scale.Width)
 		assert.NotZero(t, outfitDetails.Scale.Head)
 		assert.NotZero(t, outfitDetails.Scale.Depth)
-		assert.NotZero(t, outfitDetails.Scale.BodyType)
 
 		// Validate assets
 		for _, asset := range outfitDetails.Assets {

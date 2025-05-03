@@ -78,5 +78,23 @@ type ScaleModel struct {
 	Head       float64 `json:"head"       validate:"required"` // Head scale
 	Depth      float64 `json:"depth"      validate:"required"` // Depth scale
 	Proportion float64 `json:"proportion"`                     // Proportion scale
-	BodyType   float64 `json:"bodyType"   validate:"required"` // Body type scale
+	BodyType   float64 `json:"bodyType"`                       // Body type scale
+}
+
+// UserAvatarResponse represents the structure of a user's avatar details.
+type UserAvatarResponse struct {
+	Scales              ScaleModel   `json:"scales"              validate:"required"`      // Avatar scaling information
+	PlayerAvatarType    string       `json:"playerAvatarType"    validate:"required"`      // R6 or R15
+	BodyColors          BodyColors3  `json:"bodyColor3s"         validate:"required"`      // Body part colors
+	Assets              []AssetV2    `json:"assets"              validate:"required,dive"` // List of assets worn on the character
+	DefaultShirtApplied bool         `json:"defaultShirtApplied"`                          // Whether default shirt is applied
+	DefaultPantsApplied bool         `json:"defaultPantsApplied"`                          // Whether default pants are applied
+	Emotes              []EmoteModel `json:"emotes"              validate:"required,dive"` // List of equipped emotes
+}
+
+// EmoteModel represents an emote equipped on a user's avatar.
+type EmoteModel struct {
+	AssetID   uint64 `json:"assetId"   validate:"required,min=1"` // The asset ID of the emote
+	AssetName string `json:"assetName" validate:"required"`       // The name of the emote
+	Position  int32  `json:"position"  validate:"required"`       // The position the emote is equipped to
 }
