@@ -2,8 +2,8 @@ package types
 
 // OutfitResponse represents the structure of a user's outfits returned by the Roblox API.
 type OutfitResponse struct {
-	Data            []Outfit `json:"data"            validate:"required,dive"` // List of outfits
-	PaginationToken string   `json:"paginationToken"`                          // Token for pagination (if any)
+	Data            []*Outfit `json:"data"            validate:"required,dive"` // List of outfits
+	PaginationToken string    `json:"paginationToken"`                          // Token for pagination (if any)
 }
 
 // Outfit represents a single outfit in the user's outfits.
@@ -18,7 +18,7 @@ type Outfit struct {
 type OutfitDetailsResponse struct {
 	ID               uint64      `json:"id"               validate:"required,min=1"` // Unique identifier for the outfit
 	Name             string      `json:"name"             validate:"omitempty"`      // Name of the outfit
-	Assets           []AssetV2   `json:"assets"           validate:"required,dive"`  // List of assets in the outfit
+	Assets           []*AssetV2  `json:"assets"           validate:"required,dive"`  // List of assets in the outfit
 	BodyColors       BodyColors3 `json:"bodyColor3s"      validate:"required"`       // Body part colors
 	Scale            ScaleModel  `json:"scale"            validate:"required"`       // Avatar scaling information
 	PlayerAvatarType string      `json:"playerAvatarType" validate:"required"`       // R6 or R15
@@ -86,7 +86,7 @@ type UserAvatarResponse struct {
 	Scales              ScaleModel   `json:"scales"              validate:"required"`      // Avatar scaling information
 	PlayerAvatarType    string       `json:"playerAvatarType"    validate:"required"`      // R6 or R15
 	BodyColors          BodyColors3  `json:"bodyColor3s"         validate:"required"`      // Body part colors
-	Assets              []AssetV2    `json:"assets"              validate:"required,dive"` // List of assets worn on the character
+	Assets              []*AssetV2   `json:"assets"              validate:"required,dive"` // List of assets worn on the character
 	DefaultShirtApplied bool         `json:"defaultShirtApplied"`                          // Whether default shirt is applied
 	DefaultPantsApplied bool         `json:"defaultPantsApplied"`                          // Whether default pants are applied
 	Emotes              []EmoteModel `json:"emotes"              validate:"required,dive"` // List of equipped emotes
