@@ -10,7 +10,7 @@ const (
 	BadgeIconType                  ThumbnailType = "BadgeIcon"
 	GameThumbnailType              ThumbnailType = "GameThumbnail"
 	GamePassType                   ThumbnailType = "GamePass"
-	AssetType                      ThumbnailType = "Asset"
+	AssetThumbnailType             ThumbnailType = "Asset"
 	BundleThumbnailType            ThumbnailType = "BundleThumbnail"
 	OutfitType                     ThumbnailType = "Outfit"
 	GroupIconType                  ThumbnailType = "GroupIcon"

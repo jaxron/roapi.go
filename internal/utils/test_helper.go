@@ -56,6 +56,9 @@ const (
 	SampleGameID2     = uint64(116495829188952)
 	InvalidUniverseID = uint64(0)
 	InvalidGameID     = uint64(0)
+
+	SampleOutfitID  = uint64(13993719293)
+	InvalidOutfitID = uint64(12345678901234567890)
 )
 
 // NewTestEnv creates a new client.Client instance and a validator.Validate for testing purposes.

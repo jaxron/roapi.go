@@ -78,6 +78,46 @@ func (m *AuthMiddleware) Process(ctx context.Context, httpClient *http.Client, r
 	return next(ctx, httpClient, req)
 }
 
+// UpdateCookies updates the list of cookies at runtime.
+func (m *AuthMiddleware) UpdateCookies(cookies []string) {
+	m.cookiesMux.Lock()
+	defer m.cookiesMux.Unlock()
+
+	m.cookies = cookies
+	m.current.Store(0)
+	m.cookieCount = len(cookies)
+	m.logger.WithFields(logger.Int("cookies", len(cookies))).Debug("Cookies updated")
+}
+
+// Shuffle randomizes the order of the cookies.
+func (m *AuthMiddleware) Shuffle() {
+	m.cookiesMux.Lock()
+	defer m.cookiesMux.Unlock()
+
+	rand.New(rand.NewSource(time.Now().UnixNano())).Shuffle(len(m.cookies), func(i, j int) {
+		m.cookies[i], m.cookies[j] = m.cookies[j], m.cookies[i]
+	})
+
+	m.logger.Debug("Cookies shuffled")
+}
+
+// GetCookieCount returns the current number of cookies in the list.
+func (m *AuthMiddleware) GetCookieCount() int {
+	m.cookiesMux.RLock()
+	defer m.cookiesMux.RUnlock()
+	return m.cookieCount
+}
+
+// SetLogger sets the logger for the middleware.
+func (m *AuthMiddleware) SetLogger(l logger.Logger) {
+	m.logger = l
+}
+
+// SetNowFunc sets a custom function for getting the current time (useful for testing).
+func (m *AuthMiddleware) SetNowFunc(f func() time.Time) {
+	m.now = f
+}
+
 func (m *AuthMiddleware) getAndValidateCookie() (string, error) {
 	m.cookiesMux.RLock()
 	defer m.cookiesMux.RUnlock()
@@ -163,44 +203,4 @@ func (m *AuthMiddleware) refreshCSRFToken(ctx context.Context, httpClient *http.
 	m.csrfTokenExp = m.now().Add(5 * time.Minute)
 
 	return csrfToken, nil
-}
-
-// UpdateCookies updates the list of cookies at runtime.
-func (m *AuthMiddleware) UpdateCookies(cookies []string) {
-	m.cookiesMux.Lock()
-	defer m.cookiesMux.Unlock()
-
-	m.cookies = cookies
-	m.current.Store(0)
-	m.cookieCount = len(cookies)
-	m.logger.WithFields(logger.Int("cookies", len(cookies))).Debug("Cookies updated")
-}
-
-// Shuffle randomizes the order of the cookies.
-func (m *AuthMiddleware) Shuffle() {
-	m.cookiesMux.Lock()
-	defer m.cookiesMux.Unlock()
-
-	rand.New(rand.NewSource(time.Now().UnixNano())).Shuffle(len(m.cookies), func(i, j int) {
-		m.cookies[i], m.cookies[j] = m.cookies[j], m.cookies[i]
-	})
-
-	m.logger.Debug("Cookies shuffled")
-}
-
-// GetCookieCount returns the current number of cookies in the list.
-func (m *AuthMiddleware) GetCookieCount() int {
-	m.cookiesMux.RLock()
-	defer m.cookiesMux.RUnlock()
-	return m.cookieCount
-}
-
-// SetLogger sets the logger for the middleware.
-func (m *AuthMiddleware) SetLogger(l logger.Logger) {
-	m.logger = l
-}
-
-// SetNowFunc sets a custom function for getting the current time (useful for testing).
-func (m *AuthMiddleware) SetNowFunc(f func() time.Time) {
-	m.now = f
 }
