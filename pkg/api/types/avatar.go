@@ -40,8 +40,8 @@ type AssetV2 struct {
 
 // AssetType represents the type information for an asset.
 type AssetType struct {
-	ID   uint64 `json:"id"   validate:"required,min=1"` // Asset type ID
-	Name string `json:"name" validate:"required"`       // Asset type name
+	ID   ItemAssetType `json:"id"   validate:"required,min=1"` // Asset type ID
+	Name string        `json:"name" validate:"required"`       // Asset type name
 }
 
 // AssetMetaV1 represents metadata for an asset.
