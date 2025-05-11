@@ -16,6 +16,7 @@ type ResourceInterface interface {
 	GetGamesByUniverseIDs(ctx context.Context, universeIDs []uint64) (*types.GameDetailsResponse, error)
 	GetGameServers(ctx context.Context, p GameServersParams) (*types.ServerResponse, error)
 	GetMultiplePlaceDetails(ctx context.Context, placeIDs []uint64) ([]*types.PlaceDetailResponse, error)
+	GetUserFavoriteGames(ctx context.Context, p UserFavoriteGamesParams) (*types.GameResponse, error)
 }
 
 // Ensure Resource implements ResourceInterface.
