@@ -37,7 +37,7 @@ type FriendsResponse struct {
 
 // Friend represents a single friend in a user's friend list.
 type Friend struct {
-	ID int64 `json:"id" validate:"required"` // Unique identifier for the friend
+	ID int64 `json:"id" validate:"required,oneof=-1|min=1"` // Unique identifier for the friend
 }
 
 // ExtendedFriend represents a friend with additional information.
@@ -58,12 +58,12 @@ type FriendPageResponse struct {
 
 // FriendResponse represents the structure of friend information returned by the Roblox API.
 type FriendResponse struct {
-	ID               int64 `json:"id"               validate:"required"` // Unique identifier for the friend
-	HasVerifiedBadge bool  `json:"hasVerifiedBadge"`                     // Whether the friend has a verified badge
+	ID               int64 `json:"id"               validate:"required,oneof=-1|min=1"` // Unique identifier for the friend
+	HasVerifiedBadge bool  `json:"hasVerifiedBadge"`                                    // Whether the friend has a verified badge
 }
 
 // OnlineFriend represents the structure of friend information returned by the Roblox API.
 type OnlineFriend struct {
-	ID           int64                `json:"id"           validate:"required"` // Unique identifier for the friend
-	UserPresence UserPresenceResponse `json:"userPresence" validate:"required"` // User presence information
+	ID           int64                `json:"id"           validate:"required,oneof=-1|min=1"` // Unique identifier for the friend
+	UserPresence UserPresenceResponse `json:"userPresence" validate:"required"`                // User presence information
 }
