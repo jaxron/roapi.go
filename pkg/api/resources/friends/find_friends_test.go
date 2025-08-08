@@ -56,8 +56,8 @@ func TestFindFriends(t *testing.T) {
 
 		params := builder.Build()
 		assert.Equal(t, utils.SampleUserID1, params.UserID)
-		assert.Equal(t, uint64(1), params.UserSort)
-		assert.Equal(t, uint64(20), params.Limit)
+		assert.Equal(t, int64(1), params.UserSort)
+		assert.Equal(t, int64(20), params.Limit)
 		assert.Equal(t, "someCursor", params.Cursor)
 	})
 }

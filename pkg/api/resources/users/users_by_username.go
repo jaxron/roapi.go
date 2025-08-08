@@ -17,6 +17,7 @@ func (r *Resource) GetUsersByUsernames(ctx context.Context, p GetUsersByUsername
 	}
 
 	var users types.UsersByUsernameResponse
+
 	resp, err := r.client.NewRequest().
 		Method(http.MethodPost).
 		URL(types.UsersEndpoint + "/v1/usernames/users").
@@ -32,6 +33,7 @@ func (r *Resource) GetUsersByUsernames(ctx context.Context, p GetUsersByUsername
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&users); err != nil {
@@ -78,6 +80,7 @@ func (b *GetUsersByUsernamesBuilder) RemoveUsernames(usernames ...string) *GetUs
 			}
 		}
 	}
+
 	return b
 }
 

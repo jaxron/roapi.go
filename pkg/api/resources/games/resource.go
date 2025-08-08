@@ -11,11 +11,11 @@ import (
 // ResourceInterface defines the methods available for game-related operations.
 type ResourceInterface interface {
 	GetUserGames(ctx context.Context, p UserGamesParams) (*types.GameResponse, error)
-	GetGameFavoritesCount(ctx context.Context, universeID uint64) (*types.GameFavoritesCountResponse, error)
-	GetUniverseIDFromPlace(ctx context.Context, placeID uint64) (*types.UniverseIDResponse, error)
-	GetGamesByUniverseIDs(ctx context.Context, universeIDs []uint64) (*types.GameDetailsResponse, error)
+	GetGameFavoritesCount(ctx context.Context, universeID int64) (*types.GameFavoritesCountResponse, error)
+	GetUniverseIDFromPlace(ctx context.Context, placeID int64) (*types.UniverseIDResponse, error)
+	GetGamesByUniverseIDs(ctx context.Context, universeIDs []int64) (*types.GameDetailsResponse, error)
 	GetGameServers(ctx context.Context, p GameServersParams) (*types.ServerResponse, error)
-	GetMultiplePlaceDetails(ctx context.Context, placeIDs []uint64) ([]*types.PlaceDetailResponse, error)
+	GetMultiplePlaceDetails(ctx context.Context, placeIDs []int64) ([]*types.PlaceDetailResponse, error)
 	GetUserFavoriteGames(ctx context.Context, p UserFavoriteGamesParams) (*types.GameResponse, error)
 }
 

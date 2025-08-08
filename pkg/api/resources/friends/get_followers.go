@@ -18,10 +18,11 @@ func (r *Resource) GetFollowers(ctx context.Context, p GetFollowersParams) (*typ
 	}
 
 	var followers types.FollowerPageResponse
+
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v1/users/%d/followers", types.FriendsEndpoint, p.UserID)).
-		Query("limit", strconv.FormatUint(p.Limit, 10)).
+		Query("limit", strconv.FormatInt(p.Limit, 10)).
 		Query("cursor", p.Cursor).
 		Query("sortOrder", string(p.SortOrder)).
 		Result(&followers).
@@ -29,6 +30,7 @@ func (r *Resource) GetFollowers(ctx context.Context, p GetFollowersParams) (*typ
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&followers); err != nil {
@@ -40,8 +42,8 @@ func (r *Resource) GetFollowers(ctx context.Context, p GetFollowersParams) (*typ
 
 // GetFollowersParams holds the parameters for getting followers.
 type GetFollowersParams struct {
-	UserID    uint64          `json:"userId"    validate:"required,gt=0"`            // Required: ID of the user to fetch followers for
-	Limit     uint64          `json:"limit"     validate:"oneof=10 18 25 50 100"`    // Optional: Maximum number of results to return (default: 10)
+	UserID    int64           `json:"userId"    validate:"required,gt=0"`            // Required: ID of the user to fetch followers for
+	Limit     int64           `json:"limit"     validate:"oneof=10 18 25 50 100"`    // Optional: Maximum number of results to return (default: 10)
 	Cursor    string          `json:"cursor"    validate:"omitempty,base64"`         // Optional: Cursor for pagination
 	SortOrder types.SortOrder `json:"sortOrder" validate:"omitempty,oneof=Asc Desc"` // Optional: Sort order for results
 }
@@ -52,7 +54,7 @@ type GetFollowersBuilder struct {
 }
 
 // NewGetFollowersBuilder creates a new GetFollowersBuilder with default values.
-func NewGetFollowersBuilder(userID uint64) *GetFollowersBuilder {
+func NewGetFollowersBuilder(userID int64) *GetFollowersBuilder {
 	return &GetFollowersBuilder{
 		params: GetFollowersParams{
 			UserID:    userID,
@@ -64,7 +66,7 @@ func NewGetFollowersBuilder(userID uint64) *GetFollowersBuilder {
 }
 
 // WithLimit sets the limit.
-func (b *GetFollowersBuilder) WithLimit(limit uint64) *GetFollowersBuilder {
+func (b *GetFollowersBuilder) WithLimit(limit int64) *GetFollowersBuilder {
 	b.params.Limit = limit
 	return b
 }

@@ -38,6 +38,7 @@ func (ae *APIError) Error() string {
 	}
 
 	err := ae.Errors[0]
+
 	return fmt.Sprintf("roblox API error (%d): %s", err.Code, err.Message)
 }
 
@@ -47,6 +48,7 @@ func HandleAPIError(resp *http.Response, err error) error {
 	if errors.Is(err, clientErrors.ErrBadStatus) {
 		return New(resp)
 	}
+
 	return err
 }
 

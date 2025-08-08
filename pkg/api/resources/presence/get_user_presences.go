@@ -17,6 +17,7 @@ func (r *Resource) GetUserPresences(ctx context.Context, p UserPresencesParams) 
 	}
 
 	var presences types.UserPresencesResponse
+
 	resp, err := r.client.NewRequest().
 		Method(http.MethodPost).
 		URL(types.PresenceEndpoint + "/v1/presence/users").
@@ -26,6 +27,7 @@ func (r *Resource) GetUserPresences(ctx context.Context, p UserPresencesParams) 
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&presences); err != nil {
@@ -37,7 +39,7 @@ func (r *Resource) GetUserPresences(ctx context.Context, p UserPresencesParams) 
 
 // UserPresencesParams holds the parameters for getting user presences.
 type UserPresencesParams struct {
-	UserIDs []uint64 `json:"userIds" validate:"required,min=1,max=50"`
+	UserIDs []int64 `json:"userIds" validate:"required,min=1,max=50"`
 }
 
 // UserPresencesBuilder is a builder for UserPresencesParams.
@@ -46,7 +48,7 @@ type UserPresencesBuilder struct {
 }
 
 // NewUserPresencesBuilder creates a new UserPresencesBuilder.
-func NewUserPresencesBuilder(userIDs ...uint64) *UserPresencesBuilder {
+func NewUserPresencesBuilder(userIDs ...int64) *UserPresencesBuilder {
 	return &UserPresencesBuilder{
 		params: UserPresencesParams{
 			UserIDs: userIDs,
@@ -55,13 +57,13 @@ func NewUserPresencesBuilder(userIDs ...uint64) *UserPresencesBuilder {
 }
 
 // WithUserIDs adds multiple user IDs to the list.
-func (b *UserPresencesBuilder) WithUserIDs(userIDs ...uint64) *UserPresencesBuilder {
+func (b *UserPresencesBuilder) WithUserIDs(userIDs ...int64) *UserPresencesBuilder {
 	b.params.UserIDs = append(b.params.UserIDs, userIDs...)
 	return b
 }
 
 // RemoveUserIDs removes multiple user IDs from the list.
-func (b *UserPresencesBuilder) RemoveUserIDs(userIDs ...uint64) *UserPresencesBuilder {
+func (b *UserPresencesBuilder) RemoveUserIDs(userIDs ...int64) *UserPresencesBuilder {
 	for _, id := range userIDs {
 		for i, userID := range b.params.UserIDs {
 			if userID == id {
@@ -70,6 +72,7 @@ func (b *UserPresencesBuilder) RemoveUserIDs(userIDs ...uint64) *UserPresencesBu
 			}
 		}
 	}
+
 	return b
 }
 

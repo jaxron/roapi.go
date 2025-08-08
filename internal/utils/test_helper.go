@@ -29,36 +29,36 @@ const (
 	// ExpectedProxyParts is the number of parts expected in a proxy string (IP:Port:Username:Password).
 	ExpectedProxyParts = 4
 
-	SampleUserID1   = uint64(7380156655)
-	SampleUserID2   = uint64(7436054881)
-	SampleUserID3   = uint64(7436059676)
-	SampleUserID4   = uint64(1)   // Roblox
-	SampleUserID5   = uint64(156) // Builderman
+	SampleUserID1   = int64(7380156655)
+	SampleUserID2   = int64(7436054881)
+	SampleUserID3   = int64(7436059676)
+	SampleUserID4   = int64(1)   // Roblox
+	SampleUserID5   = int64(156) // Builderman
 	SampleUsername1 = "actuallynotabot1"
 	SampleUsername2 = "actuallynotabot2"
 	SampleUsername3 = "actuallynotabot3"
 	SampleUsername4 = "Roblox"
 	SampleUsername5 = "builderman"
-	InvalidUserID   = uint64(math.MaxUint64)
+	InvalidUserID   = int64(0)
 	InvalidUsername = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
 
-	SampleGroupID    = uint64(3336691)
-	SampleGroupID2   = uint64(7)
-	SampleGroupID3   = uint64(6303746)
+	SampleGroupID    = int64(3336691)
+	SampleGroupID2   = int64(7)
+	SampleGroupID3   = int64(6303746)
 	SampleGroupName  = "test"
-	SampleRoleID     = uint64(23018355)
-	InvalidGroupID   = uint64(math.MaxUint64)
+	SampleRoleID     = int64(23018355)
+	InvalidGroupID   = int64(math.MaxInt64)
 	InvalidGroupName = "ThisGroupShouldNotExist12345"
-	InvalidRoleID    = uint64(math.MaxUint64)
+	InvalidRoleID    = int64(math.MaxInt64)
 
-	SampleUniverseID  = uint64(6591173970)
-	SampleGameID      = uint64(104971911222178)
-	SampleGameID2     = uint64(116495829188952)
-	InvalidUniverseID = uint64(0)
-	InvalidGameID     = uint64(0)
+	SampleUniverseID  = int64(6591173970)
+	SampleGameID      = int64(104971911222178)
+	SampleGameID2     = int64(116495829188952)
+	InvalidUniverseID = int64(0)
+	InvalidGameID     = int64(0)
 
-	SampleOutfitID  = uint64(13993719293)
-	InvalidOutfitID = uint64(12345678901234567890)
+	SampleOutfitID  = int64(13993719293)
+	InvalidOutfitID = int64(math.MaxInt64)
 )
 
 // NewTestEnv creates a new client.Client instance and a validator.Validate for testing purposes.
@@ -112,6 +112,7 @@ func getProxiesFromEnv(log logger.Logger) ([]*url.URL, error) {
 	}
 
 	log.WithFields(logger.Int("count", len(proxies))).Debug("Loaded proxies")
+
 	return proxies, nil
 }
 
@@ -125,6 +126,7 @@ func readProxiesFromFile(fileName string) ([]*url.URL, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to open proxy file: %w", err)
 	}
+
 	defer func() { _ = file.Close() }()
 
 	// Read the file line by line
@@ -176,6 +178,7 @@ func getCookiesFromEnv(log logger.Logger) ([]string, error) {
 	}
 
 	log.WithFields(logger.Int("count", len(cookies))).Debug("Loaded cookies")
+
 	return cookies, nil
 }
 
@@ -189,6 +192,7 @@ func readCookiesFromFile(fileName string) ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to open cookie file: %w", err)
 	}
+
 	defer func() { _ = file.Close() }()
 
 	// Read the file line by line

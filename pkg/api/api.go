@@ -49,6 +49,7 @@ func New(cookies []string, opts ...client.Option) *API {
 
 	// Return a new API instance with initialized client and resources
 	v := validator.New(validator.WithRequiredStructEnabled())
+
 	return &API{
 		client:     c,
 		users:      users.New(c, v),

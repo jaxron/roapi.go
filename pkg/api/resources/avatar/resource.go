@@ -11,8 +11,8 @@ import (
 // ResourceInterface defines the interface for avatar-related operations.
 type ResourceInterface interface {
 	GetUserOutfits(ctx context.Context, p UserOutfitsParams) (*types.OutfitResponse, error)
-	GetOutfitDetails(ctx context.Context, outfitID uint64) (*types.OutfitDetailsResponse, error)
-	GetUserAvatar(ctx context.Context, userID uint64) (*types.UserAvatarResponse, error)
+	GetOutfitDetails(ctx context.Context, outfitID int64) (*types.OutfitDetailsResponse, error)
+	GetUserAvatar(ctx context.Context, userID int64) (*types.UserAvatarResponse, error)
 }
 
 // Ensure Resource implements the ResourceInterface.

@@ -18,6 +18,7 @@ func (r *Resource) GetUserGroupRoles(ctx context.Context, params UserGroupRolesP
 	}
 
 	var userGroupRoles types.UserGroupRolesResponse
+
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v1/users/%d/groups/roles", types.GroupsEndpoint, params.UserID)).
@@ -28,6 +29,7 @@ func (r *Resource) GetUserGroupRoles(ctx context.Context, params UserGroupRolesP
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&userGroupRoles); err != nil {
@@ -39,9 +41,9 @@ func (r *Resource) GetUserGroupRoles(ctx context.Context, params UserGroupRolesP
 
 // UserGroupRolesParams holds the parameters for fetching user group roles.
 type UserGroupRolesParams struct {
-	UserID                         uint64 `json:"userId"                         validate:"required,gt=0"`
-	IncludeLocked                  bool   `json:"includeLocked"`
-	IncludeNotificationPreferences bool   `json:"includeNotificationPreferences"`
+	UserID                         int64 `json:"userId"                         validate:"required,gt=0"`
+	IncludeLocked                  bool  `json:"includeLocked"`
+	IncludeNotificationPreferences bool  `json:"includeNotificationPreferences"`
 }
 
 // UserGroupRolesBuilder is a builder for UserGroupRolesParams.
@@ -50,7 +52,7 @@ type UserGroupRolesBuilder struct {
 }
 
 // NewUserGroupRolesBuilder creates a new UserGroupRolesBuilder.
-func NewUserGroupRolesBuilder(userID uint64) *UserGroupRolesBuilder {
+func NewUserGroupRolesBuilder(userID int64) *UserGroupRolesBuilder {
 	return &UserGroupRolesBuilder{
 		params: UserGroupRolesParams{
 			UserID:                         userID,

@@ -18,7 +18,7 @@ func TestGetGameFavoritesCount(t *testing.T) {
 		result, err := api.GetGameFavoritesCount(context.Background(), utils.SampleUniverseID)
 		require.NoError(t, err)
 		assert.NotNil(t, result)
-		assert.GreaterOrEqual(t, result.FavoritesCount, uint64(0))
+		assert.GreaterOrEqual(t, result.FavoritesCount, int64(0))
 	})
 
 	t.Run("Fetch With Invalid Universe ID", func(t *testing.T) {

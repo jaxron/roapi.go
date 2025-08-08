@@ -45,6 +45,6 @@ func TestGetOnlineFriends(t *testing.T) {
 
 		params := builder.Build()
 		assert.Equal(t, utils.SampleUserID1, params.UserID)
-		assert.Equal(t, uint64(2), params.UserSort)
+		assert.Equal(t, int64(2), params.UserSort)
 	})
 }

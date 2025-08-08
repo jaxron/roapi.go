@@ -46,7 +46,7 @@ func TestGetUserAssets(t *testing.T) {
 		params := builder.Build()
 		assert.Equal(t, utils.SampleUserID1, params.UserID)
 		assert.Equal(t, []types.ItemAssetType{types.ItemAssetTypeHat}, params.AssetTypes)
-		assert.Equal(t, uint64(25), params.Limit)
+		assert.Equal(t, int64(25), params.Limit)
 		assert.Equal(t, types.SortOrderDesc, params.SortOrder)
 		assert.True(t, params.FilterDisapprovedAssets)
 		assert.True(t, params.ShowApprovedOnly)

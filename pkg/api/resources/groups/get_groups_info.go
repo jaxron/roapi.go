@@ -19,6 +19,7 @@ func (r *Resource) GetGroupsInfo(ctx context.Context, p GetGroupsInfoParams) (*t
 	}
 
 	var groupsInfo types.GroupsInfoResponse
+
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(types.GroupsEndpoint+"/v2/groups").
@@ -28,6 +29,7 @@ func (r *Resource) GetGroupsInfo(ctx context.Context, p GetGroupsInfoParams) (*t
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&groupsInfo); err != nil {
@@ -48,10 +50,10 @@ type GetGroupsInfoBuilder struct {
 }
 
 // NewGetGroupsInfoBuilder creates a new GetGroupsInfoBuilder with default values.
-func NewGetGroupsInfoBuilder(groupIDs ...uint64) *GetGroupsInfoBuilder {
+func NewGetGroupsInfoBuilder(groupIDs ...int64) *GetGroupsInfoBuilder {
 	stringGroupIDs := make([]string, len(groupIDs))
 	for i, id := range groupIDs {
-		stringGroupIDs[i] = strconv.FormatUint(id, 10)
+		stringGroupIDs[i] = strconv.FormatInt(id, 10)
 	}
 
 	return &GetGroupsInfoBuilder{
@@ -62,23 +64,25 @@ func NewGetGroupsInfoBuilder(groupIDs ...uint64) *GetGroupsInfoBuilder {
 }
 
 // WithGroupIDs adds multiple group IDs to the list.
-func (b *GetGroupsInfoBuilder) WithGroupIDs(groupIDs ...uint64) *GetGroupsInfoBuilder {
+func (b *GetGroupsInfoBuilder) WithGroupIDs(groupIDs ...int64) *GetGroupsInfoBuilder {
 	for _, id := range groupIDs {
-		b.params.GroupIDs = append(b.params.GroupIDs, strconv.FormatUint(id, 10))
+		b.params.GroupIDs = append(b.params.GroupIDs, strconv.FormatInt(id, 10))
 	}
+
 	return b
 }
 
 // RemoveGroupIDs removes a group ID from the list.
-func (b *GetGroupsInfoBuilder) RemoveGroupIDs(groupIDs ...uint64) *GetGroupsInfoBuilder {
+func (b *GetGroupsInfoBuilder) RemoveGroupIDs(groupIDs ...int64) *GetGroupsInfoBuilder {
 	for _, id := range groupIDs {
 		for i, groupID := range b.params.GroupIDs {
-			if groupID == strconv.FormatUint(id, 10) {
+			if groupID == strconv.FormatInt(id, 10) {
 				b.params.GroupIDs = append(b.params.GroupIDs[:i], b.params.GroupIDs[i+1:]...)
 				break
 			}
 		}
 	}
+
 	return b
 }
 

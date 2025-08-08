@@ -16,7 +16,7 @@ func TestGetUsersByIDs(t *testing.T) {
 	api := users.New(utils.NewTestEnv())
 
 	t.Run("Fetch Known Users", func(t *testing.T) {
-		userIDs := []uint64{utils.SampleUserID4, utils.SampleUserID5}
+		userIDs := []int64{utils.SampleUserID4, utils.SampleUserID5}
 		builder := users.NewUsersByIDsBuilder(userIDs...)
 		result, err := api.GetUsersByIDs(context.Background(), builder.Build())
 		require.NoError(t, err)
@@ -29,7 +29,7 @@ func TestGetUsersByIDs(t *testing.T) {
 	})
 
 	t.Run("Fetch With Non-existent User ID", func(t *testing.T) {
-		userIDs := []uint64{utils.SampleUserID1, math.MaxUint64}
+		userIDs := []int64{utils.SampleUserID1, math.MaxInt64}
 		builder := users.NewUsersByIDsBuilder(userIDs...)
 		result, err := api.GetUsersByIDs(context.Background(), builder.Build())
 		require.NoError(t, err)
@@ -46,9 +46,9 @@ func TestGetUsersByIDs(t *testing.T) {
 
 		params := builder.Build()
 		assert.Len(t, params.UserIDs, 3)
-		assert.Contains(t, params.UserIDs, uint64(1))
-		assert.Contains(t, params.UserIDs, uint64(2))
-		assert.Contains(t, params.UserIDs, uint64(4))
-		assert.NotContains(t, params.UserIDs, uint64(3))
+		assert.Contains(t, params.UserIDs, int64(1))
+		assert.Contains(t, params.UserIDs, int64(2))
+		assert.Contains(t, params.UserIDs, int64(4))
+		assert.NotContains(t, params.UserIDs, int64(3))
 	})
 }

@@ -8,7 +8,7 @@ type OutfitResponse struct {
 
 // Outfit represents a single outfit in the user's outfits.
 type Outfit struct {
-	ID         uint64 `json:"id"         validate:"required,min=1"` // Unique identifier for the outfit
+	ID         int64  `json:"id"         validate:"required,min=1"` // Unique identifier for the outfit
 	Name       string `json:"name"       validate:"omitempty"`      // Name of the outfit
 	IsEditable bool   `json:"isEditable"`                           // Whether the outfit can be edited
 	OutfitType string `json:"outfitType" validate:"required"`       // Type of outfit
@@ -16,7 +16,7 @@ type Outfit struct {
 
 // OutfitDetailsResponse represents the detailed information about a specific outfit.
 type OutfitDetailsResponse struct {
-	ID               uint64      `json:"id"               validate:"required,min=1"` // Unique identifier for the outfit
+	ID               int64       `json:"id"               validate:"required,min=1"` // Unique identifier for the outfit
 	Name             string      `json:"name"             validate:"omitempty"`      // Name of the outfit
 	Assets           []*AssetV2  `json:"assets"           validate:"required,dive"`  // List of assets in the outfit
 	BodyColors       BodyColors3 `json:"bodyColor3s"      validate:"required"`       // Body part colors
@@ -24,17 +24,17 @@ type OutfitDetailsResponse struct {
 	PlayerAvatarType string      `json:"playerAvatarType" validate:"required"`       // R6 or R15
 	OutfitType       string      `json:"outfitType"       validate:"required"`       // Type of outfit
 	IsEditable       bool        `json:"isEditable"`                                 // Whether the outfit can be edited
-	UniverseID       *uint64     `json:"universeId"`                                 // Universe ID if created in-experience
+	UniverseID       *int64      `json:"universeId"`                                 // Universe ID if created in-experience
 	ModerationStatus *string     `json:"moderationStatus"`                           // Moderation status for in-experience outfits
-	BundleID         *uint64     `json:"bundleId"`                                   // Bundle ID for in-experience outfits
+	BundleID         *int64      `json:"bundleId"`                                   // Bundle ID for in-experience outfits
 }
 
 // AssetV2 represents an asset with additional version information.
 type AssetV2 struct {
-	ID               uint64       `json:"id"               validate:"required,min=1"` // Asset ID
+	ID               int64        `json:"id"               validate:"required,min=1"` // Asset ID
 	Name             string       `json:"name"             validate:"required"`       // Asset name
 	AssetType        AssetType    `json:"assetType"        validate:"required"`       // Asset type information
-	CurrentVersionID uint64       `json:"currentVersionId" validate:"required,min=1"` // Current version ID
+	CurrentVersionID int64        `json:"currentVersionId" validate:"required,min=1"` // Current version ID
 	Meta             *AssetMetaV1 `json:"meta,omitempty"`                             // Optional metadata
 }
 
@@ -94,7 +94,7 @@ type UserAvatarResponse struct {
 
 // EmoteModel represents an emote equipped on a user's avatar.
 type EmoteModel struct {
-	AssetID   uint64 `json:"assetId"   validate:"required,min=1"` // The asset ID of the emote
+	AssetID   int64  `json:"assetId"   validate:"required,min=1"` // The asset ID of the emote
 	AssetName string `json:"assetName" validate:"required"`       // The name of the emote
 	Position  int32  `json:"position"  validate:"required"`       // The position the emote is equipped to
 }

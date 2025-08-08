@@ -34,6 +34,7 @@ func (r *Resource) GetGameServers(ctx context.Context, p GameServersParams) (*ty
 	}
 
 	var result types.ServerResponse
+
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v1/games/%d/servers/%d", types.GamesEndpoint, p.PlaceID, p.ServerType)).
@@ -46,6 +47,7 @@ func (r *Resource) GetGameServers(ctx context.Context, p GameServersParams) (*ty
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&result); err != nil {
@@ -57,7 +59,7 @@ func (r *Resource) GetGameServers(ctx context.Context, p GameServersParams) (*ty
 
 // GameServersParams holds the parameters for fetching game servers.
 type GameServersParams struct {
-	PlaceID          uint64     `validate:"required,gt=0"`      // Required: ID of the place to fetch servers for
+	PlaceID          int64      `validate:"required,gt=0"`      // Required: ID of the place to fetch servers for
 	ServerType       ServerType `validate:"oneof=0 1"`          // Required: Type of servers to fetch (public/private)
 	SortOrder        SortOrder  `validate:"required,oneof=1 2"` // Required: Sort order for the server list
 	ExcludeFullGames bool       `validate:""`                   // Optional: Whether to exclude full games
@@ -71,7 +73,7 @@ type GameServersBuilder struct {
 }
 
 // NewGameServersBuilder creates a new GameServersBuilder with default values.
-func NewGameServersBuilder(placeID uint64) *GameServersBuilder {
+func NewGameServersBuilder(placeID int64) *GameServersBuilder {
 	return &GameServersBuilder{
 		params: GameServersParams{
 			PlaceID:          placeID,

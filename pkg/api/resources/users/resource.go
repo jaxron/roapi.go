@@ -10,7 +10,7 @@ import (
 
 // ResourceInterface defines the interface for user-related operations.
 type ResourceInterface interface {
-	GetUserByID(ctx context.Context, userID uint64) (*types.UserByIDResponse, error)
+	GetUserByID(ctx context.Context, userID int64) (*types.UserByIDResponse, error)
 	GetAuthUserInfo(ctx context.Context) (*types.AuthUserResponse, error)
 	GetUsersByUsernames(ctx context.Context, params GetUsersByUsernamesParams) (*types.UsersByUsernameResponse, error)
 	GetUsersByIDs(ctx context.Context, params UsersByIDsParams) (*types.UsersByIDsResponse, error)

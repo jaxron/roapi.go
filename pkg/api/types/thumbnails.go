@@ -68,7 +68,7 @@ type ThumbnailRequest struct {
 	Type       ThumbnailType   `json:"type"       validate:"required"`       // Type of thumbnail to request
 	Size       ThumbnailSize   `json:"size"       validate:"required"`       // Size of the thumbnail
 	RequestID  string          `json:"requestId"  validate:"required"`       // Unique identifier for the request
-	TargetID   uint64          `json:"targetId"   validate:"required,min=1"` // ID of the target item
+	TargetID   int64           `json:"targetId"   validate:"required,min=1"` // ID of the target item
 	Token      string          `json:"token"      validate:"omitempty"`      // Optional authentication token
 	Alias      string          `json:"alias"      validate:"omitempty"`      // Optional alias for the thumbnail
 	Format     ThumbnailFormat `json:"format"     validate:"omitempty"`      // Optional format for the thumbnail
@@ -85,7 +85,7 @@ type ThumbnailData struct {
 	RequestID    string         `json:"requestId"    validate:"required"`                                                                       // Unique identifier for the request
 	ErrorCode    *int           `json:"errorCode"    validate:"omitempty"`                                                                      // Error code
 	ErrorMessage *string        `json:"errorMessage" validate:"omitempty,required_with=ErrorCode"`                                              // Error message
-	TargetID     uint64         `json:"targetId"`                                                                                               // ID of the target item
+	TargetID     int64          `json:"targetId"`                                                                                               // ID of the target item
 	State        ThumbnailState `json:"state"        validate:"required,oneof=Error Completed InReview Pending Blocked TemporarilyUnavailable"` // Current state of the thumbnail
 	ImageURL     *string        `json:"imageUrl"     validate:"omitempty"`                                                                      // URL of the thumbnail image
 	Version      *string        `json:"version"      validate:"omitempty"`                                                                      // Version of the thumbnail

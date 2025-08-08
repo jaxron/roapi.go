@@ -99,7 +99,7 @@ func TestGetBatchThumbnails(t *testing.T) {
 
 		params := builder.Build()
 		assert.Len(t, params.Requests, 1)
-		assert.Equal(t, uint64(2), params.Requests[0].TargetID)
+		assert.Equal(t, int64(2), params.Requests[0].TargetID)
 		assert.Equal(t, "Request2", params.Requests[0].RequestID)
 	})
 }

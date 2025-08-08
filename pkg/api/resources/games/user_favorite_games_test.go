@@ -37,7 +37,7 @@ func TestGetUserFavoriteGames(t *testing.T) {
 		params := builder.Build()
 		assert.Equal(t, utils.SampleUserID1, params.UserID)
 		assert.Equal(t, games.AccessFilterPublic, params.AccessFilter)
-		assert.Equal(t, uint64(25), params.Limit)
+		assert.Equal(t, int64(25), params.Limit)
 		assert.Equal(t, "nextPageCursor", params.Cursor)
 	})
 

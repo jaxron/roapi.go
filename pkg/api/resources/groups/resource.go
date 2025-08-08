@@ -10,9 +10,9 @@ import (
 
 // ResourceInterface defines the interface for group-related operations.
 type ResourceInterface interface {
-	GetGroupInfo(ctx context.Context, groupID uint64) (*types.GroupResponse, error)
+	GetGroupInfo(ctx context.Context, groupID int64) (*types.GroupResponse, error)
 	GetGroupUsers(ctx context.Context, p GroupUsersParams) (*types.GroupUsersResponse, error)
-	GetGroupRoles(ctx context.Context, groupID uint64) (*types.GroupRolesResponse, error)
+	GetGroupRoles(ctx context.Context, groupID int64) (*types.GroupRolesResponse, error)
 	GetRoleUsers(ctx context.Context, p RoleUsersParams) (*types.RoleUsersResponse, error)
 	SearchGroups(ctx context.Context, p SearchGroupsParams) (*types.SearchGroupsResponse, error)
 	LookupGroup(ctx context.Context, groupName string) (*types.GroupLookupResponse, error)

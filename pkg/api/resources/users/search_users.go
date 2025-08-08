@@ -18,17 +18,19 @@ func (r *Resource) SearchUsers(ctx context.Context, p SearchUsersParams) (*types
 	}
 
 	var result types.UserSearchPageResponse
+
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(types.UsersEndpoint+"/v1/users/search").
 		Query("keyword", p.Username).
-		Query("limit", strconv.FormatUint(p.Limit, 10)).
+		Query("limit", strconv.FormatInt(p.Limit, 10)).
 		Query("cursor", p.Cursor).
 		Result(&result).
 		Do(ctx)
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&result); err != nil {
@@ -41,7 +43,7 @@ func (r *Resource) SearchUsers(ctx context.Context, p SearchUsersParams) (*types
 // SearchUsersParams holds the parameters for searching users.
 type SearchUsersParams struct {
 	Username string `json:"username" validate:"required,min=1"`     // Required: Username to search for
-	Limit    uint64 `json:"limit"    validate:"oneof=10 25 50 100"` // Optional: Maximum number of results to return (default: 10)
+	Limit    int64  `json:"limit"    validate:"oneof=10 25 50 100"` // Optional: Maximum number of results to return (default: 10)
 	Cursor   string `json:"cursor"   validate:"omitempty,base64"`   // Optional: Cursor for pagination
 }
 
@@ -62,7 +64,7 @@ func NewSearchUsersBuilder(username string) *SearchUsersBuilder {
 }
 
 // WithLimit sets the maximum number of results to return.
-func (b *SearchUsersBuilder) WithLimit(limit uint64) *SearchUsersBuilder {
+func (b *SearchUsersBuilder) WithLimit(limit int64) *SearchUsersBuilder {
 	b.params.Limit = limit
 	return b
 }

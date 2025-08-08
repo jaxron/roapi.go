@@ -18,10 +18,11 @@ func (r *Resource) GetGroupWallPosts(ctx context.Context, p GroupWallPostsParams
 	}
 
 	var wallPosts types.GroupWallPostsResponse
+
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v2/groups/%d/wall/posts", types.GroupsEndpoint, p.GroupID)).
-		Query("limit", strconv.FormatUint(p.Limit, 10)).
+		Query("limit", strconv.FormatInt(p.Limit, 10)).
 		Query("cursor", p.Cursor).
 		Query("sortOrder", string(p.SortOrder)).
 		Result(&wallPosts).
@@ -29,6 +30,7 @@ func (r *Resource) GetGroupWallPosts(ctx context.Context, p GroupWallPostsParams
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&wallPosts); err != nil {
@@ -40,8 +42,8 @@ func (r *Resource) GetGroupWallPosts(ctx context.Context, p GroupWallPostsParams
 
 // GroupWallPostsParams holds the parameters for getting group wall posts.
 type GroupWallPostsParams struct {
-	GroupID   uint64          `json:"groupId"   validate:"required,gt=0"`
-	Limit     uint64          `json:"limit"     validate:"omitempty,oneof=10 25 50 100"`
+	GroupID   int64           `json:"groupId"   validate:"required,gt=0"`
+	Limit     int64           `json:"limit"     validate:"omitempty,oneof=10 25 50 100"`
 	Cursor    string          `json:"cursor"    validate:"omitempty"`
 	SortOrder types.SortOrder `json:"sortOrder" validate:"omitempty,oneof=Asc Desc"`
 }
@@ -52,7 +54,7 @@ type GroupWallPostsBuilder struct {
 }
 
 // NewGroupWallPostsBuilder creates a new GroupWallPostsBuilder with default values.
-func NewGroupWallPostsBuilder(groupID uint64) *GroupWallPostsBuilder {
+func NewGroupWallPostsBuilder(groupID int64) *GroupWallPostsBuilder {
 	return &GroupWallPostsBuilder{
 		params: GroupWallPostsParams{
 			GroupID:   groupID,
@@ -64,7 +66,7 @@ func NewGroupWallPostsBuilder(groupID uint64) *GroupWallPostsBuilder {
 }
 
 // WithLimit sets the limit.
-func (b *GroupWallPostsBuilder) WithLimit(limit uint64) *GroupWallPostsBuilder {
+func (b *GroupWallPostsBuilder) WithLimit(limit int64) *GroupWallPostsBuilder {
 	b.params.Limit = limit
 	return b
 }

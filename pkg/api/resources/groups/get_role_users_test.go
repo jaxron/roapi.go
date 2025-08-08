@@ -57,7 +57,7 @@ func TestGetRoleUsers(t *testing.T) {
 		params := builder.Build()
 		assert.Equal(t, utils.SampleGroupID, params.GroupID)
 		assert.Equal(t, utils.SampleRoleID, params.RoleID)
-		assert.Equal(t, uint64(50), params.Limit)
+		assert.Equal(t, int64(50), params.Limit)
 		assert.Equal(t, "someCursor", params.Cursor)
 		assert.Equal(t, types.SortOrderDesc, params.SortOrder)
 	})

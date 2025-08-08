@@ -18,11 +18,12 @@ func (r *Resource) GetUserGames(ctx context.Context, p UserGamesParams) (*types.
 	}
 
 	var result types.GameResponse
+
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v2/users/%d/games", types.GamesEndpoint, p.UserID)).
-		Query("accessFilter", strconv.FormatUint(uint64(p.AccessFilter), 10)).
-		Query("limit", strconv.FormatUint(p.Limit, 10)).
+		Query("accessFilter", strconv.FormatInt(int64(p.AccessFilter), 10)).
+		Query("limit", strconv.FormatInt(p.Limit, 10)).
 		Query("cursor", p.Cursor).
 		Query("sortOrder", string(p.SortOrder)).
 		Result(&result).
@@ -30,6 +31,7 @@ func (r *Resource) GetUserGames(ctx context.Context, p UserGamesParams) (*types.
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&result); err != nil {
@@ -50,9 +52,9 @@ const (
 
 // UserGamesParams holds the parameters for fetching user games.
 type UserGamesParams struct {
-	UserID       uint64          `validate:"required,gt=0"`
+	UserID       int64           `validate:"required,gt=0"`
 	AccessFilter AccessFilter    `validate:"oneof=1 2 4"`
-	Limit        uint64          `validate:"oneof=10 25 50"`
+	Limit        int64           `validate:"oneof=10 25 50"`
 	Cursor       string          `validate:"omitempty"`
 	SortOrder    types.SortOrder `validate:"oneof=Asc Desc"`
 }
@@ -63,7 +65,7 @@ type UserGamesBuilder struct {
 }
 
 // NewUserGamesBuilder creates a new UserGamesBuilder with default values.
-func NewUserGamesBuilder(userID uint64) *UserGamesBuilder {
+func NewUserGamesBuilder(userID int64) *UserGamesBuilder {
 	return &UserGamesBuilder{
 		params: UserGamesParams{
 			UserID:       userID,
@@ -82,7 +84,7 @@ func (b *UserGamesBuilder) WithAccessFilter(filter AccessFilter) *UserGamesBuild
 }
 
 // WithLimit sets the maximum number of results to return.
-func (b *UserGamesBuilder) WithLimit(limit uint64) *UserGamesBuilder {
+func (b *UserGamesBuilder) WithLimit(limit int64) *UserGamesBuilder {
 	b.params.Limit = limit
 	return b
 }

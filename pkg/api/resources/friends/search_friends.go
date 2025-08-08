@@ -21,17 +21,19 @@ func (r *Resource) SearchFriends(ctx context.Context, p SearchFriendsParams) (*t
 	ctx = context.WithValue(ctx, auth.KeyAddCookie, true)
 
 	var friends types.FriendPageResponse
+
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v1/users/%d/friends/search", types.FriendsEndpoint, p.UserID)).
 		Query("query", p.Query).
 		Query("cursor", p.Cursor).
-		Query("limit", strconv.FormatUint(p.Limit, 10)).
+		Query("limit", strconv.FormatInt(p.Limit, 10)).
 		Result(&friends).
 		Do(ctx)
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&friends); err != nil {
@@ -43,9 +45,9 @@ func (r *Resource) SearchFriends(ctx context.Context, p SearchFriendsParams) (*t
 
 // SearchFriendsParams holds the parameters for searching friends.
 type SearchFriendsParams struct {
-	UserID uint64 `json:"userId" validate:"required,gt=0"`    // Required: ID of the user to fetch friends for
+	UserID int64  `json:"userId" validate:"required,gt=0"`    // Required: ID of the user to fetch friends for
 	Query  string `json:"query"`                              // Optional: Search keyword
-	Limit  uint64 `json:"limit"  validate:"min=1,max=50"`     // Optional: Maximum number of results to return (default: 20)
+	Limit  int64  `json:"limit"  validate:"min=1,max=50"`     // Optional: Maximum number of results to return (default: 20)
 	Cursor string `json:"cursor" validate:"omitempty,base64"` // Optional: Cursor for pagination
 }
 
@@ -55,7 +57,7 @@ type SearchFriendsBuilder struct {
 }
 
 // NewSearchFriendsBuilder creates a new SearchFriendsBuilder with default values.
-func NewSearchFriendsBuilder(userID uint64) *SearchFriendsBuilder {
+func NewSearchFriendsBuilder(userID int64) *SearchFriendsBuilder {
 	return &SearchFriendsBuilder{
 		params: SearchFriendsParams{
 			UserID: userID,
@@ -73,7 +75,7 @@ func (b *SearchFriendsBuilder) WithQuery(query string) *SearchFriendsBuilder {
 }
 
 // WithLimit sets the maximum number of results to return.
-func (b *SearchFriendsBuilder) WithLimit(limit uint64) *SearchFriendsBuilder {
+func (b *SearchFriendsBuilder) WithLimit(limit int64) *SearchFriendsBuilder {
 	b.params.Limit = limit
 	return b
 }

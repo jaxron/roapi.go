@@ -18,18 +18,20 @@ func (r *Resource) SearchGroups(ctx context.Context, p SearchGroupsParams) (*typ
 	}
 
 	var searchResults types.SearchGroupsResponse
+
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(types.GroupsEndpoint+"/v1/groups/search").
 		Query("keyword", p.Keyword).
 		Query("prioritizeExactMatch", strconv.FormatBool(p.PrioritizeExactMatch)).
-		Query("limit", strconv.FormatUint(p.Limit, 10)).
+		Query("limit", strconv.FormatInt(p.Limit, 10)).
 		Query("cursor", p.Cursor).
 		Result(&searchResults).
 		Do(ctx)
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&searchResults); err != nil {
@@ -43,7 +45,7 @@ func (r *Resource) SearchGroups(ctx context.Context, p SearchGroupsParams) (*typ
 type SearchGroupsParams struct {
 	Keyword              string `json:"keyword"              validate:"required"`
 	PrioritizeExactMatch bool   `json:"prioritizeExactMatch"`
-	Limit                uint64 `json:"limit"                validate:"omitempty,oneof=10 25 50 100"`
+	Limit                int64  `json:"limit"                validate:"omitempty,oneof=10 25 50 100"`
 	Cursor               string `json:"cursor"               validate:"omitempty,base64"`
 }
 
@@ -71,7 +73,7 @@ func (b *SearchGroupsBuilder) WithPrioritizeExactMatch(prioritize bool) *SearchG
 }
 
 // WithLimit sets the limit.
-func (b *SearchGroupsBuilder) WithLimit(limit uint64) *SearchGroupsBuilder {
+func (b *SearchGroupsBuilder) WithLimit(limit int64) *SearchGroupsBuilder {
 	b.params.Limit = limit
 	return b
 }

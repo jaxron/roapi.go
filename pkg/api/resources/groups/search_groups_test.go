@@ -56,7 +56,7 @@ func TestSearchGroups(t *testing.T) {
 		params := builder.Build()
 		assert.Equal(t, utils.SampleGroupName, params.Keyword)
 		assert.True(t, params.PrioritizeExactMatch)
-		assert.Equal(t, uint64(50), params.Limit)
+		assert.Equal(t, int64(50), params.Limit)
 		assert.Equal(t, "someCursor", params.Cursor)
 	})
 }

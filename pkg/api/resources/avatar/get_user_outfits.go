@@ -18,6 +18,7 @@ func (r *Resource) GetUserOutfits(ctx context.Context, p UserOutfitsParams) (*ty
 	}
 
 	var userOutfits types.OutfitResponse
+
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v2/avatar/users/%d/outfits", types.AvatarEndpoint, p.UserID)).
@@ -30,6 +31,7 @@ func (r *Resource) GetUserOutfits(ctx context.Context, p UserOutfitsParams) (*ty
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&userOutfits); err != nil {
@@ -41,7 +43,7 @@ func (r *Resource) GetUserOutfits(ctx context.Context, p UserOutfitsParams) (*ty
 
 // UserOutfitsParams holds the parameters for getting user outfits.
 type UserOutfitsParams struct {
-	UserID          uint64 `json:"userId"          validate:"required,gt=0"`
+	UserID          int64  `json:"userId"          validate:"required,gt=0"`
 	IsEditable      bool   `json:"isEditable"`
 	ItemsPerPage    int    `json:"itemsPerPage"    validate:"min=1"`
 	OutfitType      string `json:"outfitType"`
@@ -55,7 +57,7 @@ type UserOutfitsBuilder struct {
 }
 
 // NewUserOutfitsBuilder creates a new UserOutfitsBuilder with default values.
-func NewUserOutfitsBuilder(userID uint64) *UserOutfitsBuilder {
+func NewUserOutfitsBuilder(userID int64) *UserOutfitsBuilder {
 	return &UserOutfitsBuilder{
 		params: UserOutfitsParams{
 			UserID:          userID,

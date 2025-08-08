@@ -23,15 +23,17 @@ func (r *Resource) GetOnlineFriends(ctx context.Context, p GetOnlineFriendsParam
 	var friends struct {
 		Data []*types.OnlineFriend `json:"data" validate:"required,dive"` // List of online friends
 	}
+
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v1/users/%d/friends/online", types.FriendsEndpoint, p.UserID)).
-		Query("userSort", strconv.FormatUint(p.UserSort, 10)).
+		Query("userSort", strconv.FormatInt(p.UserSort, 10)).
 		Result(&friends).
 		Do(ctx)
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&friends); err != nil {
@@ -43,8 +45,8 @@ func (r *Resource) GetOnlineFriends(ctx context.Context, p GetOnlineFriendsParam
 
 // GetOnlineFriendsParams holds the parameters for fetching online friends.
 type GetOnlineFriendsParams struct {
-	UserID   uint64 `json:"userId"   validate:"required,gt=0"` // Required: ID of the user to fetch online friends for
-	UserSort uint64 `json:"userSort" validate:"oneof=0 1 2"`   // Optional: Sort order for results (default: 0)
+	UserID   int64 `json:"userId"   validate:"required,gt=0"` // Required: ID of the user to fetch online friends for
+	UserSort int64 `json:"userSort" validate:"oneof=0 1 2"`   // Optional: Sort order for results (default: 0)
 }
 
 // GetOnlineFriendsBuilder is a builder for GetOnlineFriendsParams.
@@ -53,7 +55,7 @@ type GetOnlineFriendsBuilder struct {
 }
 
 // NewGetOnlineFriendsBuilder creates a new GetOnlineFriendsBuilder with default values.
-func NewGetOnlineFriendsBuilder(userID uint64) *GetOnlineFriendsBuilder {
+func NewGetOnlineFriendsBuilder(userID int64) *GetOnlineFriendsBuilder {
 	return &GetOnlineFriendsBuilder{
 		params: GetOnlineFriendsParams{
 			UserID:   userID,
@@ -63,7 +65,7 @@ func NewGetOnlineFriendsBuilder(userID uint64) *GetOnlineFriendsBuilder {
 }
 
 // WithUserSort sets the user sort for the request.
-func (b *GetOnlineFriendsBuilder) WithUserSort(userSort uint64) *GetOnlineFriendsBuilder {
+func (b *GetOnlineFriendsBuilder) WithUserSort(userSort int64) *GetOnlineFriendsBuilder {
 	b.params.UserSort = userSort
 	return b
 }

@@ -30,7 +30,7 @@ type Middleware struct {
 	cookies      []string
 	cookieCount  int
 	cookiesMux   sync.RWMutex
-	current      atomic.Uint64
+	current      atomic.Int64
 	csrfToken    string
 	csrfTokenExp time.Time
 	csrfTokenMux sync.RWMutex
@@ -42,7 +42,7 @@ type Middleware struct {
 func New(cookies []string) *Middleware {
 	m := &Middleware{
 		cookies:      cookies,
-		current:      atomic.Uint64{},
+		current:      atomic.Int64{},
 		cookieCount:  len(cookies),
 		cookiesMux:   sync.RWMutex{},
 		csrfToken:    "",
@@ -52,6 +52,7 @@ func New(cookies []string) *Middleware {
 		now:          time.Now,
 	}
 	m.current.Store(0)
+
 	return m
 }
 
@@ -105,6 +106,7 @@ func (m *Middleware) Shuffle() {
 func (m *Middleware) GetCookieCount() int {
 	m.cookiesMux.RLock()
 	defer m.cookiesMux.RUnlock()
+
 	return m.cookieCount
 }
 
@@ -129,7 +131,8 @@ func (m *Middleware) getAndValidateCookie() (string, error) {
 	m.logger.Debug("Processing request with cookie middleware")
 
 	current := m.current.Add(1) - 1
-	index := current % uint64(m.cookieCount) // #nosec G115
+	index := current % int64(m.cookieCount) // #nosec G115
+
 	return m.cookies[index], nil
 }
 
@@ -144,6 +147,7 @@ func (m *Middleware) applyCookieAndToken(ctx context.Context, httpClient *http.C
 		if err != nil {
 			return err
 		}
+
 		req.Header.Set("X-Csrf-Token", token)
 		m.logger.Debug("Applied CSRF token to request")
 	}
@@ -190,6 +194,7 @@ func (m *Middleware) refreshCSRFToken(ctx context.Context, httpClient *http.Clie
 	if err != nil {
 		return "", err
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	// Get the CSRF token from the response

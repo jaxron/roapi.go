@@ -17,6 +17,7 @@ func (r *Resource) LookupGroup(ctx context.Context, groupName string) (*types.Gr
 	}
 
 	var lookupResults types.GroupLookupResponse
+
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(types.GroupsEndpoint+"/v1/groups/search/lookup").
@@ -26,6 +27,7 @@ func (r *Resource) LookupGroup(ctx context.Context, groupName string) (*types.Gr
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&lookupResults); err != nil {

@@ -63,7 +63,7 @@ func TestGetGroupWallPosts(t *testing.T) {
 
 		params := builder.Build()
 		assert.Equal(t, utils.SampleGroupID3, params.GroupID)
-		assert.Equal(t, uint64(50), params.Limit)
+		assert.Equal(t, int64(50), params.Limit)
 		assert.Equal(t, "someCursor", params.Cursor)
 		assert.Equal(t, types.SortOrderDesc, params.SortOrder)
 	})

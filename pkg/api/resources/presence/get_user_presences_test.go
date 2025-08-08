@@ -15,7 +15,7 @@ func TestGetUserPresences(t *testing.T) {
 	api := presence.New(utils.NewTestEnv())
 
 	t.Run("Fetch Known Users Presence", func(t *testing.T) {
-		userIDs := []uint64{utils.SampleUserID1, utils.SampleUserID2}
+		userIDs := []int64{utils.SampleUserID1, utils.SampleUserID2}
 		builder := presence.NewUserPresencesBuilder(userIDs...)
 		result, err := api.GetUserPresences(context.Background(), builder.Build())
 		require.NoError(t, err)
@@ -31,8 +31,8 @@ func TestGetUserPresences(t *testing.T) {
 	t.Run("Fetch With Non-existent User ID", func(t *testing.T) {
 		builder := presence.NewUserPresencesBuilder(utils.InvalidUserID)
 		result, err := api.GetUserPresences(context.Background(), builder.Build())
-		require.NoError(t, err)
-		assert.Len(t, result.UserPresences, 0)
+		require.Error(t, err)
+		assert.Nil(t, result)
 	})
 
 	t.Run("Test Builder Methods", func(t *testing.T) {
@@ -42,9 +42,9 @@ func TestGetUserPresences(t *testing.T) {
 
 		params := builder.Build()
 		assert.Len(t, params.UserIDs, 2)
-		assert.Contains(t, params.UserIDs, uint64(1))
-		assert.Contains(t, params.UserIDs, uint64(4))
-		assert.NotContains(t, params.UserIDs, uint64(2))
-		assert.NotContains(t, params.UserIDs, uint64(3))
+		assert.Contains(t, params.UserIDs, int64(1))
+		assert.Contains(t, params.UserIDs, int64(4))
+		assert.NotContains(t, params.UserIDs, int64(2))
+		assert.NotContains(t, params.UserIDs, int64(3))
 	})
 }

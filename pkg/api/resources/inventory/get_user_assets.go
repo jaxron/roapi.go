@@ -13,11 +13,11 @@ import (
 
 // GetUserAssetsParams holds the parameters for fetching user assets.
 type GetUserAssetsParams struct {
-	UserID                  uint64                `json:"-" validate:"required,min=1"`
+	UserID                  int64                 `json:"-" validate:"required,min=1"`
 	AssetTypes              []types.ItemAssetType `json:"-" validate:"required,min=1,dive,required"`
 	FilterDisapprovedAssets bool                  `json:"-"`
 	ShowApprovedOnly        bool                  `json:"-"`
-	Limit                   uint64                `json:"-" validate:"required,oneof=10 25 50 100"`
+	Limit                   int64                 `json:"-" validate:"required,oneof=10 25 50 100"`
 	SortOrder               types.SortOrder       `json:"-" validate:"required,oneof=Asc Desc"`
 	Cursor                  string                `json:"-" validate:"omitempty,base64"`
 }
@@ -36,13 +36,14 @@ func (r *Resource) GetUserAssets(ctx context.Context, p GetUserAssetsParams) (*t
 	}
 
 	var result types.InventoryAssetResponse
+
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v2/users/%d/inventory", types.InventoryEndpoint, p.UserID)).
 		Query("assetTypes", strings.Join(assetTypeIDs, ",")).
 		Query("filterDisapprovedAssets", strconv.FormatBool(p.FilterDisapprovedAssets)).
 		Query("showApprovedOnly", strconv.FormatBool(p.ShowApprovedOnly)).
-		Query("limit", strconv.FormatUint(p.Limit, 10)).
+		Query("limit", strconv.FormatInt(p.Limit, 10)).
 		Query("sortOrder", string(p.SortOrder)).
 		Query("cursor", p.Cursor).
 		Result(&result).
@@ -50,6 +51,7 @@ func (r *Resource) GetUserAssets(ctx context.Context, p GetUserAssetsParams) (*t
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&result); err != nil {
@@ -65,7 +67,7 @@ type GetUserAssetsBuilder struct {
 }
 
 // NewGetUserAssetsBuilder creates a new GetUserAssetsBuilder with default values.
-func NewGetUserAssetsBuilder(userID uint64, assetTypes ...types.ItemAssetType) *GetUserAssetsBuilder {
+func NewGetUserAssetsBuilder(userID int64, assetTypes ...types.ItemAssetType) *GetUserAssetsBuilder {
 	return &GetUserAssetsBuilder{
 		params: GetUserAssetsParams{
 			UserID:                  userID,
@@ -92,7 +94,7 @@ func (b *GetUserAssetsBuilder) WithShowApprovedOnly(show bool) *GetUserAssetsBui
 }
 
 // WithLimit sets the maximum number of results to return.
-func (b *GetUserAssetsBuilder) WithLimit(limit uint64) *GetUserAssetsBuilder {
+func (b *GetUserAssetsBuilder) WithLimit(limit int64) *GetUserAssetsBuilder {
 	b.params.Limit = limit
 	return b
 }

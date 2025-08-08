@@ -59,7 +59,7 @@ func TestGetUsernameHistory(t *testing.T) {
 
 		params := builder.Build()
 		assert.Equal(t, utils.SampleUserID1, params.UserID)
-		assert.Equal(t, uint64(50), params.Limit)
+		assert.Equal(t, int64(50), params.Limit)
 		assert.Equal(t, "someCursor", params.Cursor)
 		assert.Equal(t, types.SortOrderDesc, params.SortOrder)
 	})

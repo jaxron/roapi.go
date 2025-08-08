@@ -18,10 +18,11 @@ func (r *Resource) GetRoleUsers(ctx context.Context, p RoleUsersParams) (*types.
 	}
 
 	var roleUsers types.RoleUsersResponse
+
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v1/groups/%d/roles/%d/users", types.GroupsEndpoint, p.GroupID, p.RoleID)).
-		Query("limit", strconv.FormatUint(p.Limit, 10)).
+		Query("limit", strconv.FormatInt(p.Limit, 10)).
 		Query("cursor", p.Cursor).
 		Query("sortOrder", string(p.SortOrder)).
 		Result(&roleUsers).
@@ -29,6 +30,7 @@ func (r *Resource) GetRoleUsers(ctx context.Context, p RoleUsersParams) (*types.
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&roleUsers); err != nil {
@@ -40,9 +42,9 @@ func (r *Resource) GetRoleUsers(ctx context.Context, p RoleUsersParams) (*types.
 
 // RoleUsersParams holds the parameters for getting role users.
 type RoleUsersParams struct {
-	GroupID   uint64          `json:"groupId"   validate:"required,gt=0"`
-	RoleID    uint64          `json:"roleId"    validate:"required,gt=0"`
-	Limit     uint64          `json:"limit"     validate:"omitempty,oneof=10 25 50 100"`
+	GroupID   int64           `json:"groupId"   validate:"required,gt=0"`
+	RoleID    int64           `json:"roleId"    validate:"required,gt=0"`
+	Limit     int64           `json:"limit"     validate:"omitempty,oneof=10 25 50 100"`
 	Cursor    string          `json:"cursor"    validate:"omitempty"`
 	SortOrder types.SortOrder `json:"sortOrder" validate:"omitempty,oneof=Asc Desc"`
 }
@@ -53,7 +55,7 @@ type RoleUsersBuilder struct {
 }
 
 // NewRoleUsersBuilder creates a new RoleUsersBuilder with default values.
-func NewRoleUsersBuilder(groupID, roleID uint64) *RoleUsersBuilder {
+func NewRoleUsersBuilder(groupID, roleID int64) *RoleUsersBuilder {
 	return &RoleUsersBuilder{
 		params: RoleUsersParams{
 			GroupID:   groupID,
@@ -66,7 +68,7 @@ func NewRoleUsersBuilder(groupID, roleID uint64) *RoleUsersBuilder {
 }
 
 // WithLimit sets the limit.
-func (b *RoleUsersBuilder) WithLimit(limit uint64) *RoleUsersBuilder {
+func (b *RoleUsersBuilder) WithLimit(limit int64) *RoleUsersBuilder {
 	b.params.Limit = limit
 	return b
 }

@@ -16,6 +16,7 @@ func (r *Resource) GetAuthUserInfo(ctx context.Context) (*types.AuthUserResponse
 	ctx = context.WithValue(ctx, auth.KeyAddCookie, true)
 
 	var user types.AuthUserResponse
+
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(types.UsersEndpoint + "/v1/users/authenticated").
@@ -24,6 +25,7 @@ func (r *Resource) GetAuthUserInfo(ctx context.Context) (*types.AuthUserResponse
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&user); err != nil {

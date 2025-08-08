@@ -11,7 +11,7 @@ type InventoryAssetResponse struct {
 
 // InventoryAsset represents a single asset in a user's inventory.
 type InventoryAsset struct {
-	AssetID   uint64    `json:"assetId"   validate:"required,min=1"` // Unique identifier for the asset
+	AssetID   int64     `json:"assetId"   validate:"required,min=1"` // Unique identifier for the asset
 	Name      string    `json:"name"      validate:"required,min=1"` // Name of the asset
 	AssetType string    `json:"assetType" validate:"required,min=1"` // Type of the asset (e.g., "Hat", "Shirt")
 	Created   time.Time `json:"created"   validate:"required"`       // When the asset was created/acquired
@@ -20,7 +20,7 @@ type InventoryAsset struct {
 // ItemAssetType represents the type of asset in the inventory.
 //
 //go:generate go tool enumer -type=ItemAssetType -trimprefix=ItemAssetType
-type ItemAssetType uint64
+type ItemAssetType int64
 
 const (
 	ItemAssetTypeImage               ItemAssetType = 1

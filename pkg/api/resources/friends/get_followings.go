@@ -18,10 +18,11 @@ func (r *Resource) GetFollowings(ctx context.Context, p GetFollowingsParams) (*t
 	}
 
 	var followings types.FollowingPageResponse
+
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v1/users/%d/followings", types.FriendsEndpoint, p.UserID)).
-		Query("limit", strconv.FormatUint(p.Limit, 10)).
+		Query("limit", strconv.FormatInt(p.Limit, 10)).
 		Query("cursor", p.Cursor).
 		Query("sortOrder", string(p.SortOrder)).
 		Result(&followings).
@@ -29,6 +30,7 @@ func (r *Resource) GetFollowings(ctx context.Context, p GetFollowingsParams) (*t
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&followings); err != nil {
@@ -40,8 +42,8 @@ func (r *Resource) GetFollowings(ctx context.Context, p GetFollowingsParams) (*t
 
 // GetFollowingsParams holds the parameters for getting followings.
 type GetFollowingsParams struct {
-	UserID    uint64          `json:"userId"    validate:"required,gt=0"`                   // Required: ID of the user to fetch followings for
-	Limit     uint64          `json:"limit"     validate:"omitempty,oneof=10 18 25 50 100"` // Optional: Maximum number of results to return (default: 10)
+	UserID    int64           `json:"userId"    validate:"required,gt=0"`                   // Required: ID of the user to fetch followings for
+	Limit     int64           `json:"limit"     validate:"omitempty,oneof=10 18 25 50 100"` // Optional: Maximum number of results to return (default: 10)
 	Cursor    string          `json:"cursor"    validate:"omitempty,base64"`                // Optional: Cursor for pagination
 	SortOrder types.SortOrder `json:"sortOrder" validate:"omitempty,oneof=Asc Desc"`        // Optional: Sort order for results
 }
@@ -52,7 +54,7 @@ type GetFollowingsBuilder struct {
 }
 
 // NewGetFollowingsBuilder creates a new GetFollowingsBuilder with default values.
-func NewGetFollowingsBuilder(userID uint64) *GetFollowingsBuilder {
+func NewGetFollowingsBuilder(userID int64) *GetFollowingsBuilder {
 	return &GetFollowingsBuilder{
 		params: GetFollowingsParams{
 			UserID:    userID,
@@ -64,7 +66,7 @@ func NewGetFollowingsBuilder(userID uint64) *GetFollowingsBuilder {
 }
 
 // WithLimit sets the limit.
-func (b *GetFollowingsBuilder) WithLimit(limit uint64) *GetFollowingsBuilder {
+func (b *GetFollowingsBuilder) WithLimit(limit int64) *GetFollowingsBuilder {
 	b.params.Limit = limit
 	return b
 }

@@ -18,10 +18,11 @@ func (r *Resource) GetGroupUsers(ctx context.Context, p GroupUsersParams) (*type
 	}
 
 	var groupUsers types.GroupUsersResponse
+
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v1/groups/%d/users", types.GroupsEndpoint, p.GroupID)).
-		Query("limit", strconv.FormatUint(p.Limit, 10)).
+		Query("limit", strconv.FormatInt(p.Limit, 10)).
 		Query("cursor", p.Cursor).
 		Query("sortOrder", string(p.SortOrder)).
 		Result(&groupUsers).
@@ -29,6 +30,7 @@ func (r *Resource) GetGroupUsers(ctx context.Context, p GroupUsersParams) (*type
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&groupUsers); err != nil {
@@ -40,8 +42,8 @@ func (r *Resource) GetGroupUsers(ctx context.Context, p GroupUsersParams) (*type
 
 // GroupUsersParams holds the parameters for getting group users.
 type GroupUsersParams struct {
-	GroupID   uint64          `json:"groupId"   validate:"required,gt=0"`
-	Limit     uint64          `json:"limit"     validate:"omitempty,oneof=10 25 50 100"`
+	GroupID   int64           `json:"groupId"   validate:"required,gt=0"`
+	Limit     int64           `json:"limit"     validate:"omitempty,oneof=10 25 50 100"`
 	Cursor    string          `json:"cursor"    validate:"omitempty"`
 	SortOrder types.SortOrder `json:"sortOrder" validate:"omitempty,oneof=Asc Desc"`
 }
@@ -52,7 +54,7 @@ type GroupUsersBuilder struct {
 }
 
 // NewGroupUsersBuilder creates a new GroupUsersBuilder with default values.
-func NewGroupUsersBuilder(groupID uint64) *GroupUsersBuilder {
+func NewGroupUsersBuilder(groupID int64) *GroupUsersBuilder {
 	return &GroupUsersBuilder{
 		params: GroupUsersParams{
 			GroupID:   groupID,
@@ -64,7 +66,7 @@ func NewGroupUsersBuilder(groupID uint64) *GroupUsersBuilder {
 }
 
 // WithLimit sets the limit.
-func (b *GroupUsersBuilder) WithLimit(limit uint64) *GroupUsersBuilder {
+func (b *GroupUsersBuilder) WithLimit(limit int64) *GroupUsersBuilder {
 	b.params.Limit = limit
 	return b
 }

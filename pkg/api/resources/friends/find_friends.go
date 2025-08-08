@@ -18,17 +18,19 @@ func (r *Resource) FindFriends(ctx context.Context, p FindFriendsParams) (*types
 	}
 
 	var friends types.FriendPageResponse
+
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v1/users/%d/friends/find", types.FriendsEndpoint, p.UserID)).
-		Query("userSort", strconv.FormatUint(p.UserSort, 10)).
+		Query("userSort", strconv.FormatInt(p.UserSort, 10)).
 		Query("cursor", p.Cursor).
-		Query("limit", strconv.FormatUint(p.Limit, 10)).
+		Query("limit", strconv.FormatInt(p.Limit, 10)).
 		Result(&friends).
 		Do(ctx)
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&friends); err != nil {
@@ -40,9 +42,9 @@ func (r *Resource) FindFriends(ctx context.Context, p FindFriendsParams) (*types
 
 // FindFriendsParams holds the parameters for finding friends.
 type FindFriendsParams struct {
-	UserID   uint64 `json:"userId"   validate:"required,gt=0"` // Required: ID of the user to fetch friends for
-	UserSort uint64 `json:"userSort" validate:"oneof=0 1 2"`   // Optional: Sort order for results
-	Limit    uint64 `json:"limit"    validate:"min=1,max=50"`  // Optional: Maximum number of results to return (default: 50)
+	UserID   int64  `json:"userId"   validate:"required,gt=0"` // Required: ID of the user to fetch friends for
+	UserSort int64  `json:"userSort" validate:"oneof=0 1 2"`   // Optional: Sort order for results
+	Limit    int64  `json:"limit"    validate:"min=1,max=50"`  // Optional: Maximum number of results to return (default: 50)
 	Cursor   string `json:"cursor"`                            // Optional: Cursor for pagination
 }
 
@@ -52,7 +54,7 @@ type FindFriendsBuilder struct {
 }
 
 // NewFindFriendsBuilder creates a new FindFriendsBuilder with default values.
-func NewFindFriendsBuilder(userID uint64) *FindFriendsBuilder {
+func NewFindFriendsBuilder(userID int64) *FindFriendsBuilder {
 	return &FindFriendsBuilder{
 		params: FindFriendsParams{
 			UserID:   userID,
@@ -64,13 +66,13 @@ func NewFindFriendsBuilder(userID uint64) *FindFriendsBuilder {
 }
 
 // WithUserSort sets the user sort.
-func (b *FindFriendsBuilder) WithUserSort(userSort uint64) *FindFriendsBuilder {
+func (b *FindFriendsBuilder) WithUserSort(userSort int64) *FindFriendsBuilder {
 	b.params.UserSort = userSort
 	return b
 }
 
 // WithLimit sets the limit.
-func (b *FindFriendsBuilder) WithLimit(limit uint64) *FindFriendsBuilder {
+func (b *FindFriendsBuilder) WithLimit(limit int64) *FindFriendsBuilder {
 	b.params.Limit = limit
 	return b
 }

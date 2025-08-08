@@ -17,6 +17,7 @@ func (r *Resource) GetBatchThumbnails(ctx context.Context, p BatchThumbnailsPara
 	}
 
 	var batchThumbnails types.BatchThumbnailsResponse
+
 	resp, err := r.client.NewRequest().
 		Method(http.MethodPost).
 		URL(types.ThumbnailsEndpoint + "/v1/batch").
@@ -26,6 +27,7 @@ func (r *Resource) GetBatchThumbnails(ctx context.Context, p BatchThumbnailsPara
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&batchThumbnails); err != nil {
@@ -68,6 +70,7 @@ func (b *BatchThumbnailsBuilder) RemoveRequest(requestID string) *BatchThumbnail
 			break
 		}
 	}
+
 	return b
 }
 

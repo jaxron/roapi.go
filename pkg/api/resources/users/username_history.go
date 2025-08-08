@@ -18,10 +18,11 @@ func (r *Resource) GetUsernameHistory(ctx context.Context, p UsernameHistoryPara
 	}
 
 	var history types.UsernameHistoryPageResponse
+
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v1/users/%d/username-history", types.UsersEndpoint, p.UserID)).
-		Query("limit", strconv.FormatUint(p.Limit, 10)).
+		Query("limit", strconv.FormatInt(p.Limit, 10)).
 		Query("sortOrder", string(p.SortOrder)).
 		Query("cursor", p.Cursor).
 		Result(&history).
@@ -29,6 +30,7 @@ func (r *Resource) GetUsernameHistory(ctx context.Context, p UsernameHistoryPara
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&history); err != nil {
@@ -40,8 +42,8 @@ func (r *Resource) GetUsernameHistory(ctx context.Context, p UsernameHistoryPara
 
 // UsernameHistoryParams holds the parameters for fetching username history.
 type UsernameHistoryParams struct {
-	UserID    uint64          `json:"userId"    validate:"required,gt=0"`
-	Limit     uint64          `json:"limit"     validate:"oneof=10 25 50 100"`
+	UserID    int64           `json:"userId"    validate:"required,gt=0"`
+	Limit     int64           `json:"limit"     validate:"oneof=10 25 50 100"`
 	SortOrder types.SortOrder `json:"sortOrder" validate:"omitempty,oneof=Asc Desc"`
 	Cursor    string          `json:"cursor"    validate:"omitempty,base64"`
 }
@@ -52,7 +54,7 @@ type UsernameHistoryBuilder struct {
 }
 
 // NewUsernameHistoryBuilder creates a new UsernameHistoryBuilder with the given user ID.
-func NewUsernameHistoryBuilder(userID uint64) *UsernameHistoryBuilder {
+func NewUsernameHistoryBuilder(userID int64) *UsernameHistoryBuilder {
 	return &UsernameHistoryBuilder{
 		params: UsernameHistoryParams{
 			UserID:    userID,
@@ -64,7 +66,7 @@ func NewUsernameHistoryBuilder(userID uint64) *UsernameHistoryBuilder {
 }
 
 // WithLimit sets the maximum number of results to return.
-func (b *UsernameHistoryBuilder) WithLimit(limit uint64) *UsernameHistoryBuilder {
+func (b *UsernameHistoryBuilder) WithLimit(limit int64) *UsernameHistoryBuilder {
 	b.params.Limit = limit
 	return b
 }

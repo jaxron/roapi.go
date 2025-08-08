@@ -4,7 +4,7 @@ import "time"
 
 // UserByIDResponse represents the structure of user information returned by the Roblox API.
 type UserByIDResponse struct {
-	ID                     uint64    `json:"id"                     validate:"required,min=1"`  // Unique identifier for the user
+	ID                     int64     `json:"id"                     validate:"required,min=1"`  // Unique identifier for the user
 	Name                   string    `json:"name"                   validate:"required,min=1"`  // Username of the user
 	DisplayName            string    `json:"displayName"            validate:"required,min=1"`  // Display name of the user
 	Description            string    `json:"description"`                                       // User's profile description
@@ -15,7 +15,7 @@ type UserByIDResponse struct {
 
 // AuthUserResponse represents the minimal structure of authenticated user information returned by the Roblox API.
 type AuthUserResponse struct {
-	ID          uint64 `json:"id"          validate:"required,min=1"` // Unique identifier for the user
+	ID          int64  `json:"id"          validate:"required,min=1"` // Unique identifier for the user
 	Name        string `json:"name"        validate:"required,min=1"` // Username of the user
 	DisplayName string `json:"displayName" validate:"required,min=1"` // Display name of the user
 }
@@ -27,7 +27,7 @@ type UsersByUsernameResponse struct {
 
 // UserByUsername represents a single user fetched by username.
 type UserByUsername struct {
-	ID                uint64 `json:"id"                validate:"required,min=1"` // Unique identifier for the user
+	ID                int64  `json:"id"                validate:"required,min=1"` // Unique identifier for the user
 	Name              string `json:"name"              validate:"required,min=1"` // Current username of the user
 	DisplayName       string `json:"displayName"       validate:"required,min=1"` // Display name of the user
 	RequestedUsername string `json:"requestedUsername" validate:"required,min=1"` // The username that was requested in the API call
@@ -41,7 +41,7 @@ type UsersByIDsResponse struct {
 
 // VerifiedBadgeUser represents a single user with a verified badge.
 type VerifiedBadgeUser struct {
-	ID               uint64 `json:"id"               validate:"required,min=1"` // Unique identifier for the user
+	ID               int64  `json:"id"               validate:"required,min=1"` // Unique identifier for the user
 	Name             string `json:"name"             validate:"required,min=1"` // Current username of the user
 	DisplayName      string `json:"displayName"      validate:"required,min=1"` // Display name of the user
 	HasVerifiedBadge bool   `json:"hasVerifiedBadge"`                           // Whether the user has a verified badge
@@ -68,7 +68,7 @@ type UserSearchPageResponse struct {
 
 // UserSearchResponse represents a single user in a username search result.
 type UserSearchResponse struct {
-	ID                uint64   `json:"id"                validate:"required,min=1"`      // Unique identifier for the user
+	ID                int64    `json:"id"                validate:"required,min=1"`      // Unique identifier for the user
 	Name              string   `json:"name"              validate:"required,min=1"`      // Current username of the user
 	DisplayName       string   `json:"displayName"       validate:"required,min=1"`      // Display name of the user
 	HasVerifiedBadge  bool     `json:"hasVerifiedBadge"`                                 // Whether the user has a verified badge

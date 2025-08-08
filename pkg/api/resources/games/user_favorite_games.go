@@ -18,11 +18,12 @@ func (r *Resource) GetUserFavoriteGames(ctx context.Context, p UserFavoriteGames
 	}
 
 	var result types.GameResponse
+
 	resp, err := r.client.NewRequest().
 		Method(http.MethodGet).
 		URL(fmt.Sprintf("%s/v2/users/%d/favorite/games", types.GamesEndpoint, p.UserID)).
-		Query("accessFilter", strconv.FormatUint(uint64(p.AccessFilter), 10)).
-		Query("limit", strconv.FormatUint(p.Limit, 10)).
+		Query("accessFilter", strconv.FormatInt(int64(p.AccessFilter), 10)).
+		Query("limit", strconv.FormatInt(p.Limit, 10)).
 		Query("cursor", p.Cursor).
 		Query("sortOrder", string(types.SortOrderDesc)).
 		Result(&result).
@@ -30,6 +31,7 @@ func (r *Resource) GetUserFavoriteGames(ctx context.Context, p UserFavoriteGames
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&result); err != nil {
@@ -41,9 +43,9 @@ func (r *Resource) GetUserFavoriteGames(ctx context.Context, p UserFavoriteGames
 
 // UserFavoriteGamesParams holds the parameters for fetching user's favorite games.
 type UserFavoriteGamesParams struct {
-	UserID       uint64       `validate:"required,gt=0"`
+	UserID       int64        `validate:"required,gt=0"`
 	AccessFilter AccessFilter `validate:"oneof=1 2 4"`
-	Limit        uint64       `validate:"oneof=10 25 50 100"`
+	Limit        int64        `validate:"oneof=10 25 50 100"`
 	Cursor       string       `validate:"omitempty"`
 }
 
@@ -53,7 +55,7 @@ type UserFavoriteGamesBuilder struct {
 }
 
 // NewUserFavoriteGamesBuilder creates a new UserFavoriteGamesBuilder with default values.
-func NewUserFavoriteGamesBuilder(userID uint64) *UserFavoriteGamesBuilder {
+func NewUserFavoriteGamesBuilder(userID int64) *UserFavoriteGamesBuilder {
 	return &UserFavoriteGamesBuilder{
 		params: UserFavoriteGamesParams{
 			UserID:       userID,
@@ -71,7 +73,7 @@ func (b *UserFavoriteGamesBuilder) WithAccessFilter(filter AccessFilter) *UserFa
 }
 
 // WithLimit sets the maximum number of results to return.
-func (b *UserFavoriteGamesBuilder) WithLimit(limit uint64) *UserFavoriteGamesBuilder {
+func (b *UserFavoriteGamesBuilder) WithLimit(limit int64) *UserFavoriteGamesBuilder {
 	b.params.Limit = limit
 	return b
 }

@@ -17,6 +17,7 @@ func (r *Resource) GetUsersByIDs(ctx context.Context, p UsersByIDsParams) (*type
 	}
 
 	var users types.UsersByIDsResponse
+
 	resp, err := r.client.NewRequest().
 		Method(http.MethodPost).
 		URL(types.UsersEndpoint + "/v1/users").
@@ -26,6 +27,7 @@ func (r *Resource) GetUsersByIDs(ctx context.Context, p UsersByIDsParams) (*type
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
+
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&users); err != nil {
@@ -39,8 +41,8 @@ func (r *Resource) GetUsersByIDs(ctx context.Context, p UsersByIDsParams) (*type
 //
 //goland:noinspection GoNameStartsWithPackageName
 type UsersByIDsParams struct {
-	UserIDs            []uint64 `json:"userIds"            validate:"required,min=1,max=100"`
-	ExcludeBannedUsers bool     `json:"excludeBannedUsers"`
+	UserIDs            []int64 `json:"userIds"            validate:"required,min=1,max=100"`
+	ExcludeBannedUsers bool    `json:"excludeBannedUsers"`
 }
 
 // UsersByIDsBuilder builds parameters for GetUsersByIDs API call.
@@ -51,7 +53,7 @@ type UsersByIDsBuilder struct {
 }
 
 // NewUsersByIDsBuilder creates a new UsersByIDsBuilder with the given user IDs.
-func NewUsersByIDsBuilder(userIDs ...uint64) *UsersByIDsBuilder {
+func NewUsersByIDsBuilder(userIDs ...int64) *UsersByIDsBuilder {
 	return &UsersByIDsBuilder{
 		params: UsersByIDsParams{
 			UserIDs:            userIDs,
@@ -67,13 +69,13 @@ func (b *UsersByIDsBuilder) ExcludeBannedUsers(exclude bool) *UsersByIDsBuilder 
 }
 
 // WithUserIDs adds multiple user IDs to the list.
-func (b *UsersByIDsBuilder) WithUserIDs(userIDs ...uint64) *UsersByIDsBuilder {
+func (b *UsersByIDsBuilder) WithUserIDs(userIDs ...int64) *UsersByIDsBuilder {
 	b.params.UserIDs = append(b.params.UserIDs, userIDs...)
 	return b
 }
 
 // RemoveUserIDs removes multiple user IDs from the list.
-func (b *UsersByIDsBuilder) RemoveUserIDs(userIDs ...uint64) *UsersByIDsBuilder {
+func (b *UsersByIDsBuilder) RemoveUserIDs(userIDs ...int64) *UsersByIDsBuilder {
 	for _, id := range userIDs {
 		for i, userID := range b.params.UserIDs {
 			if userID == id {
@@ -82,6 +84,7 @@ func (b *UsersByIDsBuilder) RemoveUserIDs(userIDs ...uint64) *UsersByIDsBuilder 
 			}
 		}
 	}
+
 	return b
 }
 

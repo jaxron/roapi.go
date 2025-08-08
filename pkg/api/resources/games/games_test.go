@@ -15,7 +15,7 @@ func TestGetGamesByUniverseIDs(t *testing.T) {
 	api := games.New(utils.NewTestEnv())
 
 	t.Run("Fetch Games Successfully", func(t *testing.T) {
-		result, err := api.GetGamesByUniverseIDs(context.Background(), []uint64{utils.SampleUniverseID})
+		result, err := api.GetGamesByUniverseIDs(context.Background(), []int64{utils.SampleUniverseID})
 		require.NoError(t, err)
 		assert.NotNil(t, result)
 		assert.NotEmpty(t, result.Data)
@@ -23,12 +23,12 @@ func TestGetGamesByUniverseIDs(t *testing.T) {
 	})
 
 	t.Run("Fetch With Invalid Universe ID", func(t *testing.T) {
-		_, err := api.GetGamesByUniverseIDs(context.Background(), []uint64{utils.InvalidUniverseID})
+		_, err := api.GetGamesByUniverseIDs(context.Background(), []int64{utils.InvalidUniverseID})
 		require.Error(t, err)
 	})
 
 	t.Run("Fetch With Empty Universe IDs", func(t *testing.T) {
-		_, err := api.GetGamesByUniverseIDs(context.Background(), []uint64{})
+		_, err := api.GetGamesByUniverseIDs(context.Background(), []int64{})
 		require.Error(t, err)
 	})
 }

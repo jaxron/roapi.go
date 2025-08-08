@@ -25,7 +25,7 @@ func TestSearchUsers(t *testing.T) {
 		assert.Len(t, res.Data, 10)
 
 		user := res.Data[0]
-		assert.Equal(t, uint64(1), user.ID)
+		assert.Equal(t, int64(1), user.ID)
 		assert.Equal(t, utils.SampleUsername4, user.Name)
 	})
 
@@ -66,7 +66,7 @@ func TestSearchUsers(t *testing.T) {
 
 		params := builder.Build()
 		assert.Equal(t, "TestUser", params.Username)
-		assert.Equal(t, uint64(50), params.Limit)
+		assert.Equal(t, int64(50), params.Limit)
 		assert.Equal(t, "someCursor", params.Cursor)
 	})
 }

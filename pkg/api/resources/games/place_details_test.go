@@ -15,7 +15,7 @@ func TestGetMultiplePlaceDetails(t *testing.T) {
 	api := games.New(utils.NewTestEnv())
 
 	t.Run("Fetch Place Details Successfully", func(t *testing.T) {
-		result, err := api.GetMultiplePlaceDetails(context.Background(), []uint64{utils.SampleGameID})
+		result, err := api.GetMultiplePlaceDetails(context.Background(), []int64{utils.SampleGameID})
 		require.NoError(t, err)
 		assert.NotNil(t, result)
 		assert.NotEmpty(t, result)
@@ -23,14 +23,14 @@ func TestGetMultiplePlaceDetails(t *testing.T) {
 	})
 
 	t.Run("Fetch Multiple Place Details Successfully", func(t *testing.T) {
-		placeIDs := []uint64{utils.SampleGameID, utils.SampleGameID2}
+		placeIDs := []int64{utils.SampleGameID, utils.SampleGameID2}
 		result, err := api.GetMultiplePlaceDetails(context.Background(), placeIDs)
 		require.NoError(t, err)
 		assert.NotNil(t, result)
 		assert.Len(t, result, 2)
 
 		// Verify both place IDs are in the response
-		resultIDs := make([]uint64, len(result))
+		resultIDs := make([]int64, len(result))
 		for i, place := range result {
 			resultIDs[i] = place.PlaceID
 		}
@@ -38,12 +38,12 @@ func TestGetMultiplePlaceDetails(t *testing.T) {
 	})
 
 	t.Run("Fetch With Invalid Place ID", func(t *testing.T) {
-		_, err := api.GetMultiplePlaceDetails(context.Background(), []uint64{utils.InvalidGameID})
+		_, err := api.GetMultiplePlaceDetails(context.Background(), []int64{utils.InvalidGameID})
 		require.Error(t, err)
 	})
 
 	t.Run("Fetch With Empty Place IDs", func(t *testing.T) {
-		_, err := api.GetMultiplePlaceDetails(context.Background(), []uint64{})
+		_, err := api.GetMultiplePlaceDetails(context.Background(), []int64{})
 		require.Error(t, err)
 	})
 }
