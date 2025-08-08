@@ -25,8 +25,8 @@ var (
 	ErrTokenNotFound = errors.New("CSRF token not found")
 )
 
-// AuthMiddleware manages cookie rotation and CSRF token caching for HTTP requests.
-type AuthMiddleware struct {
+// Middleware manages cookie rotation and CSRF token caching for HTTP requests.
+type Middleware struct {
 	cookies      []string
 	cookieCount  int
 	cookiesMux   sync.RWMutex
@@ -39,8 +39,8 @@ type AuthMiddleware struct {
 }
 
 // New creates a new AuthMiddleware instance.
-func New(cookies []string) *AuthMiddleware {
-	m := &AuthMiddleware{
+func New(cookies []string) *Middleware {
+	m := &Middleware{
 		cookies:      cookies,
 		current:      atomic.Uint64{},
 		cookieCount:  len(cookies),
@@ -56,7 +56,7 @@ func New(cookies []string) *AuthMiddleware {
 }
 
 // Process applies cookie logic before passing the request to the next middleware.
-func (m *AuthMiddleware) Process(ctx context.Context, httpClient *http.Client, req *http.Request, next middleware.NextFunc) (*http.Response, error) {
+func (m *Middleware) Process(ctx context.Context, httpClient *http.Client, req *http.Request, next middleware.NextFunc) (*http.Response, error) {
 	isCookieEnabled, cookieOk := ctx.Value(KeyAddCookie).(bool)
 	isTokenEnabled, tokenOk := ctx.Value(KeyAddToken).(bool)
 
@@ -79,7 +79,7 @@ func (m *AuthMiddleware) Process(ctx context.Context, httpClient *http.Client, r
 }
 
 // UpdateCookies updates the list of cookies at runtime.
-func (m *AuthMiddleware) UpdateCookies(cookies []string) {
+func (m *Middleware) UpdateCookies(cookies []string) {
 	m.cookiesMux.Lock()
 	defer m.cookiesMux.Unlock()
 
@@ -90,7 +90,7 @@ func (m *AuthMiddleware) UpdateCookies(cookies []string) {
 }
 
 // Shuffle randomizes the order of the cookies.
-func (m *AuthMiddleware) Shuffle() {
+func (m *Middleware) Shuffle() {
 	m.cookiesMux.Lock()
 	defer m.cookiesMux.Unlock()
 
@@ -102,23 +102,23 @@ func (m *AuthMiddleware) Shuffle() {
 }
 
 // GetCookieCount returns the current number of cookies in the list.
-func (m *AuthMiddleware) GetCookieCount() int {
+func (m *Middleware) GetCookieCount() int {
 	m.cookiesMux.RLock()
 	defer m.cookiesMux.RUnlock()
 	return m.cookieCount
 }
 
 // SetLogger sets the logger for the middleware.
-func (m *AuthMiddleware) SetLogger(l logger.Logger) {
+func (m *Middleware) SetLogger(l logger.Logger) {
 	m.logger = l
 }
 
 // SetNowFunc sets a custom function for getting the current time (useful for testing).
-func (m *AuthMiddleware) SetNowFunc(f func() time.Time) {
+func (m *Middleware) SetNowFunc(f func() time.Time) {
 	m.now = f
 }
 
-func (m *AuthMiddleware) getAndValidateCookie() (string, error) {
+func (m *Middleware) getAndValidateCookie() (string, error) {
 	m.cookiesMux.RLock()
 	defer m.cookiesMux.RUnlock()
 
@@ -133,7 +133,7 @@ func (m *AuthMiddleware) getAndValidateCookie() (string, error) {
 	return m.cookies[index], nil
 }
 
-func (m *AuthMiddleware) applyCookieAndToken(ctx context.Context, httpClient *http.Client, req *http.Request, cookie string, isCookieEnabled, isTokenEnabled bool) error {
+func (m *Middleware) applyCookieAndToken(ctx context.Context, httpClient *http.Client, req *http.Request, cookie string, isCookieEnabled, isTokenEnabled bool) error {
 	if isCookieEnabled {
 		req.Header.Add("Cookie", ".ROBLOSECURITY="+cookie)
 		m.logger.Debug("Applied cookie to request")
@@ -152,7 +152,7 @@ func (m *AuthMiddleware) applyCookieAndToken(ctx context.Context, httpClient *ht
 }
 
 // getCSRFToken retrieves a valid CSRF token, either from cache or by making a new request.
-func (m *AuthMiddleware) getCSRFToken(ctx context.Context, httpClient *http.Client, cookie string) (string, error) {
+func (m *Middleware) getCSRFToken(ctx context.Context, httpClient *http.Client, cookie string) (string, error) {
 	m.csrfTokenMux.RLock()
 	csrfToken := m.csrfToken
 	csrfTokenExp := m.csrfTokenExp
@@ -173,7 +173,7 @@ func (m *AuthMiddleware) getCSRFToken(ctx context.Context, httpClient *http.Clie
 }
 
 // refreshCSRFToken sends a POST request to generate a new CSRF token and caches it.
-func (m *AuthMiddleware) refreshCSRFToken(ctx context.Context, httpClient *http.Client, cookie string) (string, error) {
+func (m *Middleware) refreshCSRFToken(ctx context.Context, httpClient *http.Client, cookie string) (string, error) {
 	m.csrfTokenMux.Lock()
 	defer m.csrfTokenMux.Unlock()
 
@@ -190,7 +190,7 @@ func (m *AuthMiddleware) refreshCSRFToken(ctx context.Context, httpClient *http.
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	// Get the CSRF token from the response
 	csrfToken := resp.Header.Get("X-Csrf-Token")

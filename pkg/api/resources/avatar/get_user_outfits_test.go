@@ -55,7 +55,7 @@ func TestGetUserOutfits(t *testing.T) {
 			WithOutfitType("Avatar")
 
 		params := builder.Build()
-		assert.Equal(t, uint64(utils.SampleUserID1), params.UserID)
+		assert.Equal(t, utils.SampleUserID1, params.UserID)
 		assert.False(t, params.IsEditable)
 		assert.Equal(t, 10, params.ItemsPerPage)
 		assert.Equal(t, "Avatar", params.OutfitType)

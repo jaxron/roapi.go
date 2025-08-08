@@ -32,7 +32,7 @@ func (r *Resource) SearchFriends(ctx context.Context, p SearchFriendsParams) (*t
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&friends); err != nil {
 		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)

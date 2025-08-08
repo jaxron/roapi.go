@@ -65,38 +65,38 @@ const (
 // It sets up the client with proxies and cookies based on environment variables.
 func NewTestEnv(opts ...client.Option) (*client.Client, *validator.Validate) {
 	// Use a basic logger for testing
-	logger := logger.NewBasicLogger()
+	basicLogger := logger.NewBasicLogger()
 
 	// Get the proxies from environment variable
-	proxies, err := getProxiesFromEnv(logger)
+	proxies, err := getProxiesFromEnv(basicLogger)
 	if err != nil {
 		panic(err)
 	}
 
 	// Get the cookies from environment variable
-	cookies, err := getCookiesFromEnv(logger)
+	cookies, err := getCookiesFromEnv(basicLogger)
 	if err != nil {
 		panic(err)
 	}
 
 	// Create and return a new client with the specified options
-	auth := auth.New(cookies)
-	proxy := proxy.New(proxies)
-	client := client.NewClient(
+	authMiddleware := auth.New(cookies)
+	proxyMiddleware := proxy.New(proxies)
+	httpClient := client.NewClient(
 		append([]client.Option{
-			client.WithLogger(logger),
+			client.WithLogger(basicLogger),
 			client.WithMiddleware(retry.New(1, 5000, 10000)),
-			client.WithMiddleware(proxy),
-			client.WithMiddleware(auth),
+			client.WithMiddleware(proxyMiddleware),
+			client.WithMiddleware(authMiddleware),
 			client.WithMiddleware(jsonheader.New()),
 		}, opts...)...,
 	)
 
 	// Shuffle the cookies and proxies
-	auth.Shuffle()
-	proxy.Shuffle()
+	authMiddleware.Shuffle()
+	proxyMiddleware.Shuffle()
 
-	return client, validator.New(validator.WithRequiredStructEnabled())
+	return httpClient, validator.New(validator.WithRequiredStructEnabled())
 }
 
 // getProxiesFromEnv loads the proxies from the file specified in the ROAPI_PROXIES_FILE environment variable.
@@ -125,7 +125,7 @@ func readProxiesFromFile(fileName string) ([]*url.URL, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to open proxy file: %w", err)
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	// Read the file line by line
 	scanner := bufio.NewScanner(file)
@@ -189,7 +189,7 @@ func readCookiesFromFile(fileName string) ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to open cookie file: %w", err)
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	// Read the file line by line
 	scanner := bufio.NewScanner(file)

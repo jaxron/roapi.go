@@ -26,7 +26,7 @@ func (r *Resource) GetUsersByIDs(ctx context.Context, p UsersByIDsParams) (*type
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&users); err != nil {
 		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
@@ -36,12 +36,16 @@ func (r *Resource) GetUsersByIDs(ctx context.Context, p UsersByIDsParams) (*type
 }
 
 // UsersByIDsParams holds the parameters for fetching users by IDs.
+//
+//goland:noinspection GoNameStartsWithPackageName
 type UsersByIDsParams struct {
 	UserIDs            []uint64 `json:"userIds"            validate:"required,min=1,max=100"`
 	ExcludeBannedUsers bool     `json:"excludeBannedUsers"`
 }
 
 // UsersByIDsBuilder builds parameters for GetUsersByIDs API call.
+//
+//goland:noinspection GoNameStartsWithPackageName
 type UsersByIDsBuilder struct {
 	params UsersByIDsParams
 }

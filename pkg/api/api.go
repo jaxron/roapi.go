@@ -31,19 +31,21 @@ type API struct {
 
 // New creates a new instance of API with the provided options.
 // It initializes the client and sets up the services.
+//
+//goland:noinspection GoUnusedExportedFunction
 func New(cookies []string, opts ...client.Option) *API {
 	// Initialize the client with custom options and middleware
-	auth := auth.New(cookies)
+	authMiddleware := auth.New(cookies)
 	c := client.NewClient(append(
 		[]client.Option{
-			client.WithMiddleware(auth),
+			client.WithMiddleware(authMiddleware),
 			client.WithMiddleware(jsonheader.New()),
 		},
 		opts...,
 	)...)
 
 	// Randomize the order of cookies for balancing
-	auth.Shuffle()
+	authMiddleware.Shuffle()
 
 	// Return a new API instance with initialized client and resources
 	v := validator.New(validator.WithRequiredStructEnabled())

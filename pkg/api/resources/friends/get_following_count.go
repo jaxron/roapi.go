@@ -27,7 +27,7 @@ func (r *Resource) GetFollowingCount(ctx context.Context, userID uint64) (uint64
 	if err != nil {
 		return 0, errors.HandleAPIError(resp, err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	return count.Count, nil
 }

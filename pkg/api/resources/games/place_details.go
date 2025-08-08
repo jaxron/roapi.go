@@ -41,7 +41,7 @@ func (r *Resource) GetMultiplePlaceDetails(ctx context.Context, placeIDs []uint6
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Var(result, "required,dive"); err != nil {
 		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)

@@ -16,16 +16,16 @@ func TestGetFriends(t *testing.T) {
 
 	// Test case: Fetch friends for a known user
 	t.Run("Fetch Known User Friends", func(t *testing.T) {
-		friends, err := api.GetFriends(context.Background(), utils.SampleUserID1)
+		result, err := api.GetFriends(context.Background(), utils.SampleUserID1)
 		require.NoError(t, err)
-		assert.NotNil(t, friends)
-		assert.NotEmpty(t, friends.Data)
+		assert.NotNil(t, result)
+		assert.NotEmpty(t, result.Data)
 	})
 
 	// Test case: Attempt to fetch friends for a non-existent user
 	t.Run("Fetch Non-existent User Friends", func(t *testing.T) {
-		friends, err := api.GetFriends(context.Background(), utils.InvalidUserID)
+		result, err := api.GetFriends(context.Background(), utils.InvalidUserID)
 		require.Error(t, err)
-		assert.Nil(t, friends)
+		assert.Nil(t, result)
 	})
 }

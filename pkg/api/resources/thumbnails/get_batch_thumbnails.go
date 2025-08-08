@@ -26,7 +26,7 @@ func (r *Resource) GetBatchThumbnails(ctx context.Context, p BatchThumbnailsPara
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&batchThumbnails); err != nil {
 		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)

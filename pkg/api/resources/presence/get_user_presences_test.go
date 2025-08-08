@@ -22,9 +22,9 @@ func TestGetUserPresences(t *testing.T) {
 		assert.NotNil(t, result)
 		assert.Len(t, result.UserPresences, 2)
 
-		for _, presence := range result.UserPresences {
-			assert.Contains(t, userIDs, presence.UserID)
-			assert.NotEmpty(t, presence.LastLocation)
+		for _, userPresence := range result.UserPresences {
+			assert.Contains(t, userIDs, userPresence.UserID)
+			assert.NotEmpty(t, userPresence.LastLocation)
 		}
 	})
 

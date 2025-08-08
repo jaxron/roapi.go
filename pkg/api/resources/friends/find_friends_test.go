@@ -17,18 +17,18 @@ func TestFindFriends(t *testing.T) {
 	// Test case: Find friends for a known user
 	t.Run("Find Known User Friends", func(t *testing.T) {
 		builder := friends.NewFindFriendsBuilder(utils.SampleUserID1)
-		friends, err := api.FindFriends(context.Background(), builder.Build())
+		result, err := api.FindFriends(context.Background(), builder.Build())
 		require.NoError(t, err)
-		assert.NotNil(t, friends)
-		assert.Len(t, friends.PageItems, 2)
+		assert.NotNil(t, result)
+		assert.Len(t, result.PageItems, 2)
 	})
 
 	// Test case: Attempt to find friends for a non-existent user
 	t.Run("Find Non-existent User Friends", func(t *testing.T) {
 		builder := friends.NewFindFriendsBuilder(utils.InvalidUserID)
-		friends, err := api.FindFriends(context.Background(), builder.Build())
+		result, err := api.FindFriends(context.Background(), builder.Build())
 		require.Error(t, err)
-		assert.Nil(t, friends)
+		assert.Nil(t, result)
 	})
 
 	// Test case: Validate with invalid UserSort
@@ -55,7 +55,7 @@ func TestFindFriends(t *testing.T) {
 			WithCursor("someCursor")
 
 		params := builder.Build()
-		assert.Equal(t, uint64(utils.SampleUserID1), params.UserID)
+		assert.Equal(t, utils.SampleUserID1, params.UserID)
 		assert.Equal(t, uint64(1), params.UserSort)
 		assert.Equal(t, uint64(20), params.Limit)
 		assert.Equal(t, "someCursor", params.Cursor)

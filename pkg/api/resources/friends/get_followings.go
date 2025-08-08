@@ -29,7 +29,7 @@ func (r *Resource) GetFollowings(ctx context.Context, p GetFollowingsParams) (*t
 	if err != nil {
 		return nil, errors.HandleAPIError(resp, err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&followings); err != nil {
 		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
