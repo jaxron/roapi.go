@@ -7,7 +7,7 @@ import (
 	"io"
 	"net/http"
 
-	clientErrors "github.com/jaxron/axonet/pkg/client/errors"
+	clientErrors "github.com/jaxron/axonet/pkg/client/errs"
 )
 
 var (
