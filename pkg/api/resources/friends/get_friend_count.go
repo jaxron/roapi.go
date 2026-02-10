@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/jaxron/roapi.go/pkg/api/errors"
+	"github.com/jaxron/roapi.go/pkg/api/errs"
 	"github.com/jaxron/roapi.go/pkg/api/types"
 )
 
@@ -13,7 +13,7 @@ import (
 // GET https://friends.roblox.com/v1/users/{userID}/friends/count
 func (r *Resource) GetFriendCount(ctx context.Context, userID int64) (int64, error) {
 	if err := r.validate.Var(userID, "required,gt=0"); err != nil {
-		return 0, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
+		return 0, fmt.Errorf("%w: %w", errs.ErrInvalidRequest, err)
 	}
 
 	var count struct {
@@ -26,7 +26,7 @@ func (r *Resource) GetFriendCount(ctx context.Context, userID int64) (int64, err
 		Result(&count).
 		Do(ctx)
 	if err != nil {
-		return 0, errors.HandleAPIError(resp, err)
+		return 0, errs.HandleAPIError(resp, err)
 	}
 
 	defer func() { _ = resp.Body.Close() }()

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/jaxron/roapi.go/pkg/api/errors"
+	"github.com/jaxron/roapi.go/pkg/api/errs"
 	"github.com/jaxron/roapi.go/pkg/api/types"
 )
 
@@ -13,7 +13,7 @@ import (
 // GET https://avatar.roblox.com/v3/outfits/{outfitId}/details
 func (r *Resource) GetOutfitDetails(ctx context.Context, outfitID int64) (*types.OutfitDetailsResponse, error) {
 	if err := r.validate.Var(outfitID, "required,gt=0"); err != nil {
-		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
+		return nil, fmt.Errorf("%w: %w", errs.ErrInvalidRequest, err)
 	}
 
 	var outfitDetails types.OutfitDetailsResponse
@@ -24,13 +24,13 @@ func (r *Resource) GetOutfitDetails(ctx context.Context, outfitID int64) (*types
 		Result(&outfitDetails).
 		Do(ctx)
 	if err != nil {
-		return nil, errors.HandleAPIError(resp, err)
+		return nil, errs.HandleAPIError(resp, err)
 	}
 
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&outfitDetails); err != nil {
-		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
+		return nil, fmt.Errorf("%w: %w", errs.ErrInvalidResponse, err)
 	}
 
 	return &outfitDetails, nil

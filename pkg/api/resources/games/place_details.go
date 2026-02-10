@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/jaxron/roapi.go/pkg/api/errors"
+	"github.com/jaxron/roapi.go/pkg/api/errs"
 	"github.com/jaxron/roapi.go/pkg/api/middleware/auth"
 	"github.com/jaxron/roapi.go/pkg/api/types"
 )
@@ -15,7 +15,7 @@ import (
 // GET https://games.roblox.com/v1/games/multiget-place-details?placeIds={placeIds}
 func (r *Resource) GetMultiplePlaceDetails(ctx context.Context, placeIDs []int64) ([]*types.PlaceDetailResponse, error) {
 	if err := r.validate.Var(placeIDs, "required,min=1,max=100,dive,gt=0"); err != nil {
-		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
+		return nil, fmt.Errorf("%w: %w", errs.ErrInvalidRequest, err)
 	}
 
 	ctx = context.WithValue(ctx, auth.KeyAddCookie, true)
@@ -40,13 +40,13 @@ func (r *Resource) GetMultiplePlaceDetails(ctx context.Context, placeIDs []int64
 
 	resp, err := req.Result(&result).Do(ctx)
 	if err != nil {
-		return nil, errors.HandleAPIError(resp, err)
+		return nil, errs.HandleAPIError(resp, err)
 	}
 
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Var(result, "required,dive"); err != nil {
-		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
+		return nil, fmt.Errorf("%w: %w", errs.ErrInvalidResponse, err)
 	}
 
 	return result, nil

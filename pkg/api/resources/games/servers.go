@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/jaxron/roapi.go/pkg/api/errors"
+	"github.com/jaxron/roapi.go/pkg/api/errs"
 	"github.com/jaxron/roapi.go/pkg/api/types"
 )
 
@@ -30,7 +30,7 @@ const (
 // GET https://games.roblox.com/v1/games/{placeId}/servers/{serverType}
 func (r *Resource) GetGameServers(ctx context.Context, p GameServersParams) (*types.ServerResponse, error) {
 	if err := r.validate.Struct(p); err != nil {
-		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
+		return nil, fmt.Errorf("%w: %w", errs.ErrInvalidRequest, err)
 	}
 
 	var result types.ServerResponse
@@ -45,13 +45,13 @@ func (r *Resource) GetGameServers(ctx context.Context, p GameServersParams) (*ty
 		Result(&result).
 		Do(ctx)
 	if err != nil {
-		return nil, errors.HandleAPIError(resp, err)
+		return nil, errs.HandleAPIError(resp, err)
 	}
 
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&result); err != nil {
-		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
+		return nil, fmt.Errorf("%w: %w", errs.ErrInvalidResponse, err)
 	}
 
 	return &result, nil

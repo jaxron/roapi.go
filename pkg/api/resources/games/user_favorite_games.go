@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/jaxron/roapi.go/pkg/api/errors"
+	"github.com/jaxron/roapi.go/pkg/api/errs"
 	"github.com/jaxron/roapi.go/pkg/api/types"
 )
 
@@ -14,7 +14,7 @@ import (
 // GET https://games.roblox.com/v2/users/{userId}/favorite/games
 func (r *Resource) GetUserFavoriteGames(ctx context.Context, p UserFavoriteGamesParams) (*types.GameResponse, error) {
 	if err := r.validate.Struct(p); err != nil {
-		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
+		return nil, fmt.Errorf("%w: %w", errs.ErrInvalidRequest, err)
 	}
 
 	var result types.GameResponse
@@ -29,13 +29,13 @@ func (r *Resource) GetUserFavoriteGames(ctx context.Context, p UserFavoriteGames
 		Result(&result).
 		Do(ctx)
 	if err != nil {
-		return nil, errors.HandleAPIError(resp, err)
+		return nil, errs.HandleAPIError(resp, err)
 	}
 
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&result); err != nil {
-		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
+		return nil, fmt.Errorf("%w: %w", errs.ErrInvalidResponse, err)
 	}
 
 	return &result, nil

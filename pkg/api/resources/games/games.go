@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/jaxron/roapi.go/pkg/api/errors"
+	"github.com/jaxron/roapi.go/pkg/api/errs"
 	"github.com/jaxron/roapi.go/pkg/api/types"
 )
 
@@ -15,7 +15,7 @@ import (
 // GET https://games.roblox.com/v1/games?universeIds={universeIds}
 func (r *Resource) GetGamesByUniverseIDs(ctx context.Context, universeIDs []int64) (*types.GameDetailsResponse, error) {
 	if err := r.validate.Var(universeIDs, "required,min=1,max=100,dive,gt=0"); err != nil {
-		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
+		return nil, fmt.Errorf("%w: %w", errs.ErrInvalidRequest, err)
 	}
 
 	// Convert universe IDs to strings and join them
@@ -33,13 +33,13 @@ func (r *Resource) GetGamesByUniverseIDs(ctx context.Context, universeIDs []int6
 		Result(&result).
 		Do(ctx)
 	if err != nil {
-		return nil, errors.HandleAPIError(resp, err)
+		return nil, errs.HandleAPIError(resp, err)
 	}
 
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&result); err != nil {
-		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
+		return nil, fmt.Errorf("%w: %w", errs.ErrInvalidResponse, err)
 	}
 
 	return &result, nil

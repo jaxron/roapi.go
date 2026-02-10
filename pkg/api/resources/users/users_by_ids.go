@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/jaxron/roapi.go/pkg/api/errors"
+	"github.com/jaxron/roapi.go/pkg/api/errs"
 	"github.com/jaxron/roapi.go/pkg/api/types"
 )
 
@@ -13,7 +13,7 @@ import (
 // POST https://users.roblox.com/v1/users
 func (r *Resource) GetUsersByIDs(ctx context.Context, p UsersByIDsParams) (*types.UsersByIDsResponse, error) {
 	if err := r.validate.Struct(p); err != nil {
-		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
+		return nil, fmt.Errorf("%w: %w", errs.ErrInvalidRequest, err)
 	}
 
 	var users types.UsersByIDsResponse
@@ -25,13 +25,13 @@ func (r *Resource) GetUsersByIDs(ctx context.Context, p UsersByIDsParams) (*type
 		MarshalBody(p).
 		Do(ctx)
 	if err != nil {
-		return nil, errors.HandleAPIError(resp, err)
+		return nil, errs.HandleAPIError(resp, err)
 	}
 
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&users); err != nil {
-		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
+		return nil, fmt.Errorf("%w: %w", errs.ErrInvalidResponse, err)
 	}
 
 	return &users, nil

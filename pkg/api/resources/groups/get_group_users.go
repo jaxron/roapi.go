@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/jaxron/roapi.go/pkg/api/errors"
+	"github.com/jaxron/roapi.go/pkg/api/errs"
 	"github.com/jaxron/roapi.go/pkg/api/types"
 )
 
@@ -14,7 +14,7 @@ import (
 // GET https://groups.roblox.com/v1/groups/{groupID}/users
 func (r *Resource) GetGroupUsers(ctx context.Context, p GroupUsersParams) (*types.GroupUsersResponse, error) {
 	if err := r.validate.Struct(p); err != nil {
-		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
+		return nil, fmt.Errorf("%w: %w", errs.ErrInvalidRequest, err)
 	}
 
 	var groupUsers types.GroupUsersResponse
@@ -28,13 +28,13 @@ func (r *Resource) GetGroupUsers(ctx context.Context, p GroupUsersParams) (*type
 		Result(&groupUsers).
 		Do(ctx)
 	if err != nil {
-		return nil, errors.HandleAPIError(resp, err)
+		return nil, errs.HandleAPIError(resp, err)
 	}
 
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&groupUsers); err != nil {
-		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
+		return nil, fmt.Errorf("%w: %w", errs.ErrInvalidResponse, err)
 	}
 
 	return &groupUsers, nil

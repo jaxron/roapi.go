@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/jaxron/roapi.go/pkg/api/errors"
+	"github.com/jaxron/roapi.go/pkg/api/errs"
 	"github.com/jaxron/roapi.go/pkg/api/middleware/auth"
 	"github.com/jaxron/roapi.go/pkg/api/types"
 )
@@ -15,7 +15,7 @@ import (
 // GET https://friends.roblox.com/v1/users/{userID}/friends/search
 func (r *Resource) SearchFriends(ctx context.Context, p SearchFriendsParams) (*types.FriendPageResponse, error) {
 	if err := r.validate.Struct(p); err != nil {
-		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidRequest, err)
+		return nil, fmt.Errorf("%w: %w", errs.ErrInvalidRequest, err)
 	}
 
 	ctx = context.WithValue(ctx, auth.KeyAddCookie, true)
@@ -31,13 +31,13 @@ func (r *Resource) SearchFriends(ctx context.Context, p SearchFriendsParams) (*t
 		Result(&friends).
 		Do(ctx)
 	if err != nil {
-		return nil, errors.HandleAPIError(resp, err)
+		return nil, errs.HandleAPIError(resp, err)
 	}
 
 	defer func() { _ = resp.Body.Close() }()
 
 	if err := r.validate.Struct(&friends); err != nil {
-		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidResponse, err)
+		return nil, fmt.Errorf("%w: %w", errs.ErrInvalidResponse, err)
 	}
 
 	return &friends, nil
