@@ -37,11 +37,9 @@ func New(cookies []string, opts ...client.Option) *API {
 	// Initialize the client with custom options and middleware
 	authMiddleware := auth.New(cookies)
 	c := client.NewClient(append(
-		[]client.Option{
-			client.WithMiddleware(authMiddleware),
-			client.WithMiddleware(jsonheader.New()),
-		},
-		opts...,
+		opts,
+		client.WithMiddleware(authMiddleware),
+		client.WithMiddleware(jsonheader.New()),
 	)...)
 
 	// Randomize the order of cookies for balancing
