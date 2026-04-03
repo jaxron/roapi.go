@@ -1,14 +1,14 @@
 module github.com/jaxron/roapi.go
 
-go 1.24.0
+go 1.25.0
 
 tool github.com/dmarkham/enumer
 
 require (
-	github.com/go-playground/validator/v10 v10.30.1
-	github.com/jaxron/axonet v0.0.0-20260210015239-72fd53f98435
-	github.com/jaxron/axonet/middleware/proxy v0.0.0-20260210015239-72fd53f98435
-	github.com/jaxron/axonet/middleware/retry v0.0.0-20260210015239-72fd53f98435
+	github.com/go-playground/validator/v10 v10.30.2
+	github.com/jaxron/axonet v0.0.0-20260322084616-291a42f8fe4b
+	github.com/jaxron/axonet/middleware/proxy v0.0.0-20260322084616-291a42f8fe4b
+	github.com/jaxron/axonet/middleware/retry v0.0.0-20260322084616-291a42f8fe4b
 	github.com/stretchr/testify v1.9.0
 )
 
@@ -24,13 +24,13 @@ require (
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/pascaldekloe/name v1.0.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	golang.org/x/crypto v0.48.0 // indirect
-	golang.org/x/mod v0.32.0 // indirect
-	golang.org/x/net v0.49.0 // indirect
-	golang.org/x/sync v0.19.0 // indirect
-	golang.org/x/sys v0.41.0 // indirect
-	golang.org/x/text v0.34.0 // indirect
-	golang.org/x/tools v0.41.0 // indirect
+	golang.org/x/crypto v0.49.0 // indirect
+	golang.org/x/mod v0.33.0 // indirect
+	golang.org/x/net v0.51.0 // indirect
+	golang.org/x/sync v0.20.0 // indirect
+	golang.org/x/sys v0.42.0 // indirect
+	golang.org/x/text v0.35.0 // indirect
+	golang.org/x/tools v0.42.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

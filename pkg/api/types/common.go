@@ -10,6 +10,7 @@ const (
 	PresenceEndpoint   = "https://presence.roblox.com"
 	GamesEndpoint      = "https://games.roblox.com"
 	InventoryEndpoint  = "https://inventory.roblox.com"
+	CatalogEndpoint    = "https://catalog.roblox.com"
 )
 
 // SortOrder represents the sort order of the results.

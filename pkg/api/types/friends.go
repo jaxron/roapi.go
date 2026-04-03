@@ -16,6 +16,14 @@ const (
 	UserLocationTypeGame LocationType = "Game"
 )
 
+// FriendSortType represents the sort order for the friends list.
+type FriendSortType string
+
+const (
+	FriendSortDefault         FriendSortType = ""                // Default sort order
+	FriendSortStatusFrequents FriendSortType = "StatusFrequents" // Sort by interaction frequency
+)
+
 // FollowerPageResponse represents the structure of a user's follower list returned by the Roblox API.
 type FollowerPageResponse struct {
 	PreviousPageCursor *string  `json:"previousPageCursor" validate:"omitempty,base64"` // Cursor for the previous page of results (if any)

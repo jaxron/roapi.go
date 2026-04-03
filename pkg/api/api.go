@@ -6,6 +6,7 @@ import (
 	"github.com/jaxron/roapi.go/pkg/api/middleware/auth"
 	"github.com/jaxron/roapi.go/pkg/api/middleware/jsonheader"
 	"github.com/jaxron/roapi.go/pkg/api/resources/avatar"
+	"github.com/jaxron/roapi.go/pkg/api/resources/catalog"
 	"github.com/jaxron/roapi.go/pkg/api/resources/friends"
 	"github.com/jaxron/roapi.go/pkg/api/resources/games"
 	"github.com/jaxron/roapi.go/pkg/api/resources/groups"
@@ -21,6 +22,7 @@ type API struct {
 	client     *client.Client       // Axonet client for making API requests
 	users      *users.Resource      // Resource for user-related API operations
 	friends    *friends.Resource    // Resource for friend-related API operations
+	catalog    *catalog.Resource    // Resource for catalog-related API operations
 	groups     *groups.Resource     // Resource for group-related API operations
 	thumbnails *thumbnails.Resource // Resource for thumbnail-related API operations
 	avatar     *avatar.Resource     // Resource for avatar-related API operations
@@ -52,6 +54,7 @@ func New(cookies []string, opts ...client.Option) *API {
 		client:     c,
 		users:      users.New(c, v),
 		friends:    friends.New(c, v),
+		catalog:    catalog.New(c, v),
 		groups:     groups.New(c, v),
 		thumbnails: thumbnails.New(c, v),
 		avatar:     avatar.New(c, v),
@@ -95,6 +98,12 @@ func (api *API) Thumbnails() *thumbnails.Resource {
 // This provides access to methods for interacting with avatar data via the Roblox API.
 func (api *API) Avatar() *avatar.Resource {
 	return api.avatar
+}
+
+// Catalog returns the Resource instance for catalog-related operations.
+// This provides access to methods for interacting with catalog data via the Roblox API.
+func (api *API) Catalog() *catalog.Resource {
+	return api.catalog
 }
 
 // Presence returns the Resource instance for presence-related operations.

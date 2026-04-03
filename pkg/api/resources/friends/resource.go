@@ -10,7 +10,7 @@ import (
 
 // ResourceInterface defines the interface for friend-related operations.
 type ResourceInterface interface {
-	GetFriends(ctx context.Context, userID int64) (*types.FriendsResponse, error)
+	GetFriends(ctx context.Context, params GetFriendsParams) (*types.FriendsResponse, error)
 	GetFriendCount(ctx context.Context, userID int64) (int64, error)
 	FindFriends(ctx context.Context, params FindFriendsParams) (*types.FriendPageResponse, error)
 	SearchFriends(ctx context.Context, params SearchFriendsParams) (*types.FriendPageResponse, error)
